@@ -3,6 +3,8 @@
 var CLIENT_ID = '1026721110899-6t5r7pu7hdn49rtaoioe6tkn2inq8l2r.apps.googleusercontent.com';
 var SCOPES = [
   'https://www.googleapis.com/auth/drive.file',
+  'https://www.googleapis.com/auth/drive.appfolder',
+  'https://www.googleapis.com/auth/drive.install',
   'email',
   'profile',
   // Add other scopes needed by your application.
@@ -97,7 +99,11 @@ function beginAppIfReady() {
 
   console.log('App is ready to begin.');
   if (!window.game_id) {  // Need to create a new game.
-    var request = gapi.client.drive.files.insert({'uploadType': 'media'});
+    var request = gapi.client.drive.files.insert({
+      'uploadType': 'media',
+      'title': 'poker game',
+      'mimeType': 'custom/mime.type'
+    });
     request.execute(fileCreated);
   } else {  // Need to open existing game.
     openRealtimeModel();
