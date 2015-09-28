@@ -49,8 +49,7 @@ function handleAuthResult(authResult) {
   } else {
     // No access token could be retrieved, force the authorization flow.
     gapi.auth.authorize(
-        {'client_id': CLIENT_ID, 'scope': SCOPES, 'immediate': false},
-        handleAuthResult);
+        {'client_id': CLIENT_ID, 'scope': SCOPES, 'immediate': false}, handleAuthResult);
   }
 };
 
@@ -72,21 +71,21 @@ function handleApiLoad() {
 
 function loadRealtimeIfReady() {
   if (initState.authorized && initState.apiJsLoaded) {
-    gapi.load('auth:client,drive-realtime,drive-share', handleRealtimeLoaded)
+    gapi.load('auth:client,drive-realtime,drive-share', handleRealtimeLoaded);
   }
-}
+};
 
 function handleDriveLoaded() {
   console.log('Drive loaded.');
   initState.driveLoaded = true;
   beginAppIfReady();
-}
+};
 
 function handleRealtimeLoaded() {
   console.log('Realtime loaded.');
   initState.realtimeLoaded = true;
   beginAppIfReady();
-}
+};
 
 
 function beginAppIfReady() {
@@ -97,4 +96,27 @@ function beginAppIfReady() {
   }
 
   console.log('App is ready to begin.');
-}
+  if (!window.game_id) {  // Need to create a new game.
+    var request = gapi.client.drive.files.insert({'uploadType': 'media'});
+    request.execute(fileCreated);
+  } else {  // Need to open existing game.
+    openRealtimeModel();
+  }
+};
+
+
+function fileCreated(response) {
+  if (response.id) {
+    console.log('File created.');
+    window.game_id = response.id;
+    window.history.replaceState(null, 'game', '/open/' + window.game_id)
+    openRealtimeModel();
+  } else {
+    alert('Could not create file, please reload.')
+  }
+};
+
+
+function openRealtimeModel() {
+
+};

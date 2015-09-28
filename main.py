@@ -16,10 +16,16 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 # the App Engine WSGI application server.
 
 
-@app.route('/')
-def hello():
+@app.route('/open/<game_id>')
+def open(game_id):
   template = JINJA_ENVIRONMENT.get_template('index.html')
-  return template.render({})
+  return template.render({'game_id': game_id})
+
+
+@app.route('/')
+def create():
+  template = JINJA_ENVIRONMENT.get_template('index.html')
+  return template.render({'game_id': None})
 
 
 @app.errorhandler(404)

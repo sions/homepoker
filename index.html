@@ -8,7 +8,10 @@
 </head>
 <body>
 	<h1>Hello Jinja</h1>
-  <script type="text/javascript" src="js/boot.js"></script>
+  <script type="text/javascript">
+    window.game_id = '{{ game_id if game_id else null }}';
+  </script>
+  <script type="text/javascript" src="/js/boot.js"></script>
   <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
   <script type="text/javascript" src="https://apis.google.com/js/api.js?onload=handleApiLoad"></script>
 </body>
