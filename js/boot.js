@@ -124,5 +124,25 @@ function fileCreated(response) {
 
 
 function openRealtimeModel() {
-
+  gapi.drive.realtime.load(window.game_id, documentLoaded, initializeModel, realtimeError);
 };
+
+
+function documentLoaded(doc) {
+  console.log('File loaded successfully.');
+  var players = doc.getModel().getRoot().get('players');
+  console.log('Players: ' + players);
+  doc.getModel().getRoot().set('players', players + 1);
+}
+
+
+function initializeModel(model) {
+  console.log('Initializing model.');
+  model.getRoot().set('players', 5);
+  console.log('Model initialized.');
+}
+
+
+function realtimeError(error) {
+  alert('Error loading realtime model: ' + error.toString());
+}
