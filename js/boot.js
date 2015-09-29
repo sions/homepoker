@@ -1,5 +1,8 @@
 goog.provide('poker.boot');
 
+
+goog.scope(function() {
+
 var CLIENT_ID = '1026721110899-6t5r7pu7hdn49rtaoioe6tkn2inq8l2r.apps.googleusercontent.com';
 var SCOPES = [
   'https://www.googleapis.com/auth/drive.file',
@@ -22,75 +25,102 @@ var initState = {
 /**
  * Called when the client library is loaded.
  */
-function handleClientLoad() {
+poker.boot.handleClientLoad = function() {
   console.log('gapi loaded');
   initState.gapiLoaded = true;
-  checkAuth();
+  poker.boot.checkAuth_();
 };
+
+goog.exportSymbol('handleClientLoad', poker.boot.handleClientLoad);
 
 
 /**
- * Check if the current user has authorized the application.
+ * Called when api.js is loaded.
  */
-function checkAuth() {
+poker.boot.handleApiLoad = function() {
+  console.log('api.js loaded');
+  initState.apiJsLoaded = true;
+  poker.boot.loadRealtimeIfReady_();
+};
+
+goog.exportSymbol('handleApiLoad', poker.boot.handleApiLoad);
+
+/**
+ * Check if the current user has authorized the application.
+ * @private
+ */
+poker.boot.checkAuth_ = function() {
   gapi.auth.authorize(
       {'client_id': CLIENT_ID, 'scope': SCOPES, 'immediate': true},
-      handleAuthResult);
+      poker.boot.handleAuthResult_);
 };
 
 /**
  * Called when authorization server replies.
  *
  * @param {Object} authResult Authorization result.
+ * @private
  */
-function handleAuthResult(authResult) {
+poker.boot.handleAuthResult_ = function(authResult) {
   if (authResult && !authResult.error) {
     // Access token has been successfully retrieved, requests can be sent to the API
     initState.authorized = true;
-    handleAuthenticationDone();
+    poker.boot.handleAuthenticationDone_();
   } else {
     // No access token could be retrieved, force the authorization flow.
     gapi.auth.authorize(
-        {'client_id': CLIENT_ID, 'scope': SCOPES, 'immediate': false}, handleAuthResult);
+        {'client_id': CLIENT_ID, 'scope': SCOPES, 'immediate': false}, 
+        poker.boot.handleAuthResult_);
   }
 };
 
 
-function handleAuthenticationDone() {
+/**
+ * Called when authentication is done.
+ * @private
+ */
+poker.boot.handleAuthenticationDone_ = function() {
   console.log('Authentication done.');
   initState.authorized = true;
-  gapi.client.load('drive', 'v2', handleDriveLoaded);
-  loadRealtimeIfReady();
+  gapi.client.load('drive', 'v2', poker.boot.handleDriveLoaded_);
+  poker.boot.loadRealtimeIfReady_();
 };
 
 
-function handleApiLoad() {
-  console.log('api.js loaded');
-  initState.apiJsLoaded = true;
-  loadRealtimeIfReady();
-};
-
-
-function loadRealtimeIfReady() {
+/**
+ * @private
+ */
+poker.boot.loadRealtimeIfReady_ = function() {
   if (initState.authorized && initState.apiJsLoaded) {
-    gapi.load('auth:client,drive-realtime,drive-share', handleRealtimeLoaded);
+    gapi.load('auth:client,drive-realtime,drive-share', poker.boot.handleRealtimeLoaded_);
   }
 };
 
-function handleDriveLoaded() {
+
+/**
+ * @private
+ */
+poker.boot.handleDriveLoaded_ = function() {
   console.log('Drive loaded.');
   initState.driveLoaded = true;
-  beginAppIfReady();
+  poker.boot.beginAppIfReady_();
 };
 
-function handleRealtimeLoaded() {
+
+/**
+ * @private
+ */
+poker.boot.handleRealtimeLoaded_ = function() {
   console.log('Realtime loaded.');
   initState.realtimeLoaded = true;
-  beginAppIfReady();
+  poker.boot.beginAppIfReady_();
 };
 
 
-function beginAppIfReady() {
+/**
+ * @private
+ */
+poker.boot.beginAppIfReady_ = function() {
   for (var stage in initState) {
     if (!initState[stage]) {
       return;
@@ -104,45 +134,66 @@ function beginAppIfReady() {
       'title': 'poker game',
       'mimeType': 'custom/mime.type'
     });
-    request.execute(fileCreated);
+    request.execute(poker.boot.fileCreated_);
   } else {  // Need to open existing game.
-    openRealtimeModel();
+    poker.boot.openRealtimeModel_();
   }
 };
 
 
-function fileCreated(response) {
+/**
+ * @private
+ */
+poker.boot.fileCreated_ = function(response) {
   if (response.id) {
     console.log('File created.');
     window.game_id = response.id;
     window.history.replaceState(null, 'game', '/open/' + window.game_id)
-    openRealtimeModel();
+    poker.boot.openRealtimeModel_();
   } else {
     alert('Could not create file, please reload.')
   }
 };
 
 
-function openRealtimeModel() {
-  gapi.drive.realtime.load(window.game_id, documentLoaded, initializeModel, realtimeError);
+/**
+ * @private
+ */
+poker.boot.openRealtimeModel_ = function() {
+  gapi.drive.realtime.load(
+      window.game_id, 
+      poker.boot.documentLoaded_, 
+      poker.boot.initializeModel_, 
+      poker.boot.realtimeError_);
 };
 
 
-function documentLoaded(doc) {
+/**
+ * @private
+ */
+poker.boot.documentLoaded_ = function(doc) {
   console.log('File loaded successfully.');
   var players = doc.getModel().getRoot().get('players');
   console.log('Players: ' + players);
   doc.getModel().getRoot().set('players', players + 1);
-}
+};
 
 
-function initializeModel(model) {
+/**
+ * @private
+ */
+poker.boot.initializeModel_ = function(model) {
   console.log('Initializing model.');
   model.getRoot().set('players', 5);
   console.log('Model initialized.');
-}
+};
 
 
-function realtimeError(error) {
+/**
+ * @private
+ */
+poker.boot.realtimeError_ = function(error) {
   alert('Error loading realtime model: ' + error.toString());
-}
+};
+
+});  // goog.scope
