@@ -19,16 +19,20 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 @app.route('/open/<game_id>')
 def open(game_id):
   template = JINJA_ENVIRONMENT.get_template('index.html')
-  return template.render({'game_id': game_id})
+  return template.render({'game_id': game_id, 'js_compiled': _is_jsmode_compiled()})
 
 
 @app.route('/')
 def create():
   template = JINJA_ENVIRONMENT.get_template('index.html')
-  return template.render({'game_id': None})
+  return template.render({'game_id': None, 'js_compiled': _is_jsmode_compiled()})
 
 
 @app.errorhandler(404)
 def page_not_found(e):
   """Return a custom 404 error."""
   return 'Sorry, nothing at this URL.', 404
+
+
+def _is_jsmode_compiled():
+  return os.environ.get('JS_MODE', '') == 'compiled'

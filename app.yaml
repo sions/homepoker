@@ -1,4 +1,4 @@
-application: hello-flask-app-engine
+application: home-poker
 version: 1
 runtime: python27
 api_version: 1
@@ -7,6 +7,10 @@ threadsafe: yes
 handlers:
 - url: /js
   static_dir: js
+- url: /generated
+  static_dir: generated
+- url: /closure
+  static_dir: closure-library/closure
 - url: .*
   script: main.app
 
@@ -15,3 +19,7 @@ libraries:
   version: "2.6"
 - name: markupsafe
   version: "0.15"
+
+
+env_variables:
+  JS_MODE: 'compiled'  # Use 'compiled' or any other string for uncompiled.

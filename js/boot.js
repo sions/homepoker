@@ -1,4 +1,4 @@
-
+goog.provide('poker.boot');
 
 var CLIENT_ID = '1026721110899-6t5r7pu7hdn49rtaoioe6tkn2inq8l2r.apps.googleusercontent.com';
 var SCOPES = [
@@ -6,7 +6,7 @@ var SCOPES = [
   'https://www.googleapis.com/auth/drive.appfolder',
   'https://www.googleapis.com/auth/drive.install',
   'email',
-  'profile',
+  'profile'
   // Add other scopes needed by your application.
 ];
 
