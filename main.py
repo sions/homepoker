@@ -35,4 +35,5 @@ def page_not_found(e):
 
 
 def _is_jsmode_compiled():
-  return os.environ.get('JS_MODE', '') == 'compiled'
+  return (not os.environ.get('SERVER_SOFTWARE', '').startswith('Dev') or 
+          os.environ.get('FORCE_JS_COMPILED', '') == 'YES')

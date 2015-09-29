@@ -19,7 +19,3 @@ libraries:
   version: "2.6"
 - name: markupsafe
   version: "0.15"
-
-
-env_variables:
-  JS_MODE: 'compiled'  # Use 'compiled' or any other string for uncompiled.

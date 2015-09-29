@@ -5,6 +5,7 @@ goog.require('goog.Timer');
 
 goog.scope(function() {
 
+// TODO: Use different keys for production and development.
 var CLIENT_ID = '1026721110899-6t5r7pu7hdn49rtaoioe6tkn2inq8l2r.apps.googleusercontent.com';
 var SCOPES = [
   'https://www.googleapis.com/auth/drive.file',
