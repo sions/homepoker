@@ -1,6 +1,7 @@
 goog.provide('poker.boot');
 
 goog.require('goog.Timer');
+goog.require('poker.modelservice');
 
 
 goog.scope(function() {
@@ -183,9 +184,13 @@ poker.boot.openRealtimeModel_ = function() {
  */
 poker.boot.documentLoaded_ = function(doc) {
   console.log('File loaded successfully.');
-  var players = doc.getModel().getRoot().get('players');
+  var modelService = new poker.modelservice(doc.getModel());
+  modelService.register();
+  var players = modelService.getPlayers();
   console.log('Players: ' + players);
-  doc.getModel().getRoot().set('players', players + 1);
+  modelService.setPlayers(players + 1);
+
+  angular.bootstrap(document, ['modelServiceModule', 'pokerControllers']);
 };
 
 
@@ -194,7 +199,8 @@ poker.boot.documentLoaded_ = function(doc) {
  */
 poker.boot.initializeModel_ = function(model) {
   console.log('Initializing model.');
-  model.getRoot().set('players', 5);
+  var modelService = new poker.modelservice(model);
+  modelService.initialize();
   console.log('Model initialized.');
 };
 

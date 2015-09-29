@@ -5,18 +5,24 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-</head>
-<body>
-	<h1>Hello Jinja</h1>
   <script type="text/javascript">
     window.game_id = '{{ game_id if game_id else null }}';
   </script>
+</head>
+<body>
+  <div ng-controller="DummyController">
+    <h1>Hello Jinja - {% raw %}{{players}}{% endraw %}</h1>
+  </div>
+
+  <script type="text/javascript" src="/lib/angular/angular.js"></script>
+  <script type="text/javascript" src="/lib/angular-resource/angular-resource.js"></script>
   {% if js_compiled %}
     <script type="text/javascript" src="/generated/compiled.js"></script>
   {% else %}
     <script src="/closure/goog/base.js"></script>
     <script type="text/javascript" src="/generated/deps.js"></script>
     <script>goog.require('poker.boot');</script>
+    <script>goog.require('poker.controllers');</script>
   {% endif %}
   
   <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>

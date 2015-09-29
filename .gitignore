@@ -1,4 +1,5 @@
 # Google App Engine generated folder
 appengine-generated/
+lib/bower_components
 
 *.pyc

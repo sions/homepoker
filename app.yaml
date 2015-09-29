@@ -11,6 +11,8 @@ handlers:
   static_dir: generated
 - url: /closure
   static_dir: closure-library/closure
+- url: /lib
+  static_dir: lib/bower_components
 - url: .*
   script: main.app
 
