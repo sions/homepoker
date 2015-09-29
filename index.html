@@ -8,14 +8,15 @@
   <script type="text/javascript">
     window.game_id = '{{ game_id if game_id else null }}';
   </script>
+  <script type="text/javascript" src="/lib/angular/angular.min.js"></script>
 </head>
 <body>
   <div ng-controller="DummyController">
-    <h1>Hello Jinja - {% raw %}{{players}}{% endraw %}</h1>
+    <h1>Hello Jinja<span class="ng-cloak"> - {% raw %}{{players}}{% endraw %}</span></h1>
   </div>
 
-  <script type="text/javascript" src="/lib/angular/angular.js"></script>
-  <script type="text/javascript" src="/lib/angular-resource/angular-resource.js"></script>
+  
+  <script type="text/javascript" src="/lib/angular-resource/angular-resource.min.js"></script>
   {% if js_compiled %}
     <script type="text/javascript" src="/generated/compiled.js"></script>
   {% else %}
