@@ -1,5 +1,7 @@
 goog.provide('poker.boot');
 
+goog.require('goog.Timer');
+
 
 goog.scope(function() {
 
@@ -64,8 +66,10 @@ poker.boot.checkAuth_ = function() {
 poker.boot.handleAuthResult_ = function(authResult) {
   if (authResult && !authResult.error) {
     // Access token has been successfully retrieved, requests can be sent to the API
-    initState.authorized = true;
     poker.boot.handleAuthenticationDone_();
+
+    var timeToExpiration = parseInt(authResult.expires_in);
+    goog.Timer.callOnce(poker.boot.checkAuth_, (timeToExpiration - 60) * 1000);
   } else {
     // No access token could be retrieved, force the authorization flow.
     gapi.auth.authorize(
@@ -80,6 +84,11 @@ poker.boot.handleAuthResult_ = function(authResult) {
  * @private
  */
 poker.boot.handleAuthenticationDone_ = function() {
+  if (initState.authorized) {
+    console.log('Authentication refersh done.');
+    return;  // Already done with authentication. This means this was a referesh.
+  }
+
   console.log('Authentication done.');
   initState.authorized = true;
   gapi.client.load('drive', 'v2', poker.boot.handleDriveLoaded_);
