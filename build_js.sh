@@ -1,7 +1,7 @@
 #!/bin/bash
 
-closure-library/closure/bin/build/closurebuilder.py \
-    --root="closure-library/" \
+lib/bower_components/google-closure-library/closure/bin/build/closurebuilder.py \
+    --root="lib/bower_components/google-closure-library/" \
     --root="js/" \
     --namespace="poker.boot" \
     --namespace="poker.controllers" \
@@ -10,4 +10,5 @@ closure-library/closure/bin/build/closurebuilder.py \
     --compiler_jar="compiler.jar"
  
 
-closure-library/closure/bin/build/depswriter.py --root_with_prefix="js ../../js/" > generated/deps.js
+lib/bower_components/google-closure-library/closure/bin/build/depswriter.py \
+    --root_with_prefix="js ../../../../js/" > generated/deps.js

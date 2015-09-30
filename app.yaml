@@ -9,8 +9,6 @@ handlers:
   static_dir: js
 - url: /generated
   static_dir: generated
-- url: /closure
-  static_dir: closure-library/closure
 - url: /lib
   static_dir: lib/bower_components
 - url: .*
