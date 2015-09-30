@@ -22,7 +22,7 @@ var ts = poker.timeservice;
  * @const {number}
  * @private
  */
-ts.SERVER_UPDATE_PERIOD_MS_ = 60 * 1000;
+ts.SERVER_UPDATE_PERIOD_MS_ = 60 * 5 * 1000;
 
 ts.prototype.register = function() {
   var module = angular.module('timeServiceModule', ['ngResource']);
