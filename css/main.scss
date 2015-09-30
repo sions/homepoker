@@ -1,0 +1,9 @@
+@import 'normalize-scss/_normalize.scss';
+
+$font-stack:    Helvetica, sans-serif;
+$primary-color: #333;
+
+body {
+  font: 16px $font-stack;
+  color: $primary-color;
+}

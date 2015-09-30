@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Yes, this is primitive, I know.
+
 lib/bower_components/google-closure-library/closure/bin/build/closurebuilder.py \
     --root="lib/bower_components/google-closure-library/" \
     --root="js/" \
@@ -12,3 +14,6 @@ lib/bower_components/google-closure-library/closure/bin/build/closurebuilder.py 
 
 lib/bower_components/google-closure-library/closure/bin/build/depswriter.py \
     --root_with_prefix="js ../../../../js/" > generated/deps.js
+
+
+scss -Ilib/bower_components --style compressed css/main.scss generated/main.css
