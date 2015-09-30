@@ -13,7 +13,11 @@
 </head>
 <body>
   <div ng-controller="DummyController">
-    <h1>Hello Jinja<span class="ng-cloak"> - {% raw %}{{players}}{% endraw %}</span></h1>
+    <h1>Hello Jinja
+      <span class="ng-cloak"> 
+      - {% raw %}{{players}}{% endraw %}
+      - {% raw %}{{now}}{% endraw %}
+      </span></h1>
   </div>
 
   
