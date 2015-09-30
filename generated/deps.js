@@ -2,5 +2,5 @@
 // Please do not edit.
 goog.addDependency('../../../../js/boot.js', ['poker.boot'], ['goog.Timer', 'poker.modelservice', 'poker.timeservice'], false);
 goog.addDependency('../../../../js/controllers.js', ['poker.controllers'], ['poker.modelservice'], false);
-goog.addDependency('../../../../js/modelservice.js', ['poker.modelservice'], [], false);
+goog.addDependency('../../../../js/modelservice.js', ['poker.modelservice'], ['goog.array'], false);
 goog.addDependency('../../../../js/timeservice.js', ['poker.timeservice'], ['goog.Timer'], false);

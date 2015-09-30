@@ -12,9 +12,17 @@ controllers.controller('DummyController',
      function($scope, $rootScope, timeService, modelService) {
   $scope.players = modelService.getPlayers();
   $scope.now = timeService.getTime();
+  $scope.levels = modelService.getLevels();
+  
   $rootScope.$on(modelEvent.PLAYERS_CHANGED, function(eventName, event) {
     $scope.$apply(function() {
       $scope.players = event.newValue;
+    });
+  });
+
+  $rootScope.$on(modelEvent.LEVELS_CHANGED, function(eventName) {
+    $scope.$apply(function() {
+      $scope.levels = modelService.getLevels();
     });
   });
 }]);

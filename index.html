@@ -18,6 +18,13 @@
       - {% raw %}{{players}}{% endraw %}
       - {% raw %}{{now}}{% endraw %}
       </span></h1>
+    <div class="ng-cloak">
+      <div ng-repeat="level in levels">
+        {% raw %}
+        <div>{{level.small}}/{{level.big}}/{{level.ante}} - {{level.levelTime}}</div>
+        {% endraw %}
+      </div>
+    </div>
   </div>
 
   

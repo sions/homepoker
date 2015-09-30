@@ -193,6 +193,7 @@ poker.boot.documentLoaded_ = function(doc) {
   var players = modelService.getPlayers();
   console.log('Players: ' + players);
   modelService.setPlayers(players + 1);
+  modelService.mutateLevels();
 
   angular.bootstrap(document, 
       ['timeServiceModule', 'modelServiceModule', 'pokerControllers']);
