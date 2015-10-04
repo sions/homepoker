@@ -29,6 +29,7 @@
       <button ng-click="pause()">Pause</button>
     </div>
     <div ng-controller="TimerController" class="ng-cloak">
+      <div>Level {% raw %}{{levelIndex + 1}}{% endraw %}</div>
       <div>Game time: {% raw %}{{minutes}}:{{seconds | numberFixedLen:2}}{% endraw %}</div>
       <div>{% raw %}{{small}} / {{big}} <span ng-if="ante > 0">/ {{ante}}</span>{% endraw %}</div>
     </div>

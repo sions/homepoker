@@ -64,6 +64,7 @@ controllers.controller('TimerController',
     $scope.small = levelState.current.small;
     $scope.big = levelState.current.big;
     $scope.ante = levelState.current.ante;
+    $scope.levelIndex = levelState.levelIndex;
   };
 
   $element.addClass('ng-hide');

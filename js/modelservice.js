@@ -69,7 +69,8 @@ pm.TimeEvent;
  * @typedef {{
  *   current: pm.Level,
  *   next: pm.Level,
- *   timeLeftInLevel: number
+ *   timeLeftInLevel: number,
+ *   levelIndex: number
  * }}
  */
 pm.LevelState;
@@ -373,14 +374,16 @@ pm.prototype.getCurrentLevelState = function() {
     return {
       current: levels[levels.length - 1],
       next: null,
-      timeLeftInLevel: 0
+      timeLeftInLevel: 0,
+      levelIndex: levels.length - 1
     }
   }
 
   return {
     current: levels[i],
     next: levels[i + 1] || null,
-    timeLeftInLevel: totalTime - gameTime
+    timeLeftInLevel: totalTime - gameTime,
+    levelIndex: i
   };
 };
 
