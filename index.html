@@ -31,6 +31,9 @@
       <span>Is running: {% raw %}{{running}}{% endraw %}</span>
       <span>Game time: {% raw %}{{gameTime}}{% endraw %}</span>
     </div>
+    <div ng-controller="TimerController" class="ng-cloak">
+      <span>Game time: {% raw %}{{minutes}}:{{seconds | numberFixedLen:2}}{% endraw %}</span>
+    </div>
   </div>
 
   
