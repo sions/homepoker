@@ -25,6 +25,12 @@
         {% endraw %}
       </div>
     </div>
+    <div ng-controller="StartPauseController" class="ng-cloak">
+      <button ng-click="start()">Start</button>
+      <button ng-click="pause()">Pause</button>
+      <span>Is running: {% raw %}{{running}}{% endraw %}</span>
+      <span>Game time: {% raw %}{{gameTime}}{% endraw %}</span>
+    </div>
   </div>
 
   

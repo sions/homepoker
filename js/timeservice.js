@@ -66,6 +66,10 @@ ts.prototype.localTime_ = function() {
   return new Date().getTime();
 };
 
+
+/**
+ * @return {number} Current timestamp.
+ */
 ts.prototype.getTime = function() {
   return this.serverTime_ + this.localTime_() - this.lastLocalTime_
 };

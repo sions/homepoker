@@ -15,15 +15,32 @@ controllers.controller('DummyController',
   $scope.levels = modelService.getLevels();
   
   $rootScope.$on(modelEvent.PLAYERS_CHANGED, function(eventName, event) {
-    $scope.$apply(function() {
-      $scope.players = event.newValue;
-    });
+    $scope.players = event.newValue;
   });
 
   $rootScope.$on(modelEvent.LEVELS_CHANGED, function(eventName) {
-    $scope.$apply(function() {
-      $scope.levels = modelService.getLevels();
-    });
+    $scope.levels = modelService.getLevels();
+  });
+}]);
+
+
+controllers.controller('StartPauseController', 
+    ['$scope', '$rootScope', 'modelService', function($scope, $rootScope, modelService) {
+  $scope.start = function() {
+    modelService.start();
+  };
+  $scope.pause = function() {
+    modelService.pause();
+  };
+
+  $scope.running = modelService.isRunning();
+  $rootScope.$on(modelEvent.TIME_CHANGED, function(eventName) {
+    $scope.running = modelService.isRunning();
+  });
+
+  $scope.gameTime = modelService.getGameTime();
+  $rootScope.$on(modelEvent.TIME_CHANGED, function(eventName) {
+    $scope.gameTime = modelService.getGameTime();
   });
 }]);
 

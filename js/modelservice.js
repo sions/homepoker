@@ -13,6 +13,10 @@ goog.scope(function() {
 poker.modelservice = function(model) {
   this.model_ = model;
   this.getLevelsFromModel_();
+  this.timeToLastCheckpoint_ = 0;
+  this.timeOfLastCheckpoint_ = null;
+  this.running_ = false;
+  this.processTimeEvents_();
 };
 
 
@@ -24,7 +28,8 @@ var pm = poker.modelservice;
  */
 pm.EVENT = {
   PLAYERS_CHANGED: 'players-changed',
-  LEVELS_CHANGED: 'levels-changed'
+  LEVELS_CHANGED: 'levels-changed',
+  TIME_CHANGED: 'time-changed'
 };
 
 
@@ -41,6 +46,26 @@ pm.Level;
 
 
 /**
+ * @enum {number}
+ */
+pm.TimeEventType = {
+  START: 0,
+  PAUSE: 1,
+  SET_TIME: 2
+};
+
+
+/**
+ * @typedef {{
+ *   timestamp: number,
+ *   evntType: pm.TimeEventType,
+ *   value: number 
+ * }}
+ */
+pm.TimeEvent;
+
+
+/**
  * @enum {string}
  * @private
  */
@@ -50,7 +75,8 @@ pm.PROPERTY_ = {
   SMALL_BLIND: 'small-blind',
   BIG_BLIND: 'big-blind',
   ANTE: 'ante',
-  LEVEL_TIME: 'level-time'
+  LEVEL_TIME: 'level-time',
+  TIME_EVENTS: 'time-events'
 };
 
 
@@ -63,20 +89,25 @@ pm.prototype.initialize = function() {
   levels.push(this.makeLevel_({small: 3, big: 6, ante: 0, levelTime: 15 * 60 * 1000}));
   levels.push(this.makeLevel_({small: 5, big: 10, ante: 1, levelTime: 15 * 60 * 1000}));
   this.getRoot_().set(pm.PROPERTY_.LEVELS, levels);
+
+  var timeEvents = this.model_.createList();
+  this.getRoot_().set(pm.PROPERTY_.TIME_EVENTS, timeEvents);
 };
 
 
 pm.prototype.register = function() {
   var service = angular.module('modelServiceModule', ['ngResource']);
   var thisModel = this;
-  service.factory('modelService', function($rootScope) { 
+  service.factory('modelService', ['timeService', '$rootScope', 
+      function(timeService, $rootScope) { 
     thisModel.$rootScope = $rootScope;
+    thisModel.timeService = timeService;
 
     thisModel.getRoot_().addEventListener(
         gapi.drive.realtime.EventType.OBJECT_CHANGED, 
         goog.bind(thisModel.valuesChanged_, thisModel));
     return thisModel; 
-  });
+  }]);
 };
 
 
@@ -125,7 +156,7 @@ pm.prototype.mutateLevels = function() {
 
 pm.prototype.getLevelsFromModel_ = function() {
   this.levels_ = [];
-  var modelLevels = this.getRoot_().get(pm.PROPERTY_.LEVELS);
+  var modelLevels = this.getRoot_().get(pm.PROPERTY_.LEVELS) || [];
   for (var i = 0; i < modelLevels.length; i++) {
     var level = modelLevels.get(i);
     this.levels_.push({
@@ -144,12 +175,14 @@ pm.prototype.getLevelsFromModel_ = function() {
  */
 pm.prototype.valuesChanged_ = function(event) {
   var levelsChanged = false;
+  var timeChanged = false;
+  
   for (var i = 0, e; e = event.events[i]; i++) {
     if (e.type === gapi.drive.realtime.EventType.VALUE_CHANGED) {
       console.log('values changed. property: ' + e.property + ' newValue: ' + e.newValue);
       switch (e.property) {
         case pm.PROPERTY_.PLAYERS:
-          this.$rootScope.$emit(pm.EVENT.PLAYERS_CHANGED, e);
+          this.emitEventOnRootScope_(pm.EVENT.PLAYERS_CHANGED, e);
           break;
         case pm.PROPERTY_.SMALL_BLIND:
           this.findLevelById_(e.target.id).small = e.newValue;
@@ -174,15 +207,39 @@ pm.prototype.valuesChanged_ = function(event) {
         console.log('Levels changed');
         this.getLevelsFromModel_();
         levelsChanged = true;
+      } else if (e.target.id === this.getRoot_().get(pm.PROPERTY_.TIME_EVENTS).id &&
+          e.type === gapi.drive.realtime.EventType.VALUES_ADDED) {
+        goog.array.forEach(e.values, this.processTimeEvent_, this);
+        timeChanged = true;
       }
     }
   }
 
   if (levelsChanged) {
-    this.$rootScope.$emit(pm.EVENT.LEVELS_CHANGED);
+    this.emitEventOnRootScope_(pm.EVENT.LEVELS_CHANGED);
+  }
+  if (timeChanged) {
+    this.emitEventOnRootScope_(pm.EVENT.TIME_CHANGED);
   }
 };
 
+
+/**
+ * @param {pm.EVENT} eventType
+ * @param {Object=} opt_value
+ * @private
+ */
+pm.prototype.emitEventOnRootScope_ = function(eventType, opt_value) {
+  var requiresApply = !this.$rootScope.$$phase;
+  if (requiresApply) {
+    var thisModel = this;
+    this.$rootScope.$apply(function() {
+      thisModel.$rootScope.$emit(eventType, opt_value);
+    });
+  } else {
+    this.$rootScope.$emit(eventType, opt_value);
+  }
+}
 
 /**
  * @param {string} id
@@ -207,6 +264,83 @@ pm.prototype.makeLevel_ = function(level) {
   levelMap.set(pm.PROPERTY_.ANTE, level.ante);
   levelMap.set(pm.PROPERTY_.LEVEL_TIME, level.levelTime);
   return levelMap;
+};
+
+
+/**
+ * @private
+ */
+pm.prototype.processTimeEvents_ = function() {
+  var timeEvents = this.getRoot_().get(pm.PROPERTY_.TIME_EVENTS) || [];
+
+  for (var i = 0; i < timeEvents.length; ++i) {
+    var timeEvent = /** type {pm.TimeEvent} */ timeEvents.get(i);
+    this.processTimeEvent_(timeEvent);
+  }
+};
+
+
+/**
+ * @param {pm.TimeEvent}
+ */
+pm.prototype.processTimeEvent_ = function(timeEvent) {
+  console.log('Processing time event: ' + JSON.stringify(timeEvent));
+  switch (timeEvent.eventType) {
+    case pm.TimeEventType.START:
+      if (this.running_) {
+        this.timeToLastCheckpoint_ += timeEvent.timestamp - this.timeOfLastCheckpoint_;
+      }
+      this.running_ = true;
+      break;
+    case pm.TimeEventType.PAUSE:
+      if (this.running_) {
+        this.timeToLastCheckpoint_ += timeEvent.timestamp - this.timeOfLastCheckpoint_;
+        this.running_ = false;
+      }
+      break;
+    case pm.TimeEventType.SET_TIME:
+      this.timeToLastCheckpoint_ = timeEvent.value;
+      break;
+    default:
+      console.log('Unexpected event: ' + timeEvent);
+      return;
+  }
+  this.timeOfLastCheckpoint_ = timeEvent.timestamp;
+};
+
+
+/**
+ * @return {boolean} Whether the game is running.
+ */
+pm.prototype.isRunning = function() {
+  return this.running_;
+};
+
+
+pm.prototype.start = function() {
+  var timeEvent = {
+    timestamp: this.timeService.getTime(),
+    eventType: pm.TimeEventType.START
+  }
+  this.getRoot_().get(pm.PROPERTY_.TIME_EVENTS).push(timeEvent);
+};
+
+
+pm.prototype.pause = function() {
+  var timeEvent = {
+    timestamp: this.timeService.getTime(),
+    eventType: pm.TimeEventType.PAUSE
+  }
+  this.getRoot_().get(pm.PROPERTY_.TIME_EVENTS).push(timeEvent);
+};
+
+
+pm.prototype.getGameTime = function() {
+  var gameTime = this.timeToLastCheckpoint_;
+  if (this.running_) {
+    gameTime += this.timeService.getTime() - this.timeOfLastCheckpoint_;
+  }
+  return gameTime;
 };
 
 });  // goog.scope
