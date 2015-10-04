@@ -18,16 +18,27 @@
       <div class="level">Level {% raw %}{{levelIndex + 1}}{% endraw %}</div>
       <div>
         <span class="timer">
-          <span class="timer-text">{% raw %}{{minutes}}:{{seconds | numberFixedLen:2}}{% endraw %}</span>
+          <span class="timer-text">
+            {% raw %}
+            {{minutes | numberFixedLen:2}}<span class="colon">:</span><span class="seconds">{{seconds | numberFixedLen:2}}</span>
+            {% endraw %}
+            </span>
         </span>
-      </div>
-      <div class="blinds">
-        {% raw %}{{small}} / {{big}} <span ng-if="ante > 0">/ {{ante}}</span>{% endraw %}
       </div>
     </div>
     <div ng-controller="StartPauseController">
       <button ng-click="start()">Start</button>
       <button ng-click="pause()">Pause</button>
+    </div>
+    <div ng-controller="BlindController" class="blinds">
+      <div>Blinds:
+        <span class="current">
+          {% raw %}
+          {{small}} / {{big}} <span ng-if="ante > 0">/ {{ante}}</span>
+          {% endraw %}
+        </span>
+      </div>
+      <div class="next" ng-if="nextSmall > 0">next: {% raw %}{{nextSmall}} / {{nextBig}} <span ng-if="nextAnte > 0">/ {{nextAnte}}</span>{% endraw %}</div>
     </div>
     <div ng-controller="PlayerController" class="players">
       Players: {% raw %}{{players}}{% endraw %}
