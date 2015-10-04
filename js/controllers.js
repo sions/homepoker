@@ -76,7 +76,21 @@ controllers.controller('TimerController',
   });
 }]);
 
-goog.exportSymbol('controllers', controllers);
 
+controllers.controller('PlayerController', 
+    ['$scope', '$rootScope', 'modelService', 
+     function($scope, $rootScope, modelService) {
+  $scope.players = modelService.getPlayers();
+  
+  $rootScope.$on(modelEvent.PLAYERS_CHANGED, function(eventName, event) {
+    $scope.players = event.newValue;
+  });
+
+  $rootScope.$on(modelEvent.LEVELS_CHANGED, function(eventName) {
+    $scope.levels = modelService.getLevels();
+  });
+}]);
+
+goog.exportSymbol('controllers', controllers);
 
 });  // goog.scope

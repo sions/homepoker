@@ -12,29 +12,20 @@
   <script type="text/javascript" src="/lib/angular/angular.min.js"></script>
 </head>
 <body>
-  <div ng-controller="DummyController">
-    <h1>Hello Jinja
-      <span class="ng-cloak"> 
-      - {% raw %}{{players}}{% endraw %}
-      </span></h1>
-    <div class="ng-cloak">
-      <div ng-repeat="level in levels">
-        {% raw %}
-        <div>{{level.small}}/{{level.big}}/{{level.ante}} - {{level.levelTime}}</div>
-        {% endraw %}
-      </div>
-    </div>
-    <div ng-controller="StartPauseController" class="ng-cloak">
+  <div class="ng-cloak">
+    <div ng-controller="StartPauseController">
       <button ng-click="start()">Start</button>
       <button ng-click="pause()">Pause</button>
     </div>
-    <div ng-controller="TimerController" class="ng-cloak">
+    <div ng-controller="TimerController">
       <div>Level {% raw %}{{levelIndex + 1}}{% endraw %}</div>
       <div>Game time: {% raw %}{{minutes}}:{{seconds | numberFixedLen:2}}{% endraw %}</div>
       <div>{% raw %}{{small}} / {{big}} <span ng-if="ante > 0">/ {{ante}}</span>{% endraw %}</div>
     </div>
+    <div ng-controller="PlayerController">
+      Players: {% raw %}{{players}}{% endraw %}
+    </div>
   </div>
-
   
   <script type="text/javascript" src="/lib/angular-resource/angular-resource.min.js"></script>
   {% if js_compiled %}
