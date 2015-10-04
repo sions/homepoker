@@ -12,6 +12,7 @@
     "angular-mocks": "~1.4.0",
     "angular-resource": "~1.4.0",
     "google-closure-library": null,
-    "normalize-scss": null
+    "normalize-scss": null,
+    "compass-mixins": null
   }
 }

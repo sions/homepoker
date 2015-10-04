@@ -6,23 +6,30 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/generated/main.css">
+  <link href='https://fonts.googleapis.com/css?family=Orbitron|Josefin+Slab' rel='stylesheet' type='text/css'>
   <script type="text/javascript">
     window.game_id = '{{ game_id if game_id else null }}';
   </script>
   <script type="text/javascript" src="/lib/angular/angular.min.js"></script>
 </head>
 <body>
-  <div class="ng-cloak">
+  <div class="ng-cloak canvas">
+    <div ng-controller="TimerController">
+      <div class="level">Level {% raw %}{{levelIndex + 1}}{% endraw %}</div>
+      <div>
+        <span class="timer">
+          <span class="timer-text">{% raw %}{{minutes}}:{{seconds | numberFixedLen:2}}{% endraw %}</span>
+        </span>
+      </div>
+      <div class="blinds">
+        {% raw %}{{small}} / {{big}} <span ng-if="ante > 0">/ {{ante}}</span>{% endraw %}
+      </div>
+    </div>
     <div ng-controller="StartPauseController">
       <button ng-click="start()">Start</button>
       <button ng-click="pause()">Pause</button>
     </div>
-    <div ng-controller="TimerController">
-      <div>Level {% raw %}{{levelIndex + 1}}{% endraw %}</div>
-      <div>Game time: {% raw %}{{minutes}}:{{seconds | numberFixedLen:2}}{% endraw %}</div>
-      <div>{% raw %}{{small}} / {{big}} <span ng-if="ante > 0">/ {{ante}}</span>{% endraw %}</div>
-    </div>
-    <div ng-controller="PlayerController">
+    <div ng-controller="PlayerController" class="players">
       Players: {% raw %}{{players}}{% endraw %}
     </div>
   </div>

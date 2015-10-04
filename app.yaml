@@ -9,6 +9,8 @@ handlers:
   static_dir: js
 - url: /generated
   static_dir: generated
+- url: /css
+  static_dir: css
 - url: /lib
   static_dir: lib/bower_components
 - url: .*

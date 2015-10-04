@@ -1,9 +1,94 @@
-@import 'normalize-scss/_normalize.scss';
+@import 'normalize-scss/_normalize';
+@import 'compass-mixins/lib/_compass';
 
-$font-stack:    Helvetica, sans-serif;
-$primary-color: #333;
+@function compact($vars...) {
+  $list: ();
+  @each $var in $vars {
+      @if $var {
+          $list: append($list, $var, comma);
+      }
+  }
+  @return $list;
+}
 
-body {
-  font: 16px $font-stack;
+@font-face {
+  font-family: 'digital-7';
+  font-style: normal;
+  font-weight: 400;
+  src: url(/css/digital-7.ttf) format('truetype');
+}
+
+$primary-color: #fff;
+$primary-line-height: 1.5;
+
+
+$screen-tablet: 480px;
+$screen-desktop: 992px;
+$screen-lg-desktop: 1200px;
+
+
+html, body {
+  height: 100%
+}
+
+html {
   color: $primary-color;
+  font-family: 'Josefin Slab';
+  font-size: 24px;
+  @media screen and (min-width: $screen-desktop) {
+    font-size: 32px;
+  }
+
+  @media screen and (min-width: $screen-lg-desktop) {
+    font-size: 40px;
+  }
+
+  background-color: rgba(19,19,19,1);
+  @include filter-gradient(#131313, #474747, vertical);
+  @include background-image(linear-gradient(to bottom,
+    rgba(19,19,19,1) 0%, 
+    rgba(28,28,28,1) 9%, 
+    rgba(43,43,43,1) 27%, 
+    rgba(60,60,60,1) 75%, 
+    rgba(71,71,71,1) 86%, 
+    rgba(71,71,71,1) 97%, 
+    rgba(71,71,71,1) 100%));
+}
+
+
+.canvas {
+  margin: 0 auto;
+  max-width: 600px;
+  text-align: center;
+  width: 100%
+}
+
+.level {
+  font-family: 'Orbitron';
+  font-size: 1.5rem;
+  line-height: 1.5;
+}
+
+.timer {
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 1px 1px rgba(255,255,255,0.1);
+  color: red;
+  background: black;
+  font-size: 6rem;
+  overflow: hidden;
+  padding: 0 1rem;
+}
+
+.timer-text {
+  font-family: 'digital-7';
+  position: relative;
+  top: 0.5rem;
+}
+
+.blinds {
+  line-height: $primary-line-height;
+}
+
+.players {
+  line-height: $primary-line-height;
 }
