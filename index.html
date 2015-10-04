@@ -16,7 +16,6 @@
     <h1>Hello Jinja
       <span class="ng-cloak"> 
       - {% raw %}{{players}}{% endraw %}
-      - {% raw %}{{now}}{% endraw %}
       </span></h1>
     <div class="ng-cloak">
       <div ng-repeat="level in levels">
@@ -28,11 +27,10 @@
     <div ng-controller="StartPauseController" class="ng-cloak">
       <button ng-click="start()">Start</button>
       <button ng-click="pause()">Pause</button>
-      <span>Is running: {% raw %}{{running}}{% endraw %}</span>
-      <span>Game time: {% raw %}{{gameTime}}{% endraw %}</span>
     </div>
     <div ng-controller="TimerController" class="ng-cloak">
-      <span>Game time: {% raw %}{{minutes}}:{{seconds | numberFixedLen:2}}{% endraw %}</span>
+      <div>Game time: {% raw %}{{minutes}}:{{seconds | numberFixedLen:2}}{% endraw %}</div>
+      <div>{% raw %}{{small}} / {{big}} <span ng-if="ante > 0">/ {{ante}}</span>{% endraw %}</div>
     </div>
   </div>
 

@@ -13,10 +13,20 @@ poker.timeservice = function() {
   var localTime = this.localTime_();
   this.serverTime_ = localTime;
   this.lastLocalTime_ = localTime;
+  this.gotServerTime_ = false;
 };
 
 
 var ts = poker.timeservice;
+
+
+/**
+ * @const {string}
+ */
+ts.EVENT = {
+  FIRST_SERVER_TIME: 'first-server-time'
+};
+
 
 /**
  * @const {number}
@@ -27,7 +37,8 @@ ts.SERVER_UPDATE_PERIOD_MS_ = 60 * 5 * 1000;
 ts.prototype.register = function() {
   var module = angular.module('timeServiceModule', ['ngResource']);
   var thisModel = this;
-  module.factory('timeService', ['$interval', '$http', function($interval, $http) { 
+  module.factory('timeService', ['$interval', '$http', '$rootScope', 
+      function($interval, $http, $rootScope) { 
 
     var updateTime = function() {
       // NOTE: I would have used JSON_CALLBACK as the callback, but it appears timeapi.org has a 
@@ -38,6 +49,10 @@ ts.prototype.register = function() {
         console.log('Got new time from server ' + newServerTime);
         thisModel.updateTime_(newServerTime);
         delete window[callbackName];
+        if (!thisModel.gotServerTime_) {
+          thisModel.gotServerTime_ = true;
+          $rootScope.$emit(ts.EVENT.FIRST_SERVER_TIME);
+        }
       }
       window[callbackName] = callback;
 
@@ -71,6 +86,7 @@ ts.prototype.localTime_ = function() {
  * @return {number} Current timestamp.
  */
 ts.prototype.getTime = function() {
+  goog.asserts.assert(this.gotServerTime_, 'Did not get time for server yet.');
   return this.serverTime_ + this.localTime_() - this.lastLocalTime_
 };
 

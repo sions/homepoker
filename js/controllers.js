@@ -1,6 +1,7 @@
 goog.provide('poker.controllers');
 
 goog.require('poker.modelservice');
+goog.require('poker.timeservice');
 
 goog.scope(function() {
 
@@ -14,12 +15,12 @@ var controllers = angular.module('pokerControllers', [])
         };
     });
 var modelEvent = poker.modelservice.EVENT;
+var timeEvent = poker.timeservice.EVENT;
 
 controllers.controller('DummyController', 
     ['$scope', '$rootScope', 'timeService', 'modelService', 
      function($scope, $rootScope, timeService, modelService) {
   $scope.players = modelService.getPlayers();
-  $scope.now = timeService.getTime();
   $scope.levels = modelService.getLevels();
   
   $rootScope.$on(modelEvent.PLAYERS_CHANGED, function(eventName, event) {
@@ -53,17 +54,25 @@ controllers.controller('StartPauseController',
 
 
 controllers.controller('TimerController', 
-      ['$scope', '$rootScope', '$interval', 'modelService', 
-       function($scope, $rootScope, $interval, modelService) {
-  var updateGameTime = function() {
-    var gameTimeInSeconds = Math.floor(modelService.getGameTime() / 1000);
-    $scope.seconds = gameTimeInSeconds % 60;
-    $scope.minutes = Math.floor(gameTimeInSeconds / 60);
+      ['$scope', '$rootScope', '$interval', '$element', 'modelService', 
+       function($scope, $rootScope, $interval, $element, modelService) {
+  var updateGameState = function() {
+    var levelState = modelService.getCurrentLevelState();
+    var timeLeftInSeconds = Math.floor(levelState.timeLeftInLevel / 1000);
+    $scope.seconds = timeLeftInSeconds % 60;
+    $scope.minutes = Math.floor(timeLeftInSeconds / 60);
+    $scope.small = levelState.current.small;
+    $scope.big = levelState.current.big;
+    $scope.ante = levelState.current.ante;
   };
 
-  updateGameTime();
-  $rootScope.$on(modelEvent.TIME_CHANGED, updateGameTime);
-  $interval(updateGameTime, controllers.TIMER_UPDATE_PERIOD_MS_);
+  $element.addClass('ng-hide');
+  $rootScope.$on(timeEvent.FIRST_SERVER_TIME, function() {
+    $element.removeClass('ng-hide');
+    updateGameState();
+    $rootScope.$on(modelEvent.TIME_CHANGED, updateGameState);
+    $interval(updateGameState, controllers.TIMER_UPDATE_PERIOD_MS_);
+  });
 }]);
 
 goog.exportSymbol('controllers', controllers);

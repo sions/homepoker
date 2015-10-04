@@ -66,6 +66,16 @@ pm.TimeEvent;
 
 
 /**
+ * @typedef {{
+ *   current: pm.Level,
+ *   next: pm.Level,
+ *   timeLeftInLevel: number
+ * }}
+ */
+pm.LevelState;
+
+
+/**
  * @enum {string}
  * @private
  */
@@ -84,10 +94,10 @@ pm.prototype.initialize = function() {
   this.getRoot_().set(pm.PROPERTY_.PLAYERS, 0);
   var levels = this.model_.createList();
   // Pre-populate some levels.
-  levels.push(this.makeLevel_({small: 1, big: 2, ante: 0, levelTime: 15 * 60 * 1000}));
-  levels.push(this.makeLevel_({small: 2, big: 4, ante: 0, levelTime: 15 * 60 * 1000}));
-  levels.push(this.makeLevel_({small: 3, big: 6, ante: 0, levelTime: 15 * 60 * 1000}));
-  levels.push(this.makeLevel_({small: 5, big: 10, ante: 1, levelTime: 15 * 60 * 1000}));
+  levels.push(this.makeLevel_({small: 1, big: 2, ante: 0, levelTime: 2 * 1000}));
+  levels.push(this.makeLevel_({small: 2, big: 4, ante: 0, levelTime: 2 * 1000}));
+  levels.push(this.makeLevel_({small: 3, big: 6, ante: 1, levelTime: 2 * 1000}));
+  levels.push(this.makeLevel_({small: 5, big: 10, ante: 2, levelTime: 15 * 60 * 1000}));
   this.getRoot_().set(pm.PROPERTY_.LEVELS, levels);
 
   var timeEvents = this.model_.createList();
@@ -342,5 +352,37 @@ pm.prototype.getGameTime = function() {
   }
   return gameTime;
 };
+
+
+/**
+ * @return {!pm.LevelState}
+ */
+pm.prototype.getCurrentLevelState = function() {
+  var gameTime = this.getGameTime();
+  var levels = this.getLevels();
+  var totalTime = 0;
+  var level;
+  var i = 0;
+  for (; level = levels[i]; i++) {
+    totalTime += level.levelTime;
+    if (totalTime > gameTime) {
+      break;
+    }
+  }
+  if (i >= levels.length) {
+    return {
+      current: levels[levels.length - 1],
+      next: null,
+      timeLeftInLevel: 0
+    }
+  }
+
+  return {
+    current: levels[i],
+    next: levels[i + 1] || null,
+    timeLeftInLevel: totalTime - gameTime
+  };
+};
+
 
 });  // goog.scope
