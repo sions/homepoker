@@ -2,6 +2,7 @@ goog.provide('poker.controllers');
 
 goog.require('goog.array');
 goog.require('poker.modelservice');
+goog.require('poker.permissionservice');
 goog.require('poker.timeservice');
 
 goog.scope(function() {
@@ -16,6 +17,7 @@ var controllers = angular.module('pokerControllers', [])
         };
     });
 var modelEvent = poker.modelservice.EVENT;
+var permissionEvent = poker.permissionservice.EVENT;
 var timeEvent = poker.timeservice.EVENT;
 
 /**
@@ -141,6 +143,18 @@ controllers.controller('BlindController',
 
   $rootScope.$on(EVENTS.IN_GAME_LEVEL_CHANGE, updateLevels);
   $rootScope.$on(modelEvent.LEVELS_CHANGED, updateLevels);
+}]);
+
+
+controllers.controller('EditButtonController', 
+    ['$rootScope', '$element', 'permissionService', 
+     function($rootScope, $element, permissionService) {
+  var updateEditState = function() {
+    $element.toggleClass('ng-hide', !permissionService.getEditable());
+  }
+
+  updateEditState();
+  $rootScope.$on(permissionEvent.EDITABLE_UPDATED, updateEditState);
 }]);
 
 goog.exportSymbol('controllers', controllers);

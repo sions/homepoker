@@ -14,6 +14,9 @@
 </head>
 <body>
   <div class="ng-cloak canvas">
+    <div ng-controller="EditButtonController" class="edit-button ng-hide">
+      EDIT
+    </div>
     <div ng-controller="TimerController">
       <div class="level">Level {% raw %}{{levelIndex + 1}}{% endraw %}</div>
       <div class="timer-container">

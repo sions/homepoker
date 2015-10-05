@@ -65,6 +65,7 @@ html {
   @include border-radius(4px);
   margin: 0.5rem auto 0 auto;
   max-width: 600px;
+  position: relative;;
   text-align: center;
   width: calc(100% - 1rem);
 }
@@ -176,4 +177,10 @@ $colon-alignment: -1rem;
   line-height: $primary-line-height;
   padding-bottom: $default-padding;
   padding-top: $default-padding;
+}
+
+.edit-button {
+  position: absolute;
+  right: 16px;
+  top: 16px;
 }

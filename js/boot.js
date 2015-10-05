@@ -2,7 +2,9 @@ goog.provide('poker.boot');
 
 goog.require('goog.Timer');
 goog.require('poker.modelservice');
+goog.require('poker.permissionservice');
 goog.require('poker.timeservice');
+
 
 
 goog.scope(function() {
@@ -34,6 +36,8 @@ poker.boot.handleClientLoad = function() {
   console.log('gapi loaded');
   initState.gapiLoaded = true;
   poker.boot.checkAuth_();
+  var timeService = new poker.timeservice();
+  timeService.register();
 };
 
 goog.exportSymbol('handleClientLoad', poker.boot.handleClientLoad);
@@ -177,6 +181,8 @@ poker.boot.openRealtimeModel_ = function() {
       poker.boot.documentLoaded_, 
       poker.boot.initializeModel_, 
       poker.boot.realtimeError_);
+  var permssionService = new poker.permissionservice(window.game_id);
+  permssionService.register();
 };
 
 
@@ -185,9 +191,6 @@ poker.boot.openRealtimeModel_ = function() {
  */
 poker.boot.documentLoaded_ = function(doc) {
   console.log('File loaded successfully.');
-  var timeService = new poker.timeservice();
-  timeService.register();
-
   var modelService = new poker.modelservice(doc.getModel());
   modelService.register();
   var players = modelService.getPlayers();
@@ -196,7 +199,7 @@ poker.boot.documentLoaded_ = function(doc) {
   modelService.mutateLevels();
 
   angular.bootstrap(document, 
-      ['timeServiceModule', 'modelServiceModule', 'pokerControllers']);
+      ['timeServiceModule', 'permissionServiceModule', 'modelServiceModule', 'pokerControllers']);
 };
 
 
