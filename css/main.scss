@@ -1,5 +1,6 @@
 @import 'normalize-scss/_normalize';
 @import 'compass-mixins/lib/_compass';
+@import 'compass-mixins/lib/compass/css3/_user-interface';
 
 @function compact($vars...) {
   $list: ();
@@ -61,7 +62,7 @@ html {
 
 .canvas {
   border: 1px solid $border-color;
-  border-radius: 4px;
+  @include border-radius(4px);
   margin: 0.5rem auto 0 auto;
   max-width: 600px;
   text-align: center;
@@ -81,13 +82,15 @@ hr {
 }
 
 .timer-container {
+  cursor: default;
   padding: 0 0.5rem;
+  @include user-select(none);
 }
 
 .timer {
   border: 1px solid rgba(255,255,255,0.3);
-  border-radius: 0.25rem;
-  box-shadow: 1px 1px rgba(255,255,255,0.1);
+  @include border-radius(0.25rem);
+  @include box-shadow(1px 1px rgba(255,255,255,0.1));
   box-sizing: border-box;
   color: red;
   background: black;
@@ -116,21 +119,20 @@ $colon-alignment: -1rem;
 }
 
 .toggle-container {
-  padding-bottom: $default-padding;
-  padding-top: $default-padding;
+  padding: $default-padding 0;
 }
 
 .toggle-button {
   background: rgba(255,255,255,.9);
-  border-radius: 50%;
+  @include border-radius(50%);
   border: 1px solid rgba(0,0,0,.65);
-  box-shadow: 1px 1px 1px rgba(0,0,0,.5);
+  @include box-shadow(1px 1px 1px rgba(0,0,0,.5));
   color: black;
   cursor: pointer;
   height: 48px;
   margin: 0 auto;
   position: relative;
-  transition: all 0.25s ease-in-out;
+  @include transition(all 0.25s ease-in-out);
   width: 48px;
 
   @media screen and (min-width: $screen-desktop) {
@@ -146,15 +148,15 @@ $colon-alignment: -1rem;
   &:hover, &:active, &:focus {
     background: rgba(255,255,255, 0.75);
     outline: none;
-    transform: scale(1.1);
+    @include transform(scale(1.1));
   }
 
   svg {
-    transform: rotate(180deg);
-    transition: transform 0.5s ease-in-out;
+    @include transform(rotate(180deg));
+    @include transition(transform 0.5s ease-in-out);
 
     &.paused {
-      transform: none; 
+      @include transform(none); 
     }
   }
 }
