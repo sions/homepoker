@@ -1,5 +1,6 @@
 goog.provide('poker.controllers');
 
+goog.require('goog.array');
 goog.require('poker.modelservice');
 goog.require('poker.timeservice');
 
@@ -24,21 +25,6 @@ var EVENTS = {
   IN_GAME_LEVEL_CHANGE: 'in-game-level-change'
 };
 
-controllers.controller('DummyController', 
-    ['$scope', '$rootScope', 'timeService', 'modelService', 
-     function($scope, $rootScope, timeService, modelService) {
-  $scope.players = modelService.getPlayers();
-  $scope.levels = modelService.getLevels();
-  
-  $rootScope.$on(modelEvent.PLAYERS_CHANGED, function(eventName, event) {
-    $scope.players = event.newValue;
-  });
-
-  $rootScope.$on(modelEvent.LEVELS_CHANGED, function(eventName) {
-    $scope.levels = modelService.getLevels();
-  });
-}]);
-
 
 /**
  * @const {number}
@@ -47,16 +33,44 @@ controllers.controller('DummyController',
 controllers.TIMER_UPDATE_PERIOD_MS_ = 250;
 
 controllers.controller('StartPauseController', 
-      ['$scope', '$rootScope', '$interval', 'modelService', 
-       function($scope, $rootScope, $interval, modelService) {
-  $scope.start = function() {
-    modelService.start();
-  };
-  $scope.pause = function() {
-    modelService.pause();
+      ['$scope', '$rootScope', '$interval', '$element', 'modelService',
+       function($scope, $rootScope, $interval, $element, modelService) {
+  var toPauseElements = 
+      [document.getElementById('toPause1'), document.getElementById('toPause2')];
+  var toPlayElements = 
+      [document.getElementById('toPlay1'), document.getElementById('toPlay2')];
+  var svg = $element.find('svg')[0];
+
+  var animate = function(element) {
+    element.beginElement();
   };
 
-  $scope.running = modelService.isRunning();
+  var updateRunningState = function() {
+    var newRunning = modelService.isRunning();
+    if (newRunning != $scope.running) {
+      if ($scope.running) {
+        goog.array.forEach(toPlayElements, animate);
+        svg.removeAttribute('class');
+      } else {
+        goog.array.forEach(toPauseElements, animate);
+        svg.setAttribute('class', 'paused');
+      }
+
+      $scope.running = newRunning;
+    }
+  };
+
+  $scope.running = false;
+  updateRunningState();
+  $rootScope.$on(modelEvent.TIME_CHANGED, updateRunningState);
+
+  $scope.toggle = function() {
+    if ($scope.running) {
+      modelService.pause();  
+    } else {
+      modelService.start();
+    }
+  };
 }]);
 
 

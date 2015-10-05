@@ -101,6 +101,49 @@ $colon-alignment: -1rem;
   }
 }
 
+.toggle-container {
+  padding-top: $default-padding;
+}
+
+.toggle-button {
+  background: rgba(255,255,255,.9);
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,.65);
+  box-shadow: 1px 1px 1px rgba(0,0,0,.5);
+  color: black;
+  cursor: pointer;
+  height: 48px;
+  margin: 0 auto;
+  position: relative;
+  transition: all 0.25s ease-in-out;
+  width: 48px;
+
+  @media screen and (min-width: $screen-desktop) {
+    height: 96px;
+    width: 96px;
+  }
+
+  @media screen and (min-width: $screen-lg-desktop) {
+    height: 140px;
+    width: 140px;
+  }
+
+  &:hover, &:active, &:focus {
+    background: rgba(255,255,255, 0.75);
+    outline: none;
+    transform: scale(1.1);
+  }
+
+  svg {
+    transform: rotate(180deg);
+    transition: transform 0.5s ease-in-out;
+
+    &.paused {
+      transform: none; 
+    }
+  }
+}
+
 .blinds {
   line-height: $primary-line-height;
   padding-bottom: $default-padding;
