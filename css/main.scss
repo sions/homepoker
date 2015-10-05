@@ -27,6 +27,7 @@ $screen-desktop: 992px;
 $screen-lg-desktop: 1200px;
 
 $default-padding: 0.5rem;
+$border-color: rgba(255, 255, 255, 0.3);
 
 
 html, body {
@@ -59,10 +60,18 @@ html {
 
 
 .canvas {
-  margin: 0 auto;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  margin: 0.5rem auto 0 auto;
   max-width: 600px;
   text-align: center;
-  width: 100%
+  width: calc(100% - 1rem);
+}
+
+hr {
+  border-bottom-width: 0;
+  color: $border-color;
+  margin: 0;
 }
 
 .level {
@@ -71,14 +80,19 @@ html {
   line-height: 1.5;
 }
 
+.timer-container {
+  padding: 0 0.5rem;
+}
+
 .timer {
   border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 0.25rem;
   box-shadow: 1px 1px rgba(255,255,255,0.1);
+  box-sizing: border-box;
   color: red;
   background: black;
   font-size: 6rem;
   overflow: hidden;
-  padding: 0 1rem;
 }
 
 $colon-alignment: -1rem;
@@ -102,6 +116,7 @@ $colon-alignment: -1rem;
 }
 
 .toggle-container {
+  padding-bottom: $default-padding;
   padding-top: $default-padding;
 }
 

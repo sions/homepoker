@@ -16,14 +16,14 @@
   <div class="ng-cloak canvas">
     <div ng-controller="TimerController">
       <div class="level">Level {% raw %}{{levelIndex + 1}}{% endraw %}</div>
-      <div>
-        <span class="timer">
+      <div class="timer-container">
+        <div class="timer">
           <span class="timer-text">
             {% raw %}
             {{minutes | numberFixedLen:2}}<span class="colon">:</span><span class="seconds">{{seconds | numberFixedLen:2}}</span>
             {% endraw %}
             </span>
-        </span>
+        </div>
       </div>
     </div>
     <div ng-controller="StartPauseController" class="toggle-container">
@@ -40,6 +40,7 @@
         </svg>
       </div>
     </div>
+    <hr/>
     <div ng-controller="BlindController" class="blinds">
       <div>Blinds:
         <span class="current">
@@ -50,6 +51,7 @@
       </div>
       <div class="next" ng-if="nextSmall > 0">next: {% raw %}{{nextSmall}} / {{nextBig}} <span ng-if="nextAnte > 0">/ {{nextAnte}}</span>{% endraw %}</div>
     </div>
+    <hr/>
     <div ng-controller="PlayerController" class="players">
       Players: {% raw %}{{players}}{% endraw %}
     </div>
