@@ -26,7 +26,8 @@ var timeEvent = poker.timeservice.EVENT;
 var EVENTS = {
   IN_GAME_LEVEL_CHANGE: 'in-game-level-change',
   EDIT_STARTED: 'edit-started',
-  EDIT_ENDED: 'edit-ended'
+  EDIT_ENDED_CANCELLED: 'edit-ended-cancelled',
+  EDIT_ENDED_SAVED: 'edit-ended-saved'
 };
 
 
@@ -152,10 +153,8 @@ controllers.controller('TimerController',
     $scope.levelInputChanged();
   });
 
-  $rootScope.$on(EVENTS.EDIT_ENDED, function(eventName, opt_saveChanges) {
+  $rootScope.$on(EVENTS.EDIT_ENDED_SAVED, function(eventName) {
     // TODO: need to set time here.
-    // if (opt_saveChanges) {
-    // }
   });
 }]);
 
@@ -178,10 +177,8 @@ controllers.controller('PlayerController',
     inputElement.val($scope.players);
   });
 
-  $rootScope.$on(EVENTS.EDIT_ENDED, function(eventName, opt_saveChanges) {
-    if (opt_saveChanges) {
-      modelService.setPlayers(inputElement.val());
-    }
+  $rootScope.$on(EVENTS.EDIT_ENDED_SAVED, function(eventName) {
+    modelService.setPlayers(inputElement.val());
   });
 }]);
 
@@ -232,9 +229,11 @@ controllers.controller('EditButtonController',
     canvas.toggleClass('editing', active);
     if (active) {
       $rootScope.$emit(EVENTS.EDIT_STARTED);
+    } else if (opt_saveChanges) {
+      $rootScope.$emit(EVENTS.EDIT_ENDED_SAVED);
     } else {
-      $rootScope.$emit(EVENTS.EDIT_ENDED, opt_saveChanges);
-    }
+      $rootScope.$emit(EVENTS.EDIT_ENDED_CANCELLED);
+    };
   };
 
   $scope.edit = function() {
