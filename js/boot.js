@@ -193,11 +193,6 @@ poker.boot.documentLoaded_ = function(doc) {
   console.log('File loaded successfully.');
   var modelService = new poker.modelservice(doc.getModel());
   modelService.register();
-  var players = modelService.getPlayers();
-  console.log('Players: ' + players);
-  modelService.setPlayers(players + 1);
-  modelService.mutateLevels();
-
   angular.bootstrap(document, 
       ['timeServiceModule', 'permissionServiceModule', 'modelServiceModule', 'pokerControllers']);
 };

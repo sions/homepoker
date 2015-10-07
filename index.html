@@ -58,7 +58,9 @@
     </div>
     <hr/>
     <div ng-controller="PlayerController" class="players">
-      Players: {% raw %}{{players}}{% endraw %}
+      Players: 
+      <span class="view-only">{% raw %}{{players}}{% endraw %}</span>
+      <input type="number" class="edit-only" ng-model="number" min="1"></input>
     </div>
   </div>
   

@@ -104,8 +104,8 @@ controllers.controller('TimerController',
 
 
 controllers.controller('PlayerController', 
-    ['$scope', '$rootScope', 'modelService', 
-     function($scope, $rootScope, modelService) {
+    ['$scope', '$rootScope', '$element', 'modelService', 
+     function($scope, $rootScope, $element, modelService) {
   $scope.players = modelService.getPlayers();
   
   $rootScope.$on(modelEvent.PLAYERS_CHANGED, function(eventName, event) {
@@ -114,6 +114,17 @@ controllers.controller('PlayerController',
 
   $rootScope.$on(modelEvent.LEVELS_CHANGED, function(eventName) {
     $scope.levels = modelService.getLevels();
+  });
+
+  var inputElement = $element.find('input');
+  $rootScope.$on(EVENTS.EDIT_STARTED, function() {
+    inputElement.val($scope.players);
+  });
+
+  $rootScope.$on(EVENTS.EDIT_ENDED, function(eventName, opt_saveChanges) {
+    if (opt_saveChanges) {
+      modelService.setPlayers(inputElement.val());
+    }
   });
 }]);
 

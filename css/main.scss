@@ -29,6 +29,7 @@ $screen-lg-desktop: 1200px;
 
 $default-padding: 0.5rem;
 $border-color: rgba(255, 255, 255, 0.3);
+$button-border-color: rgba(167, 167, 167, 0.35);
 
 
 html, body {
@@ -82,6 +83,12 @@ html {
       display: none;
     }
   }
+}
+
+input {
+  background: rgba(0,0,0,0.8);
+  border-color: $button-border-color;
+  padding: 0.1rem 0.125rem;
 }
 
 hr {
@@ -191,6 +198,10 @@ $colon-alignment: -1rem;
   line-height: $primary-line-height;
   padding-bottom: $default-padding;
   padding-top: $default-padding;
+
+  input {
+    width: 2rem;
+  }
 }
 
 .edit-button {
@@ -199,10 +210,14 @@ $colon-alignment: -1rem;
   top: 8px;
 
   button {
-    background: rgba(0,0,0,0.4);
-    border-color: rgba(167, 167, 167, 0.35);
+    background: rgb(0,0,0);
+    border-color: $button-border-color;
     font-size: 0.8rem;
     padding-top: 0.2rem;
+
+    @media screen and (min-width: $screen-lg-desktop) {
+      font-size: 24px;
+    }
   }
 }
 
