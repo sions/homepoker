@@ -68,6 +68,20 @@ html {
   position: relative;;
   text-align: center;
   width: calc(100% - 1rem);
+
+  .edit-only {
+    display: none;
+  }
+
+  &.editing {
+    .edit-only {
+      display: initial;
+    }
+
+    .view-only {
+      display: none;
+    }
+  }
 }
 
 hr {
@@ -182,5 +196,13 @@ $colon-alignment: -1rem;
 .edit-button {
   position: absolute;
   right: 16px;
-  top: 16px;
+  top: 8px;
+
+  button {
+    background: rgba(0,0,0,0.4);
+    border-color: rgba(167, 167, 167, 0.35);
+    font-size: 0.8rem;
+    padding-top: 0.2rem;
+  }
 }
+

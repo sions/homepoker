@@ -13,9 +13,11 @@
   <script type="text/javascript" src="/lib/angular/angular.min.js"></script>
 </head>
 <body>
-  <div class="ng-cloak canvas">
+  <div class="ng-cloak canvas" id="canvas">
     <div ng-controller="EditButtonController" class="edit-button ng-hide">
-      EDIT
+      <button class="view-only" ng-click="edit()">EDIT</button>
+      <button class="edit-only" ng-click="ok()">OK</button>
+      <button class="edit-only" ng-click="cancel()">CANCEL</button>
     </div>
     <div ng-controller="TimerController">
       <div class="level">Level {% raw %}{{levelIndex + 1}}{% endraw %}</div>

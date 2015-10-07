@@ -24,7 +24,9 @@ var timeEvent = poker.timeservice.EVENT;
  * @const {string}
  */
 var EVENTS = {
-  IN_GAME_LEVEL_CHANGE: 'in-game-level-change'
+  IN_GAME_LEVEL_CHANGE: 'in-game-level-change',
+  EDIT_STARTED: 'edit-started',
+  EDIT_ENDED: 'edit-ended'
 };
 
 
@@ -147,14 +149,37 @@ controllers.controller('BlindController',
 
 
 controllers.controller('EditButtonController', 
-    ['$rootScope', '$element', 'permissionService', 
-     function($rootScope, $element, permissionService) {
+    ['$scope', '$rootScope', '$element', 'permissionService', 
+     function($scope, $rootScope, $element, permissionService) {
+  var canvas = angular.element(document.getElementById('canvas'));
+
   var updateEditState = function() {
     $element.toggleClass('ng-hide', !permissionService.getEditable());
   }
 
   updateEditState();
   $rootScope.$on(permissionEvent.EDITABLE_UPDATED, updateEditState);
+
+  $scope.toggleEditing_ = function(active, opt_saveChanges) {
+    canvas.toggleClass('editing', active);
+    if (active) {
+      $rootScope.$emit(EVENTS.EDIT_STARTED);
+    } else {
+      $rootScope.$emit(EVENTS.EDIT_ENDED, opt_saveChanges);
+    }
+  };
+
+  $scope.edit = function() {
+    $scope.toggleEditing_(true);
+  };
+
+  $scope.ok = function() {
+    $scope.toggleEditing_(false, true);
+  };
+
+  $scope.cancel = function() {
+    $scope.toggleEditing_(false, false);
+  };
 }]);
 
 goog.exportSymbol('controllers', controllers);
