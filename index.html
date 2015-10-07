@@ -20,18 +20,33 @@
       <button class="edit-only" ng-click="cancel()">CANCEL</button>
     </div>
     <div ng-controller="TimerController">
-      <div class="level">Level {% raw %}{{levelIndex + 1}}{% endraw %}</div>
+      <div class="level">
+        Level 
+        <span class="view-only">{% raw %}{{levelIndex + 1}}{% endraw %}</span>
+        <input type="number" class="edit-only" ng-model="levelInput_" min="1" ng-change="levelInputChanged()"></input>
+      </div>
       <div class="timer-container">
         <div class="timer">
           <span class="timer-text">
-            {% raw %}
-            {{minutes | numberFixedLen:2}}<span class="colon">:</span><span class="seconds">{{seconds | numberFixedLen:2}}</span>
-            {% endraw %}
+            <span class="view-only">
+              {% raw %}
+              <span>{{minutes | numberFixedLen:2}}</span><span 
+                  class="colon">:</span><span 
+                  class="seconds">{{seconds | numberFixedLen:2}}</span>
+              {% endraw %}
             </span>
+            <span class="edit-only">
+              <input class="input-minutes" type="number" ng-model="minutesInput_" 
+                  min="0" ng-change="minutesInputChanged()"></input><span 
+                  class="colon">:</span><input 
+                  class="input-seconds" type="number" ng-model="secondsInput_" min="0" max="59"
+                  ng-change="secondsInputChanged()"></input>
+            </span>
+          </span>
         </div>
       </div>
     </div>
-    <div ng-controller="StartPauseController" class="toggle-container">
+    <div ng-controller="StartPauseController" class="toggle-container view-only">
       <div class="toggle-button" ng-click="toggle()" tabindex="0">
         <svg id="bar" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0px">
           <polygon fill="currentColor" points="3,12 17,4 17,20 3,12">
@@ -46,7 +61,7 @@
       </div>
     </div>
     <hr/>
-    <div ng-controller="BlindController" class="blinds">
+    <div ng-controller="BlindController" class="blinds view-only">
       <div>Blinds:
         <span class="current">
           {% raw %}
@@ -55,6 +70,9 @@
         </span>
       </div>
       <div class="next" ng-if="nextSmall > 0">next: {% raw %}{{nextSmall}} / {{nextBig}} <span ng-if="nextAnte > 0">/ {{nextAnte}}</span>{% endraw %}</div>
+    </div>
+    <div ng-controller="BlindController" class="edit-only">
+      Blinds table.
     </div>
     <hr/>
     <div ng-controller="PlayerController" class="players">

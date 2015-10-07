@@ -100,6 +100,63 @@ controllers.controller('TimerController',
     $rootScope.$on(modelEvent.TIME_CHANGED, updateGameState);
     $interval(updateGameState, controllers.TIMER_UPDATE_PERIOD_MS_);
   });
+
+  var levelInputElement = angular.element(document.querySelector('.level input'));
+  var minutesInputElement = angular.element(document.querySelector('.timer-text .input-minutes'));
+  var secondsInputElement = angular.element(document.querySelector('.timer-text .input-seconds'));
+  var addLeadingZeroIfNeeded = function(value) {
+    return value < 10 ? '0' + value : value;
+  };
+
+  var setInputMax = function(element, maxValue) {
+    element.attr('max', maxValue);
+    if (element.val() > maxValue) {
+      element.val(addLeadingZeroIfNeeded(maxValue));
+    }
+  };
+  var setSecondsMax = function() {
+    var maxSeconds = 
+        Math.min($scope.secondsInLevel - (minutesInputElement.val() * 60), 60);
+    setInputMax(secondsInputElement, maxSeconds);
+  };
+  $scope.levelInputChanged = function() {
+    controllers.validateNumberInput(levelInputElement);
+    var levelIndex = levelInputElement.val() - 1;
+    var currentLevel = $scope.allLevels[levelIndex];
+    if (currentLevel) {
+      var timeLeft = (minutesInputElement.val() * 60) + secondsInputElement.val();
+      $scope.secondsInLevel = Math.floor(currentLevel.levelTime / 1000);
+      setInputMax(minutesInputElement, Math.floor($scope.secondsInLevel / 60));
+      setSecondsMax();
+    }
+  };
+
+  $scope.minutesInputChanged = function() {
+    controllers.validateNumberInput(minutesInputElement);
+    setSecondsMax();
+    minutesInputElement.val(addLeadingZeroIfNeeded(minutesInputElement.val()));
+  };
+
+   $scope.secondsInputChanged = function() {
+    controllers.validateNumberInput(secondsInputElement);
+    secondsInputElement.val(addLeadingZeroIfNeeded(secondsInputElement.val()));
+  };
+
+  $rootScope.$on(EVENTS.EDIT_STARTED, function() {
+    $scope.allLevels = modelService.getLevels();
+    levelInputElement.attr('max', $scope.allLevels.length)
+    levelInputElement.val($scope.levelIndex + 1);
+
+    minutesInputElement.val(addLeadingZeroIfNeeded($scope.minutes));
+    secondsInputElement.val(addLeadingZeroIfNeeded($scope.seconds));
+    $scope.levelInputChanged();
+  });
+
+  $rootScope.$on(EVENTS.EDIT_ENDED, function(eventName, opt_saveChanges) {
+    // TODO: need to set time here.
+    // if (opt_saveChanges) {
+    // }
+  });
 }]);
 
 
@@ -192,6 +249,23 @@ controllers.controller('EditButtonController',
     $scope.toggleEditing_(false, false);
   };
 }]);
+
+
+/**
+ * @param {Object} element angular.element object.
+ */
+controllers.validateNumberInput = function(element) {
+  var value = element.val();
+  var newValue = value;
+  var min = parseInt(element.attr('min')) || 0;
+  var max = parseInt(element.attr('max')) || Infinity;
+
+  newValue = value ? Math.max(min, Math.min(max, parseInt(value))) : min;
+  if (newValue != value) {
+    element.val(newValue);
+  }
+};
+
 
 goog.exportSymbol('controllers', controllers);
 

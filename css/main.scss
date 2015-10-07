@@ -13,11 +13,12 @@
 }
 
 @font-face {
-  font-family: 'digital-7-mono';
+  font-family: 'DSEG7Classic-Regular';
   font-style: normal;
   font-weight: 400;
-  src: url(/css/digital-7-mono.ttf) format('truetype');
+  src: url(/css/DSEG7Classic-Regular.woff) format('woff');
 }
+
 
 $primary-color: #fff;
 $primary-line-height: 1.5;
@@ -101,11 +102,15 @@ hr {
   font-family: 'Orbitron';
   font-size: 1.5rem;
   line-height: 1.5;
+
+  input {
+    width: 3rem;
+  }
 }
 
 .timer-container {
   cursor: default;
-  padding: 0 0.5rem;
+  padding: $default-padding;
   @include user-select(none);
 }
 
@@ -116,27 +121,20 @@ hr {
   box-sizing: border-box;
   color: red;
   background: black;
-  font-size: 6rem;
+  font-size: 3.5rem;
   overflow: hidden;
+  padding: $default-padding 0;
 }
 
-$colon-alignment: -1rem;
 
 .timer-text {
-  font-family: 'digital-7-mono';
-  position: relative;
-  right: $colon-alignment / 2;
-  top: 0.5rem;
+  font-family: 'DSEG7Classic-Regular';
+  display: inline-block;
+  vertical-align: middle;
 
-  .colon {
-    letter-spacing: $colon-alignment;
-    position: relative;
-    left: $colon-alignment;
-  }
-
-  .seconds {
-    position: relative;
-    left: $colon-alignment;
+  input {
+    text-align: right;
+    width: 6rem;
   }
 }
 
