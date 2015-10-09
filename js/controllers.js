@@ -8,13 +8,18 @@ goog.require('poker.timeservice');
 goog.scope(function() {
 
 var controllers = angular.module('pokerControllers', [])
-    .filter('numberFixedLen', function () {
-        return function (n, len) {
-            var num = parseInt(n, 10);
-            len = parseInt(len, 10);
-            num_str = '' + num;
-            return Array(len - num_str.length + 1).join('0') + num_str;
-        };
+    .filter('numberFixedLen', function() {
+      return function(n, len) {
+        var num = parseInt(n, 10);
+        len = parseInt(len, 10);
+        num_str = '' + num;
+        return Array(len - num_str.length + 1).join('0') + num_str;
+      };
+    })
+    .filter('round', function() {
+      return function(n) {
+        return Math.round(n);
+      };
     });
 var modelEvent = poker.modelservice.EVENT;
 var permissionEvent = poker.permissionservice.EVENT;
@@ -106,18 +111,19 @@ controllers.controller('TimerController',
   var minutesInputElement = angular.element(document.querySelector('.timer-text .input-minutes'));
   var secondsInputElement = angular.element(document.querySelector('.timer-text .input-seconds'));
   var addLeadingZeroIfNeeded = function(value) {
+    value = parseInt(value);
     return value < 10 ? '0' + value : value;
   };
 
   var setInputMax = function(element, maxValue) {
     element.attr('max', maxValue);
-    if (element.val() > maxValue) {
+    if (parseInt(element.val()) > maxValue) {
       element.val(addLeadingZeroIfNeeded(maxValue));
     }
   };
   var setSecondsMax = function() {
     var maxSeconds = 
-        Math.min($scope.secondsInLevel - (minutesInputElement.val() * 60), 60);
+        Math.min(parseInt($scope.secondsInLevel) - (minutesInputElement.val() * 60), 60);
     setInputMax(secondsInputElement, maxSeconds);
   };
   $scope.levelInputChanged = function() {
@@ -125,7 +131,7 @@ controllers.controller('TimerController',
     var levelIndex = levelInputElement.val() - 1;
     var currentLevel = $scope.allLevels[levelIndex];
     if (currentLevel) {
-      var timeLeft = (minutesInputElement.val() * 60) + secondsInputElement.val();
+      var timeLeft = (minutesInputElement.val() * 60) + parseInt(secondsInputElement.val());
       $scope.secondsInLevel = Math.floor(currentLevel.levelTime / 1000);
       setInputMax(minutesInputElement, Math.floor($scope.secondsInLevel / 60));
       setSecondsMax();
@@ -162,25 +168,65 @@ controllers.controller('TimerController',
 
 
 controllers.controller('PlayerController', 
-    ['$scope', '$rootScope', '$element', 'modelService', 
-     function($scope, $rootScope, $element, modelService) {
+    ['$scope', '$rootScope', 'modelService', 
+     function($scope, $rootScope, modelService) {
+  var updateAverage = function() {
+    $scope.averageChips = $scope.players > 0 ? modelService.getStartingChips() / $scope.players : 0;
+  };
+
   $scope.players = modelService.getPlayers();
+  $scope.playersStarted = modelService.getPlayersStarted();
+  $scope.startingChips = modelService.getStartingChips();
+
+  $scope.averageChips = function() {
+    return $scope.players > 0 ? 
+        modelService.getStartingChips() * $scope.playersStarted / $scope.players : 0;
+  };
   
   $rootScope.$on(modelEvent.PLAYERS_CHANGED, function(eventName, event) {
     $scope.players = event.newValue;
   });
 
-  $rootScope.$on(modelEvent.LEVELS_CHANGED, function(eventName) {
-    $scope.levels = modelService.getLevels();
+  $rootScope.$on(modelEvent.PLAYERS_STARTED_CHANGED, function(eventName, event) {
+    $scope.playersStarted = event.newValue;
   });
 
-  var inputElement = $element.find('input');
+  $rootScope.$on(modelEvent.STARTING_CHIPS_CHANGED, function(eventName, event) {
+    $scope.startingChips = event.newValue;
+  });
+
+  var playersInput = angular.element(document.querySelector('.players-field input'));
+  var playersStartedInput = angular.element(document.querySelector('.players-started-field input'));
+  var startingChipsInput = angular.element(document.querySelector('.starting-chips input'));
+
+  $scope.playersInputChanged = function() {
+    controllers.validateNumberInput(playersInput);
+    var newValue = parseInt(playersInput.val());
+    if (newValue > parseInt(playersStartedInput.val())) {
+      playersInput.val(playersStartedInput.val());
+    }
+  };
+
+  $scope.playersStartedInputChanged = function() {
+    controllers.validateNumberInput(playersStartedInput);
+    var newValue = parseInt(playersStartedInput.val());
+    if (newValue < parseInt(playersInput.val())) {
+      playersInput.val(newValue);
+    }
+    playersInput.attr('max', newValue);
+  };
+
   $rootScope.$on(EVENTS.EDIT_STARTED, function() {
-    inputElement.val($scope.players);
+    playersInput.val($scope.players);
+    playersInput.attr('max', $scope.playersStarted);
+    playersStartedInput.val($scope.playersStarted);
+    startingChipsInput.val(modelService.getStartingChips());
   });
 
   $rootScope.$on(EVENTS.EDIT_ENDED_SAVED, function(eventName) {
-    modelService.setPlayers(inputElement.val());
+    modelService.setPlayers(playersInput.val());
+    modelService.setPlayersStarted(playersStartedInput.val());
+    modelService.setStartingChips(startingChipsInput.val());
   });
 }]);
 

@@ -197,8 +197,13 @@ hr {
   padding-bottom: $default-padding;
   padding-top: $default-padding;
 
-  input {
-    width: 2rem;
+  .players-field > input,
+  .players-started-field > input {
+    width: 2.5rem;
+  }
+
+  .starting-chips > input {
+    width: 3rem;
   }
 }
 

@@ -76,9 +76,27 @@
     </div>
     <hr/>
     <div ng-controller="PlayerController" class="players">
-      Players: 
-      <span class="view-only">{% raw %}{{players}}{% endraw %}</span>
-      <input type="number" class="edit-only" ng-model="number" min="1"></input>
+      <div class="players-field">
+        Players:
+        <span class="players-field">
+          <span class="view-only">{% raw %}{{players}}{% endraw %}</span>
+          <input type="number" class="edit-only" ng-model="playersInput" min="1" 
+              ng-change="playersInputChanged()"></input>
+        </span>
+        <span class="players-started-field">
+          (started:
+          <span class="view-only">{% raw %}{{playersStarted}}{% endraw %}</span><input 
+              type="number" class="edit-only" ng-model="playersStartedInput" min="1"
+              ng-change="playersStartedInputChanged()"></input>)
+        </span>
+      </div>
+      <div ng-if="averageChips() > 0" class="view-only">
+        Average stack: {% raw %}{{averageChips() |round}}{% endraw %}
+      </div>
+      <div class="edit-only starting-chips">
+        Staring chips: 
+        <input type="number" class="edit-only" ng-model="startingChipsInput" min="0"></input>
+      </div>
     </div>
   </div>
   

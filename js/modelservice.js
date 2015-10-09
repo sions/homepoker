@@ -28,6 +28,8 @@ var pm = poker.modelservice;
  */
 pm.EVENT = {
   PLAYERS_CHANGED: 'players-changed',
+  PLAYERS_STARTED_CHANGED: 'players-started-changed',
+  STARTING_CHIPS_CHANGED: 'starting-chips-changed',
   LEVELS_CHANGED: 'levels-changed',
   TIME_CHANGED: 'time-changed'
 };
@@ -82,6 +84,8 @@ pm.LevelState;
  */
 pm.PROPERTY_ = {
   PLAYERS: 'players',
+  PLAYERS_STARTED: 'players-started',
+  STARTING_CHIPS: 'starting-chips',
   LEVELS: 'levels',
   SMALL_BLIND: 'small-blind',
   BIG_BLIND: 'big-blind',
@@ -92,7 +96,9 @@ pm.PROPERTY_ = {
 
 
 pm.prototype.initialize = function() {
-  this.getRoot_().set(pm.PROPERTY_.PLAYERS, 0);
+  this.setPlayers(1);
+  this.setPlayersStarted(1);
+  this.setStartingChips(1)
   var levels = this.model_.createList();
   // Pre-populate some levels.
   levels.push(this.makeLevel_({small: 1, big: 2, ante: 0, levelTime: 2 * 1000}));
@@ -147,6 +153,37 @@ pm.prototype.setPlayers = function(count) {
 
 
 /**
+ * @return {number}
+ */
+pm.prototype.getPlayersStarted = function() {
+  return this.getRoot_().get(pm.PROPERTY_.PLAYERS_STARTED);
+};
+
+
+/**
+ * @param {number} count
+ */
+pm.prototype.setPlayersStarted = function(count) {
+  this.getRoot_().set(pm.PROPERTY_.PLAYERS_STARTED, count);
+};
+
+/**
+ * @return {number}
+ */
+pm.prototype.getStartingChips = function() {
+  return this.getRoot_().get(pm.PROPERTY_.STARTING_CHIPS);
+};
+
+
+/**
+ * @param {number} count
+ */
+pm.prototype.setStartingChips = function(count) {
+  this.getRoot_().set(pm.PROPERTY_.STARTING_CHIPS, count);
+};
+
+
+/**
  * @return {!Array{pm.Level}}
  */
 pm.prototype.getLevels = function() {
@@ -183,6 +220,12 @@ pm.prototype.valuesChanged_ = function(event) {
       switch (e.property) {
         case pm.PROPERTY_.PLAYERS:
           this.emitEventOnRootScope_(pm.EVENT.PLAYERS_CHANGED, e);
+          break;
+        case pm.PROPERTY_.PLAYERS_STARTED:
+          this.emitEventOnRootScope_(pm.EVENT.PLAYERS_STARTED_CHANGED, e);
+          break;
+        case pm.PROPERTY_.STARTING_CHIPS:
+          this.emitEventOnRootScope_(pm.EVENT.STARTING_CHIPS_CHANGED, e);
           break;
         case pm.PROPERTY_.SMALL_BLIND:
           this.findLevelById_(e.target.id).small = e.newValue;
