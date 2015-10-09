@@ -154,17 +154,6 @@ pm.prototype.getLevels = function() {
 };
 
 
-/**
- * @return {!Array{pm.Level}}
- */
-pm.prototype.mutateLevels = function() {
-  var modelLevels = this.getRoot_().get(pm.PROPERTY_.LEVELS);
-  var level = modelLevels.get(2);
-  var big = level.get(pm.PROPERTY_.BIG_BLIND);
-  level.set(pm.PROPERTY_.BIG_BLIND, big + 1);
-};
-
-
 pm.prototype.getLevelsFromModel_ = function() {
   this.levels_ = [];
   var modelLevels = this.getRoot_().get(pm.PROPERTY_.LEVELS) || [];
@@ -332,7 +321,7 @@ pm.prototype.start = function() {
   var timeEvent = {
     timestamp: this.timeService.getTime(),
     eventType: pm.TimeEventType.START
-  }
+  };
   this.getRoot_().get(pm.PROPERTY_.TIME_EVENTS).push(timeEvent);
 };
 
@@ -341,7 +330,7 @@ pm.prototype.pause = function() {
   var timeEvent = {
     timestamp: this.timeService.getTime(),
     eventType: pm.TimeEventType.PAUSE
-  }
+  };
   this.getRoot_().get(pm.PROPERTY_.TIME_EVENTS).push(timeEvent);
 };
 
@@ -352,6 +341,35 @@ pm.prototype.getGameTime = function() {
     gameTime += this.timeService.getTime() - this.timeOfLastCheckpoint_;
   }
   return gameTime;
+};
+
+
+/**
+ * @param {number} levelINdex
+ * @param {number} timeRemainingInLevelMs
+ */
+pm.prototype.setGameTime = function(levelIndex, timeRemainingInLevelMs) {
+  var levels = this.getLevels();
+
+  if (levelIndex >= levels.length) {
+    console.log('Level ' + levelIndex + ' out of range. Ignoring set game time');
+    return;
+  }
+
+  var i = 0;
+  var newTime = 0;
+  for (; i < levelIndex; ++i) {
+    newTime += levels[i].levelTime;
+  }
+  var timeInLevel = Math.max(0, levels[levelIndex].levelTime - timeRemainingInLevelMs);
+  newTime += timeInLevel;
+  
+  var timeEvent = {
+    timestamp: this.timeService.getTime(),
+    eventType: pm.TimeEventType.SET_TIME,
+    value: newTime
+  };
+  this.getRoot_().get(pm.PROPERTY_.TIME_EVENTS).push(timeEvent);
 };
 
 
@@ -386,6 +404,5 @@ pm.prototype.getCurrentLevelState = function() {
     levelIndex: i
   };
 };
-
 
 });  // goog.scope

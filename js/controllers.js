@@ -154,7 +154,9 @@ controllers.controller('TimerController',
   });
 
   $rootScope.$on(EVENTS.EDIT_ENDED_SAVED, function(eventName) {
-    // TODO: need to set time here.
+    modelService.setGameTime(
+      parseInt(levelInputElement.val()) - 1, 
+      (parseInt(minutesInputElement.val()) * 60 + parseInt(secondsInputElement.val())) * 1000);
   });
 }]);
 
