@@ -24,7 +24,7 @@ var pm = poker.modelservice;
 
 
 /**
- * @const {string}
+ * @enum {string}
  */
 pm.EVENT = {
   PLAYERS_CHANGED: 'players-changed',
@@ -78,6 +78,17 @@ pm.LevelState;
 
 
 /**
+ * @const {Level}
+ */
+pm.DEFAULT_FIRST_LEVEL = {
+  small: 1,
+  big: 2,
+  ante: 0,
+  levelTime: 15 * 60 * 1000
+};
+
+
+/**
  * @enum {string}
  * @private
  */
@@ -96,10 +107,10 @@ pm.prototype.initialize = function() {
   this.setStartingChips(1)
   var levels = [];
   // Pre-populate some levels.
-  levels.push({small: 1, big: 2, ante: 0, levelTime: 2 * 1000});
-  levels.push({small: 2, big: 4, ante: 0, levelTime: 2 * 1000});
-  levels.push({small: 3, big: 6, ante: 1, levelTime: 2 * 1000});
-  levels.push({small: 5, big: 10, ante: 2, levelTime: 15 * 60 * 1000});
+  levels.push(pm.DEFAULT_FIRST_LEVEL);
+  for (var i = 0; i < 5; ++i) {
+    levels.push(this.speculateNextLevel(levels[levels.length - 1]));
+  }
   this.getRoot_().set(pm.PROPERTY_.LEVELS, levels);
 
   var timeEvents = this.model_.createList();
@@ -190,6 +201,19 @@ pm.prototype.getLevels = function() {
  */
 pm.prototype.setLevels = function(levels) {
   this.getRoot_().set(pm.PROPERTY_.LEVELS, levels);
+};
+
+
+/**
+ * @param {!pm.Level} level
+ */
+pm.prototype.speculateNextLevel = function(level) {
+  return {
+    small: level.small * 2,
+    big: level.big * 2,
+    ante: level.ante * 2,
+    levelTime: level.levelTime
+  };
 };
 
 

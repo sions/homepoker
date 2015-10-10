@@ -270,24 +270,51 @@ controllers.controller('EditBlindController',
   $scope.remove = function(index) {
     goog.array.removeAt($scope.levels, index);
   };
-  var defaultFirstLevel = {
-    small: 1,
-    big: 2,
-    ante: 0,
-    levelTime: 15 * 60 * 1000
-  };
   $scope.add = function() {
-    var newLevel = defaultFirstLevel;
+    var newLevel = poker.modelservice.DEFAULT_FIRST_LEVEL;
     if ($scope.levels.length > 0) {
       var lastLevel = $scope.levels[$scope.levels.length - 1];
-      newLevel = {
-        small: lastLevel.small * 2,
-        big: lastLevel.big * 2,
-        ante: lastLevel.ante * 2,
-        levelTime: lastLevel.levelTime
-      };
+      newLevel = modelService.speculateNextLevel(lastLevel);
     } 
     $scope.levels.push(newLevel);
+  };
+
+  var copyValueFromItem = function(inputlement) {
+    var field = inputlement.parent()[0].getElementsByClassName('field')[0];
+    inputlement.val(field.innerText);
+  };
+
+  $scope.onItemMouseOver = function($event) {
+    copyValueFromItem(angular.element($event.currentTarget).find('input'))
+  };
+
+  $scope.onInputFocus = function($event) {
+    $scope.currentInput = angular.element($event.target);
+    copyValueFromItem($scope.currentInput)
+  };
+
+  $scope.smallChanged = function($event, index) {
+    var value = parseInt($scope.currentInput.val());
+    $scope.levels[index].small = value;
+  };
+  $scope.bigChanged = function($event, index) {
+    var value = parseInt($scope.currentInput.val());
+    $scope.levels[index].big = value;
+  };
+  $scope.anteChanged = function($event, index) {
+    var value = parseInt($scope.currentInput.val());
+    $scope.levels[index].ante = value;
+  };
+  $scope.minutesChanged = function($event, index) {
+    var value = parseInt($scope.currentInput.val());
+    var levelSeconds = Math.floor($scope.levels[index].levelTime / 1000);
+    $scope.levels[index].levelTime = (value * 60 + (levelSeconds % 60)) * 1000;
+  };
+
+  $scope.secondsChanged = function($event, index) {
+    var value = parseInt($scope.currentInput.val());
+    var levelSeconds = Math.floor($scope.levels[index].levelTime / 1000);
+    $scope.levels[index].levelTime = (Math.floor(levelSeconds / 60) * 60 + value) * 1000;
   };
 
   $rootScope.$on(EVENTS.EDIT_STARTED, function() {

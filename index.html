@@ -85,11 +85,40 @@
         <tbody>
            <tr ng-repeat="level in levels">
               <td>{% raw %}{{$index + 1}}{% endraw %}</td>
-              <td>{% raw %}{{level.small}}{% endraw %}</td>
-              <td>{% raw %}{{level.big}}{% endraw %}</td>
-              <td>{% raw %}{{level.ante}}{% endraw %}</td>
-              <td>{% raw %}{{level.levelTime / 1000 / 60 |round|numberFixedLen:2}}:{{
-                  level.levelTime / 1000 % 60 |round|numberFixedLen:2}}{% endraw %}
+              <td class="field-group" ng-mouseover="onItemMouseOver($event)"><span 
+                      class="field">{% raw %}{{level.small}}{% endraw %}</span><input tabindex="0"
+                  type="number" ng-model="smallInput_" min="1" 
+                  ng-change="smallChanged($event, $index)" ng-focus="onInputFocus($event)"></input>
+              </td>
+              <td class="field-group" ng-mouseover="onItemMouseOver($event)"><span 
+                      class="field">{% raw %}{{level.big}}{% endraw %}</span><input tabindex="0" 
+                  type="number" ng-model="bigInput_" min="1" 
+                  ng-change="bigChanged($event, $index)" ng-focus="onInputFocus($event)"></input>
+              </td>
+              <td class="field-group" ng-mouseover="onItemMouseOver($event)"><span 
+                      class="field">{% raw %}{{level.ante}}{% endraw %}</span><input tabindex="0" 
+                  type="number" ng-model="anteInput_" min="0" 
+                  ng-change="anteChanged($event, $index)" ng-focus="onInputFocus($event)"></input>
+              </td>
+              <td>
+                <div class="time-item">
+                  <div class="field-group time-group" ng-mouseover="onItemMouseOver($event)">
+                    <span class="field">{% raw %}{{
+                        level.levelTime / 1000 / 60 |round|numberFixedLen:2}}{% endraw %}</span>
+                    <input tabindex="0" 
+                        type="number" ng-model="minutesInput_" min="0" 
+                        ng-change="minutesChanged($event, $index)" 
+                        ng-focus="onInputFocus($event)"></input>
+                  </div>:<div 
+                      class="field-group time-group" ng-mouseover="onItemMouseOver($event)">
+                    <span class="field">{% raw %}{{
+                        level.levelTime / 1000 % 60 |round|numberFixedLen:2}}{% endraw %}</span>
+                    <input tabindex="0" 
+                        type="number" ng-model="secondsInput_" min="0" 
+                        ng-change="secondsChanged($event, $index)" 
+                        ng-focus="onInputFocus($event)"></input>
+                  </div>
+                </div>
               </td>
               <td ng-click="remove($index)" class="remove-level-button" tabindex="0">
                 <svg viewBox="0 0 24 24" stroke="currentColor" 
