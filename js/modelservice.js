@@ -1,6 +1,7 @@
 goog.provide('poker.modelservice');
 
 goog.require('goog.array');
+goog.require('goog.object');
 
 goog.scope(function() {
 
@@ -12,7 +13,6 @@ goog.scope(function() {
  */
 poker.modelservice = function(model) {
   this.model_ = model;
-  this.getLevelsFromModel_();
   this.timeToLastCheckpoint_ = 0;
   this.timeOfLastCheckpoint_ = null;
   this.running_ = false;
@@ -37,7 +37,6 @@ pm.EVENT = {
 
 /**
  * @typedef {{
- *   id: string,
  *   small: number,
  *   big: number,
  *   ante: number,
@@ -87,10 +86,6 @@ pm.PROPERTY_ = {
   PLAYERS_STARTED: 'players-started',
   STARTING_CHIPS: 'starting-chips',
   LEVELS: 'levels',
-  SMALL_BLIND: 'small-blind',
-  BIG_BLIND: 'big-blind',
-  ANTE: 'ante',
-  LEVEL_TIME: 'level-time',
   TIME_EVENTS: 'time-events'
 };
 
@@ -99,12 +94,12 @@ pm.prototype.initialize = function() {
   this.setPlayers(1);
   this.setPlayersStarted(1);
   this.setStartingChips(1)
-  var levels = this.model_.createList();
+  var levels = [];
   // Pre-populate some levels.
-  levels.push(this.makeLevel_({small: 1, big: 2, ante: 0, levelTime: 2 * 1000}));
-  levels.push(this.makeLevel_({small: 2, big: 4, ante: 0, levelTime: 2 * 1000}));
-  levels.push(this.makeLevel_({small: 3, big: 6, ante: 1, levelTime: 2 * 1000}));
-  levels.push(this.makeLevel_({small: 5, big: 10, ante: 2, levelTime: 15 * 60 * 1000}));
+  levels.push({small: 1, big: 2, ante: 0, levelTime: 2 * 1000});
+  levels.push({small: 2, big: 4, ante: 0, levelTime: 2 * 1000});
+  levels.push({small: 3, big: 6, ante: 1, levelTime: 2 * 1000});
+  levels.push({small: 5, big: 10, ante: 2, levelTime: 15 * 60 * 1000});
   this.getRoot_().set(pm.PROPERTY_.LEVELS, levels);
 
   var timeEvents = this.model_.createList();
@@ -187,23 +182,14 @@ pm.prototype.setStartingChips = function(count) {
  * @return {!Array{pm.Level}}
  */
 pm.prototype.getLevels = function() {
-  return goog.array.clone(this.levels_);
+  return goog.array.map(this.getRoot_().get(pm.PROPERTY_.LEVELS) || [], goog.object.clone);
 };
 
-
-pm.prototype.getLevelsFromModel_ = function() {
-  this.levels_ = [];
-  var modelLevels = this.getRoot_().get(pm.PROPERTY_.LEVELS) || [];
-  for (var i = 0; i < modelLevels.length; i++) {
-    var level = modelLevels.get(i);
-    this.levels_.push({
-      id: level.id,
-      small: level.get(pm.PROPERTY_.SMALL_BLIND),
-      big: level.get(pm.PROPERTY_.BIG_BLIND),
-      ante: level.get(pm.PROPERTY_.ANTE),
-      levelTime: level.get(pm.PROPERTY_.LEVEL_TIME)
-    });
-  }
+/**
+ * @param {!Array{pm.Level}} levels
+ */
+pm.prototype.setLevels = function(levels) {
+  this.getRoot_().set(pm.PROPERTY_.LEVELS, levels);
 };
 
 
@@ -211,7 +197,6 @@ pm.prototype.getLevelsFromModel_ = function() {
  * @param {!Object} event
  */
 pm.prototype.valuesChanged_ = function(event) {
-  var levelsChanged = false;
   var timeChanged = false;
   
   for (var i = 0, e; e = event.events[i]; i++) {
@@ -227,40 +212,17 @@ pm.prototype.valuesChanged_ = function(event) {
         case pm.PROPERTY_.STARTING_CHIPS:
           this.emitEventOnRootScope_(pm.EVENT.STARTING_CHIPS_CHANGED, e);
           break;
-        case pm.PROPERTY_.SMALL_BLIND:
-          this.findLevelById_(e.target.id).small = e.newValue;
-          levelsChanged = true;
-          break;
-        case pm.PROPERTY_.BIG_BLIND:
-          this.findLevelById_(e.target.id).big = e.newValue;
-          levelsChanged = true;
-          break;
-        case pm.PROPERTY_.ANTE:
-          this.findLevelById_(e.target.id).ante = e.newValue;
-          levelsChanged = true;
-          break;
-        case pm.PROPERTY_.LEVEL_TIME:
-          this.findLevelById_(e.target.id).levelTime = e.newValue;
-          levelsChanged = true;
-          break;
+        case pm.PROPERTY_.LEVELS:
+          this.emitEventOnRootScope_(pm.EVENT.LEVELS_CHANGED, e);
+          break
       }
-    } else if (e.type === gapi.drive.realtime.EventType.VALUES_ADDED || 
-          e.type === gapi.drive.realtime.EventType.VALUES_REMOVED) {
-      if (e.target.id === this.getRoot_().get(pm.PROPERTY_.LEVELS).id) {
-        console.log('Levels changed');
-        this.getLevelsFromModel_();
-        levelsChanged = true;
-      } else if (e.target.id === this.getRoot_().get(pm.PROPERTY_.TIME_EVENTS).id &&
-          e.type === gapi.drive.realtime.EventType.VALUES_ADDED) {
-        goog.array.forEach(e.values, this.processTimeEvent_, this);
-        timeChanged = true;
-      }
+    } else if (e.type === gapi.drive.realtime.EventType.VALUES_ADDED &&
+          e.target.id === this.getRoot_().get(pm.PROPERTY_.TIME_EVENTS).id) {
+      goog.array.forEach(e.values, this.processTimeEvent_, this);
+      timeChanged = true;
     }
   }
 
-  if (levelsChanged) {
-    this.emitEventOnRootScope_(pm.EVENT.LEVELS_CHANGED);
-  }
   if (timeChanged) {
     this.emitEventOnRootScope_(pm.EVENT.TIME_CHANGED);
   }
@@ -283,31 +245,6 @@ pm.prototype.emitEventOnRootScope_ = function(eventType, opt_value) {
     this.$rootScope.$emit(eventType, opt_value);
   }
 }
-
-/**
- * @param {string} id
- * @return {pm.Level}
- */
-pm.prototype.findLevelById_ = function(id) {
-  for (var i = 0, level; level = this.levels_[i]; i++) {
-    if (level.id === id) {
-      return level;
-    }
-  }
-  return {};  // Return dummy level.
-};
-
-/**
- * @param {pm.Level} level
- */
-pm.prototype.makeLevel_ = function(level) {
-  var levelMap = this.model_.createMap();
-  levelMap.set(pm.PROPERTY_.SMALL_BLIND, level.small);
-  levelMap.set(pm.PROPERTY_.BIG_BLIND, level.big);
-  levelMap.set(pm.PROPERTY_.ANTE, level.ante);
-  levelMap.set(pm.PROPERTY_.LEVEL_TIME, level.levelTime);
-  return levelMap;
-};
 
 
 /**

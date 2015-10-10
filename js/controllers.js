@@ -1,6 +1,7 @@
 goog.provide('poker.controllers');
 
 goog.require('goog.array');
+goog.require('goog.object');
 goog.require('poker.modelservice');
 goog.require('poker.permissionservice');
 goog.require('poker.timeservice');
@@ -293,7 +294,13 @@ controllers.controller('EditBlindController',
     $scope.levels = modelService.getLevels();
   });
 
+  $rootScope.$on(modelEvent.LEVELS_CHANGED, function(eventName, e) {
+    $scope.levels = goog.array.map(e.newValue, goog.object.clone);
+  });
 
+  $rootScope.$on(EVENTS.EDIT_ENDED_SAVED, function(eventName) {
+    modelService.setLevels($scope.levels);
+  });
 }]);
 
 
