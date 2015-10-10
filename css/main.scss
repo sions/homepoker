@@ -32,7 +32,6 @@ $default-padding: 0.5rem;
 $border-color: rgba(255, 255, 255, 0.3);
 $button-border-color: rgba(167, 167, 167, 0.35);
 
-
 html, body {
   min-height: 100%
 }
@@ -71,13 +70,21 @@ html {
   text-align: center;
   width: calc(100% - 1rem);
 
-  .edit-only {
+  @media screen and (min-width: $screen-lg-desktop) {
+    max-width: 800px;
+  }
+
+  .edit-only, .edit-only-block {
     display: none;
   }
 
   &.editing {
     .edit-only {
       display: initial;
+    }
+
+    .edit-only-block {
+      display: block;
     }
 
     .view-only {
@@ -142,34 +149,39 @@ hr {
   padding: $default-padding 0;
 }
 
-.toggle-button {
+@mixin action-button($defaultSize, $largeSize, $xlSize) {
   background: rgba(255,255,255,.9);
   @include border-radius(50%);
   border: 1px solid rgba(0,0,0,.65);
   @include box-shadow(1px 1px 1px rgba(0,0,0,.5));
   color: black;
   cursor: pointer;
-  height: 48px;
-  margin: 0 auto;
-  position: relative;
+  height: $defaultSize;
   @include transition(all 0.25s ease-in-out);
-  width: 48px;
-
-  @media screen and (min-width: $screen-desktop) {
-    height: 96px;
-    width: 96px;
-  }
-
-  @media screen and (min-width: $screen-lg-desktop) {
-    height: 140px;
-    width: 140px;
-  }
+  width: $defaultSize;
 
   &:hover, &:active, &:focus {
     background: rgba(255,255,255, 0.75);
     outline: none;
     @include transform(scale(1.1));
   }
+
+  @media screen and (min-width: $screen-desktop) {
+    height: $largeSize;
+    width: $largeSize;
+  }
+
+  @media screen and (min-width: $screen-lg-desktop) {
+    height: $xlSize;
+    width: $xlSize;
+  }
+
+}
+
+.toggle-button {
+  @include action-button(48px, 96px, 140px);
+  margin: 0 auto;
+  position: relative;
 
   svg {
     @include transform(rotate(180deg));
@@ -189,6 +201,63 @@ hr {
   .next {
     font-size: 0.8rem;
     line-height: 1;
+  }
+}
+
+.blind-table-container {
+  padding: $default-padding 0;
+}
+
+.blind-table {
+  margin: 0 auto;
+
+  th, td {
+    border: 1px solid $border-color;
+    padding: 0.25rem;
+  }
+
+
+
+  thead tr {
+    background: rgb(20, 21, 23);
+  }
+
+  tr:nth-child(2n) {
+    th, td {
+      background: rgb(45, 45, 45);
+    }
+
+    td:last-child {
+      background: none;
+    }
+  }
+
+  td:last-child {
+    border: none;
+  }
+}
+
+.remove-level-button {
+  cursor: pointer;
+  color: rgb(128, 128, 128);
+  height: 24px;
+  width: 24px;
+
+  &:hover, &:focus {
+    color: rgb(255, 255, 255);
+  }
+
+  svg {
+    vertical-align: middle;
+  }
+}
+
+.add-level-button {
+  @include action-button(24px, 32px, 48px);
+  margin: $default-padding auto;
+
+  svg {
+    vertical-align: middle;
   }
 }
 

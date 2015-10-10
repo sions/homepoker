@@ -10,7 +10,8 @@ import webapp2
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
     extensions=['jinja2.ext.autoescape'],
-    autoescape=True)
+    autoescape=True,
+    trim_blocks=True)
 
 # Note: We don't need to call run() since our application is embedded within
 # the App Engine WSGI application server.

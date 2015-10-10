@@ -232,8 +232,8 @@ controllers.controller('PlayerController',
 
 
 controllers.controller('BlindController', 
-      ['$scope', '$rootScope', '$interval', '$element', 'modelService', 
-       function($scope, $rootScope, $interval, $element, modelService) {
+      ['$scope', '$rootScope', '$element', 'modelService', 
+       function($scope, $rootScope, $element, modelService) {
   $scope.small = 0;
   $scope.big = 0;
   $scope.ante = 0;
@@ -258,6 +258,42 @@ controllers.controller('BlindController',
 
   $rootScope.$on(EVENTS.IN_GAME_LEVEL_CHANGE, updateLevels);
   $rootScope.$on(modelEvent.LEVELS_CHANGED, updateLevels);
+}]);
+
+
+controllers.controller('EditBlindController', 
+      ['$scope', '$rootScope', '$element', 'modelService', 
+       function($scope, $rootScope, $element, modelService) {
+  $scope.levels = [];
+
+  $scope.remove = function(index) {
+    goog.array.removeAt($scope.levels, index);
+  };
+  var defaultFirstLevel = {
+    small: 1,
+    big: 2,
+    ante: 0,
+    levelTime: 15 * 60 * 1000
+  };
+  $scope.add = function() {
+    var newLevel = defaultFirstLevel;
+    if ($scope.levels.length > 0) {
+      var lastLevel = $scope.levels[$scope.levels.length - 1];
+      newLevel = {
+        small: lastLevel.small * 2,
+        big: lastLevel.big * 2,
+        ante: lastLevel.ante * 2,
+        levelTime: lastLevel.levelTime
+      };
+    } 
+    $scope.levels.push(newLevel);
+  };
+
+  $rootScope.$on(EVENTS.EDIT_STARTED, function() {
+    $scope.levels = modelService.getLevels();
+  });
+
+
 }]);
 
 

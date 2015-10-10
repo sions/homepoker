@@ -48,7 +48,7 @@
     </div>
     <div ng-controller="StartPauseController" class="toggle-container view-only">
       <div class="toggle-button" ng-click="toggle()" tabindex="0">
-        <svg id="bar" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0px">
+        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="0px">
           <polygon fill="currentColor" points="3,12 17,4 17,20 3,12">
             <animate id="toPlay1" begin="indefinite" attributeName="points" dur="500ms" to="3,12 17,4 17,20 3,12" fill="freeze" />
             <animate id="toPause1" begin="indefinite" attributeName="points" dur="500ms" to="5,4 10,4 10,20 5,20" fill="freeze" />
@@ -71,8 +71,40 @@
       </div>
       <div class="next" ng-if="nextSmall > 0">next: {% raw %}{{nextSmall}} / {{nextBig}} <span ng-if="nextAnte > 0">/ {{nextAnte}}</span>{% endraw %}</div>
     </div>
-    <div ng-controller="BlindController" class="edit-only">
-      Blinds table.
+    <div ng-controller="EditBlindController" class="blind-table-container edit-only-block">
+      <table class="blind-table">
+        <thead>
+          <tr>
+            <th>Level</th>
+            <th>Small</th>
+            <th>Big</th>
+            <th>Ante</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+           <tr ng-repeat="level in levels">
+              <td>{% raw %}{{$index + 1}}{% endraw %}</td>
+              <td>{% raw %}{{level.small}}{% endraw %}</td>
+              <td>{% raw %}{{level.big}}{% endraw %}</td>
+              <td>{% raw %}{{level.ante}}{% endraw %}</td>
+              <td>{% raw %}{{level.levelTime / 1000 / 60 |round|numberFixedLen:2}}:{{
+                  level.levelTime / 1000 % 60 |round|numberFixedLen:2}}{% endraw %}
+              </td>
+              <td ng-click="remove($index)" class="remove-level-button" tabindex="0">
+                <svg viewBox="0 0 24 24" stroke="currentColor" 
+                    stroke-width="2">
+                  <path d="M4 4 L20 20 M4 20 L20 4 Z"/>
+                </svg>
+              </td>
+           </tr>
+        </tbody>
+      </table>
+      <div class="add-level-button" ng-click="add()" tabindex="0">
+        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+          <path d="M4 12 L20 12 M12 4 L12 20 Z"/>
+        </svg>
+      </div>
     </div>
     <hr/>
     <div ng-controller="PlayerController" class="players">
