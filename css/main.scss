@@ -106,10 +106,21 @@ hr {
   margin: 0;
 }
 
+@keyframes level-up {
+  0% { @include transform(none); }
+  50% { @include transform(scale(1.5)); }
+  100% { @include transform(none); }
+}
+
 .level {
   font-family: 'Orbitron';
   font-size: 1.5rem;
   line-height: 1.5;
+
+  .level-span.animate {
+    animation-duration: 1s;
+    animation-name: level-up;
+  }
 
   input {
     width: 3rem;

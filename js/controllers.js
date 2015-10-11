@@ -1,6 +1,8 @@
 goog.provide('poker.controllers');
 
 goog.require('goog.array');
+goog.require('goog.events');
+goog.require('goog.events.EventType');
 goog.require('goog.object');
 goog.require('poker.modelservice');
 goog.require('poker.permissionservice');
@@ -33,7 +35,8 @@ var EVENTS = {
   IN_GAME_LEVEL_CHANGE: 'in-game-level-change',
   EDIT_STARTED: 'edit-started',
   EDIT_ENDED_CANCELLED: 'edit-ended-cancelled',
-  EDIT_ENDED_SAVED: 'edit-ended-saved'
+  EDIT_ENDED_SAVED: 'edit-ended-saved',
+  LEVEL_UP: 'in-game-level-up'
 };
 
 
@@ -42,6 +45,7 @@ var EVENTS = {
  * @private
  */
 controllers.TIMER_UPDATE_PERIOD_MS_ = 250;
+
 
 controllers.controller('StartPauseController', 
       ['$scope', '$rootScope', '$interval', '$element', 'modelService',
@@ -97,6 +101,9 @@ controllers.controller('TimerController',
     $scope.levelIndex = levelState.levelIndex;
     if ($scope.levelIndex != oldLevel) {
       $rootScope.$emit(EVENTS.IN_GAME_LEVEL_CHANGE);
+      if ($scope.levelIndex == oldLevel + 1) {
+        $rootScope.$emit(EVENTS.LEVEL_UP);
+      }
     }
   };
 
@@ -145,7 +152,7 @@ controllers.controller('TimerController',
     minutesInputElement.val(addLeadingZeroIfNeeded(minutesInputElement.val()));
   };
 
-   $scope.secondsInputChanged = function() {
+  $scope.secondsInputChanged = function() {
     controllers.validateNumberInput(secondsInputElement);
     secondsInputElement.val(addLeadingZeroIfNeeded(secondsInputElement.val()));
   };
@@ -164,6 +171,14 @@ controllers.controller('TimerController',
     modelService.setGameTime(
       parseInt(levelInputElement.val()) - 1, 
       (parseInt(minutesInputElement.val()) * 60 + parseInt(secondsInputElement.val())) * 1000);
+  });
+
+  var levelElement = angular.element(document.querySelector('.level-span'));
+  goog.events.listen(levelElement[0], goog.events.EventType.ANIMATIONEND, function() {
+    levelElement.removeClass('animate');
+  });
+  $rootScope.$on(EVENTS.LEVEL_UP, function() {
+    levelElement.addClass('animate');
   });
 }]);
 
@@ -374,6 +389,13 @@ controllers.controller('EditButtonController',
   };
 }]);
 
+
+controllers.controller('LevelUpAudioController', 
+      ['$rootScope', '$element', function($rootScope, $element) {
+  $rootScope.$on(EVENTS.LEVEL_UP, function() {
+    $element[0].play();
+  });
+}]);
 
 /**
  * @param {Object} element angular.element object.

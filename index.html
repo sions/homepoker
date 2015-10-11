@@ -21,9 +21,11 @@
     </div>
     <div ng-controller="TimerController">
       <div class="level">
-        Level 
-        <span class="view-only">{% raw %}{{levelIndex + 1}}{% endraw %}</span>
-        <input type="number" class="edit-only" ng-model="levelInput_" min="1" ng-change="levelInputChanged()"></input>
+        <span class="level-span">
+          Level <span class="view-only">{% raw %}{{levelIndex + 1}}{% endraw %}</span><input 
+              type="number" class="edit-only" ng-model="levelInput_" min="1" 
+              ng-change="levelInputChanged()"></input>
+        </span>
       </div>
       <div class="timer-container">
         <div class="timer">
@@ -164,6 +166,9 @@
       </div>
     </div>
   </div>
+  <audio ng-controller="LevelUpAudioController" 
+      src="/res/levelup.mp3" preload="auto" type="audio/mpeg">
+  </audio>
   
   <script type="text/javascript" src="/lib/angular-resource/angular-resource.min.js"></script>
   {% if js_compiled %}
