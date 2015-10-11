@@ -2,6 +2,8 @@ from flask import Flask
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
+import datetime
+import json
 import os
 import jinja2
 import webapp2
@@ -16,6 +18,11 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 # Note: We don't need to call run() since our application is embedded within
 # the App Engine WSGI application server.
 
+
+@app.route('/get_time')
+def gettime():
+  utctime = (datetime.datetime.utcnow() - datetime.datetime.utcfromtimestamp(0)).total_seconds()
+  return json.dumps({'timestamp': int(round(utctime * 1000))})
 
 @app.route('/open/<game_id>')
 def open(game_id):

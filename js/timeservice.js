@@ -39,26 +39,18 @@ ts.prototype.register = function() {
   var thisModel = this;
   module.factory('timeService', ['$interval', '$http', '$rootScope', 
       function($interval, $http, $rootScope) { 
-
     var updateTime = function() {
-      // NOTE: I would have used JSON_CALLBACK as the callback, but it appears timeapi.org has a 
-      // problem with dots in the callback.
-      var callbackName = '_timeservice_callback_' + Math.round(Math.random() * 100000)
-      var callback = function(data) {
-        var newServerTime = parseInt(data.dateString);
-        console.log('Got new time from server ' + newServerTime);
-        thisModel.updateTime_(newServerTime);
-        delete window[callbackName];
+      $http({
+        method: 'GET',
+        url: '/get_time'
+      }).then(function(response) {
+        thisModel.updateTime_(response.data.timestamp);
         if (!thisModel.gotServerTime_) {
           thisModel.gotServerTime_ = true;
           $rootScope.$emit(ts.EVENT.FIRST_SERVER_TIME);
         }
-      }
-      window[callbackName] = callback;
-
-      var url = 'http://www.timeapi.org/utc/now.json?format=%25Q&callback=' + callbackName;
-      $http.jsonp(url);
-    }
+      });
+    };
 
     updateTime();
     $interval(updateTime, ts.SERVER_UPDATE_PERIOD_MS_)
