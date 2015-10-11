@@ -46,7 +46,8 @@
         </div>
       </div>
     </div>
-    <div ng-controller="StartPauseController" class="toggle-container view-only">
+    <div ng-controller="StartPauseController" 
+        class="toggle-container view-only requires-edit-permission">
       <div class="toggle-button" ng-click="toggle()" tabindex="0">
         <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="0px">
           <polygon fill="currentColor" points="3,12 17,4 17,20 3,12">
@@ -150,6 +151,9 @@
               type="number" class="edit-only" ng-model="playersStartedInput" min="1"
               ng-change="playersStartedInputChanged()"></input>)
         </span>
+      </div>
+      <div class="remove-player-container requires-edit-permission">
+        <button ng-click="manDown()" ng-if="players > 0">Man down!</button>
       </div>
       <div ng-if="averageChips() > 0" class="view-only">
         Average stack: {% raw %}{{averageChips() |round}}{% endraw %}

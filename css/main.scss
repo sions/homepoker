@@ -194,6 +194,14 @@ hr {
   }
 }
 
+.requires-edit-permission {
+  display: none;
+}
+
+.has-edit-permission .requires-edit-permission {
+  display: block;
+}
+
 .blinds {
   line-height: $primary-line-height;
   padding-bottom: $default-padding;
@@ -314,8 +322,6 @@ hr {
   }
 }
 
-
-
 .add-level-button {
   @include action-button(24px, 32px, 48px);
   margin: $default-padding auto;
@@ -338,6 +344,16 @@ hr {
   .starting-chips > input {
     width: 3rem;
   }
+
+  .remove-player-container {
+    margin: 0 auto;
+  }
+}
+
+button {
+  background: rgb(0,0,0);
+  border-color: $button-border-color;
+  padding-top: 0.2rem;
 }
 
 .edit-button {
@@ -346,11 +362,7 @@ hr {
   top: 8px;
 
   button {
-    background: rgb(0,0,0);
-    border-color: $button-border-color;
     font-size: 0.8rem;
-    padding-top: 0.2rem;
-
     @media screen and (min-width: $screen-lg-desktop) {
       font-size: 24px;
     }

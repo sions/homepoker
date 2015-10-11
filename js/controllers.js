@@ -229,6 +229,12 @@ controllers.controller('PlayerController',
     modelService.setPlayersStarted(playersStartedInput.val());
     modelService.setStartingChips(startingChipsInput.val());
   });
+
+  $scope.manDown = function() {
+    if ($scope.players > 0) {
+      modelService.setPlayers($scope.players - 1);
+    }
+  };
 }]);
 
 
@@ -338,6 +344,7 @@ controllers.controller('EditButtonController',
 
   var updateEditState = function() {
     $element.toggleClass('ng-hide', !permissionService.getEditable());
+    canvas.toggleClass('has-edit-permission', permissionService.getEditable())
   }
 
   updateEditState();
