@@ -154,7 +154,7 @@
               ng-change="playersStartedInputChanged()"></input>)
         </span>
       </div>
-      <div class="remove-player-container requires-edit-permission">
+      <div class="remove-player-container requires-edit-permission view-only">
         <button ng-click="manDown()" ng-if="players > 0">Man down!</button>
       </div>
       <div ng-if="averageChips() > 0" class="view-only">
