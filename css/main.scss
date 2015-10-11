@@ -224,6 +224,11 @@ hr {
   padding-bottom: $default-padding;
   padding-top: $default-padding;
 
+  .current.animate {
+    animation-duration: 1s;
+    animation-name: level-up;
+  }
+
   .next {
     font-size: 0.8rem;
     line-height: 1;

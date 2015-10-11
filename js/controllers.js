@@ -173,13 +173,8 @@ controllers.controller('TimerController',
       (parseInt(minutesInputElement.val()) * 60 + parseInt(secondsInputElement.val())) * 1000);
   });
 
-  var levelElement = angular.element(document.querySelector('.level-span'));
-  goog.events.listen(levelElement[0], goog.events.EventType.ANIMATIONEND, function() {
-    levelElement.removeClass('animate');
-  });
-  $rootScope.$on(EVENTS.LEVEL_UP, function() {
-    levelElement.addClass('animate');
-  });
+  controllers.setupLevelUpAnimation(
+      angular.element(document.querySelector('.level-span')), $rootScope);
 }]);
 
 
@@ -280,6 +275,9 @@ controllers.controller('BlindController',
 
   $rootScope.$on(EVENTS.IN_GAME_LEVEL_CHANGE, updateLevels);
   $rootScope.$on(modelEvent.LEVELS_CHANGED, updateLevels);
+
+  controllers.setupLevelUpAnimation(
+      angular.element(document.querySelector('.blinds .current')), $rootScope);
 }]);
 
 
@@ -410,6 +408,19 @@ controllers.validateNumberInput = function(element) {
   if (newValue != value) {
     element.val(newValue);
   }
+};
+
+
+/**
+ * @param {Object} element angular.element object.
+ */
+controllers.setupLevelUpAnimation = function(element, $rootScope) {
+  goog.events.listen(element[0], goog.events.EventType.ANIMATIONEND, function() {
+    element.removeClass('animate');
+  });
+  $rootScope.$on(EVENTS.LEVEL_UP, function() {
+    element.addClass('animate');
+  });
 };
 
 
