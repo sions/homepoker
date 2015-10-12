@@ -30,7 +30,8 @@
       <div class="timer-container">
         <div class="timer">
           <span class="timer-text">
-            <span class="view-only">
+            <span class="view-only" 
+                ng-class="{levelend: running && minutes == 0 && seconds < 10, odd: seconds % 2}">
               {% raw %}
               <span>{{minutes | numberFixedLen:2}}</span><span 
                   class="colon">:</span><span 

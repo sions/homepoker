@@ -1,5 +1,6 @@
 @import 'normalize-scss/_normalize';
 @import 'compass-mixins/lib/_compass';
+@import 'compass-mixins/lib/animation/_core';
 @import 'compass-mixins/lib/compass/css3/_user-interface';
 
 @function compact($vars...) {
@@ -112,7 +113,7 @@ hr {
   margin: 0;
 }
 
-@keyframes level-up {
+@include keyframes(level-up) {
   0% { @include transform(none); }
   50% { @include transform(scale(1.5)); }
   100% { @include transform(none); }
@@ -151,6 +152,13 @@ hr {
   padding: $default-padding 0;
 }
 
+@for $i from 1 through 2 {
+  @include keyframes(level-end-notice-#{$i}) {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+}
 
 .timer-text {
   font-family: 'DSEG7Classic-Regular';
@@ -160,6 +168,15 @@ hr {
   input {
     text-align: right;
     width: 6rem;
+  }
+
+  .levelend {
+    animation-duration: 0.5s;
+    animation-name: level-end-notice-1;
+  }
+
+  .levelend.odd {
+    animation-name: level-end-notice-2;
   }
 }
 

@@ -95,6 +95,7 @@ controllers.controller('TimerController',
   var updateGameState = function() {
     var levelState = modelService.getCurrentLevelState();
     var timeLeftInSeconds = Math.floor(levelState.timeLeftInLevel / 1000);
+    $scope.running = modelService.isRunning();
     $scope.seconds = timeLeftInSeconds % 60;
     $scope.minutes = Math.floor(timeLeftInSeconds / 60);
     var oldLevel = $scope.levelIndex;
