@@ -13,6 +13,7 @@
     "angular-resource": "~1.4.0",
     "google-closure-library": null,
     "normalize-scss": null,
-    "compass-mixins": null
+    "compass-mixins": null,
+    "qrcode.js": "https://github.com/davidshimjs/qrcodejs.git"
   }
 }

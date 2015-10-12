@@ -65,7 +65,7 @@ html {
 .canvas {
   border: 1px solid $border-color;
   @include border-radius(4px);
-  margin: 0.5rem auto 0 auto;
+  margin: 0.5rem auto;
   max-width: 700px;
   min-width: 400px;
   position: relative;
@@ -403,5 +403,10 @@ button {
 }
 
 .share-link {
-  word-break: break-all;
+  padding: 1rem 0;
+  text-align: center;
+
+  img {
+    margin: $default-padding auto;
+  }
 }

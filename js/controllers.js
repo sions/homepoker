@@ -390,9 +390,24 @@ controllers.controller('EditButtonController',
 
 
 controllers.controller('ShareLinkController', 
-    ['$scope', '$rootScope', 'permissionService', function($scope, $rootScope, permissionService) {
+    ['$scope', '$element', '$rootScope', 'permissionService', 
+     function($scope, $element, $rootScope, permissionService) {
+  $scope.link = '';
   var updateLink = function() {
+    var children = $element.children();
+    if (children.length > 1) {
+      children[children.length - 1].remove();
+    }
     $scope.link = permissionService.getShareLink();
+    if ($scope.link) {
+      var newElement = document.createElement('span');
+      var qrcode = new QRCode(newElement, {
+        text: $scope.link,
+        width: 128,
+        height: 128
+      });
+      $element.append(newElement);
+    }
   };
   updateLink();
   $rootScope.$on(permissionEvent.EDITABLE_UPDATED, updateLink);
