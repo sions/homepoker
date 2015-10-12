@@ -389,6 +389,16 @@ controllers.controller('EditButtonController',
 }]);
 
 
+controllers.controller('ShareLinkController', 
+    ['$scope', '$rootScope', 'permissionService', function($scope, $rootScope, permissionService) {
+  var updateLink = function() {
+    $scope.link = permissionService.getShareLink();
+  };
+  updateLink();
+  $rootScope.$on(permissionEvent.EDITABLE_UPDATED, updateLink);
+}]);
+
+
 controllers.controller('LevelUpAudioController', 
       ['$rootScope', '$element', function($rootScope, $element) {
   $rootScope.$on(EVENTS.LEVEL_UP, function() {

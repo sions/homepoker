@@ -12,6 +12,7 @@ goog.scope(function() {
 poker.permissionservice = function(fileId) {
   this.editable_ = null;
   this.fileId_ = fileId;
+  this.shareLink_ = null;
 
   var request = gapi.client.drive.files.get({'fileId': this.fileId_});
   request.execute(goog.bind(this.metadataResponseHandler_, this));
@@ -44,6 +45,7 @@ ps.prototype.register = function() {
  */
 ps.prototype.metadataResponseHandler_ = function(response) {
   this.editable_ = response['editable'];
+  this.shareLink_ = response['alternateLink'];
   if (!this.$rootScope) {  // Response arrived before angular was bootstrapped.
     return;
   }
@@ -60,6 +62,14 @@ ps.prototype.metadataResponseHandler_ = function(response) {
  */
 ps.prototype.getEditable = function() {
   return !!this.editable_;
+};
+
+
+/**
+ * @return {string}
+ */
+ps.prototype.getShareLink = function() {
+  return this.shareLink_;
 };
 
 });  // goog.scope

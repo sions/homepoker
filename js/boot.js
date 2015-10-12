@@ -165,7 +165,13 @@ poker.boot.fileCreated_ = function(response) {
     console.log('File created.');
     window.game_id = response.id;
     window.history.replaceState(null, 'game', '/open/' + window.game_id)
-    poker.boot.openRealtimeModel_();
+
+    // Share with anyone with the link.
+    var req = gapi.client.drive.permissions.insert({
+      'fileId': window.game_id, 
+      'resource': {'role': 'reader', 'type': 'anyone', 'withLink': true}
+    });
+    req.then(poker.boot.openRealtimeModel_());
   } else {
     alert('Could not create file, please reload.')
   }

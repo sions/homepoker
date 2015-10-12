@@ -166,6 +166,10 @@
         <input type="number" class="edit-only" ng-model="startingChipsInput" min="0"></input>
       </div>
     </div>
+    <hr/>
+    <div class="share-link" ng-controller="ShareLinkController">
+      {% raw %}{{link}}{% endraw %}
+    </div>
   </div>
   <audio ng-controller="LevelUpAudioController" 
       src="/res/levelup.mp3" preload="auto" type="audio/mpeg">
