@@ -61,9 +61,20 @@ html {
     rgba(71,71,71,1) 100%));
 }
 
+.vertical-layout {
+  flex-direction: column;
+  display: flex;
+  min-height: 100vh;
+}
+
+.placeholder {
+  flex-grow: 1;
+  min-height: 0;
+}
 
 .canvas {
   border: 1px solid $border-color;
+  flex-grow: 0;
   @include border-radius(4px);
   margin: 0.5rem auto;
   max-width: 700px;
@@ -488,7 +499,9 @@ $action-button-total-size: $action-button-size + $action-button-padding * 2;
 }
 
 .share-link {
-  margin: $default-padding 0;
+  flex-grow: 0;
+  margin-bottom: 32px;
+  margin-top: $default-padding;
   text-align: center;
 
   img {
