@@ -7,16 +7,22 @@ threadsafe: yes
 handlers:
 - url: /js
   static_dir: js
+  secure: always
 - url: /generated
   static_dir: generated
+  secure: always
 - url: /css
   static_dir: css
+  secure: always
 - url: /lib
   static_dir: lib/bower_components
+  secure: always
 - url: /res
   static_dir: res
+  secure: always
 - url: .*
   script: main.app
+  secure: always
 
 libraries:
 - name: jinja2
