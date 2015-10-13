@@ -219,7 +219,7 @@ hr {
 }
 
 .toggle-button {
-  @include action-button(48px, 96px, 140px);
+  @include action-button(48px, 96px, 96px);
   margin: 0 auto;
   position: relative;
 
@@ -233,12 +233,19 @@ hr {
   }
 }
 
-.requires-edit-permission {
+.requires-edit-permission,
+.requires-edit-permission-inline-block {
   display: none;
 }
 
-.has-edit-permission .requires-edit-permission {
-  display: block;
+.has-edit-permission {
+  .requires-edit-permission {
+    display: block;
+  }
+
+  .requires-edit-permission-inline-block {
+    display: inline-block;
+  }
 }
 
 .blinds {
@@ -388,6 +395,15 @@ hr {
   }
 }
 
+.remove-player-button {
+  display: none;
+  vertical-align: middle;
+
+  &.has-edit-permission {
+    display: inline-block;
+  }
+}
+
 button {
   background: rgb(0,0,0);
   border-color: $button-border-color;
@@ -410,20 +426,29 @@ button {
 }
 
 $action-button-size: 24px;
-$action-button-padding: 8px;
-$action-button-total-size: $action-button-size + $action-button-padding;
+$action-button-padding: 4px;
+$action-button-total-size: $action-button-size + $action-button-padding * 2;
 .action-button {
   @include action-button(
-      $action-button-total-size, $action-button-total-size, $action-button-total-size);
+      $action-button-total-size, $action-button-total-size, 48px);
 
   box-sizing: border-box;
   display: inline-block;
-  padding-top: ($action-button-padding / 2) - 1;  // -1 to account for border.
+  padding: $action-button-padding;
   position: relative;
 
   svg {
-    height: $action-button-size;
-    width: $action-button-size;
+    // height: $action-button-size;
+    left: $action-button-padding;
+
+    position: absolute;
+    top: $action-button-padding;
+    // width: $action-button-size;
+
+    @media screen and (min-width: $screen-lg-desktop) {
+      // height: 32px;
+      // width: 32px;
+    }
   }
 }
 
@@ -457,7 +482,7 @@ $action-button-total-size: $action-button-size + $action-button-padding;
 }
 
 .share-link {
-  padding: 1rem 0;
+  margin: $default-padding 0;
   text-align: center;
 
   img {
