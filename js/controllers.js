@@ -436,6 +436,16 @@ controllers.controller('LevelUpAudioController',
   });
 }]);
 
+
+controllers.controller('ShareButtonController', ['$scope', function($scope) {
+  var client = new gapi.drive.share.ShareClient(window.client_id);
+  client.setItemIds([window.game_id])
+  $scope.share = function() {
+    client.showSettingsDialog();
+  };
+}]);
+
+
 /**
  * @param {Object} element angular.element object.
  */

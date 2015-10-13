@@ -481,6 +481,12 @@ $action-button-total-size: $action-button-size + $action-button-padding * 2;
   }
 }
 
+.share-button {
+  left: 16px;
+  position: absolute;
+  top: 8px;
+}
+
 .share-link {
   margin: $default-padding 0;
   text-align: center;
