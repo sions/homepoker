@@ -8,6 +8,9 @@ import os
 import jinja2
 import webapp2
 
+DEV_CLIENT_ID = '1026721110899-nj8vph4j6oe5hspslp9lnc9obmfsj3jp.apps.googleusercontent.com'
+PROD_CLIENT_ID = '1026721110899-6t5r7pu7hdn49rtaoioe6tkn2inq8l2r.apps.googleusercontent.com'
+
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -27,13 +30,20 @@ def gettime():
 @app.route('/open/<game_id>')
 def open(game_id):
   template = JINJA_ENVIRONMENT.get_template('index.html')
-  return template.render({'game_id': game_id, 'js_compiled': _is_jsmode_compiled()})
+  return template.render({
+    'game_id': game_id, 
+    'js_compiled': _is_jsmode_compiled(),
+    'client_id': _get_client_id()})
 
 
 @app.route('/')
 def create():
   template = JINJA_ENVIRONMENT.get_template('index.html')
-  return template.render({'game_id': None, 'js_compiled': _is_jsmode_compiled()})
+  return template.render({
+    'game_id': None, 
+    'js_compiled': _is_jsmode_compiled(),
+    'client_id': _get_client_id()
+    })
 
 
 @app.errorhandler(404)
@@ -45,3 +55,6 @@ def page_not_found(e):
 def _is_jsmode_compiled():
   return (not os.environ.get('SERVER_SOFTWARE', '').startswith('Dev') or 
           os.environ.get('FORCE_JS_COMPILED', '') == 'YES')
+
+def _get_client_id():
+  return DEV_CLIENT_ID if os.environ.get('SERVER_SOFTWARE', '').startswith('Dev') else PROD_CLIENT_ID

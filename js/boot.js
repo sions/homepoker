@@ -9,8 +9,6 @@ goog.require('poker.timeservice');
 
 goog.scope(function() {
 
-// TODO: Use different keys for production and development.
-var CLIENT_ID = '1026721110899-6t5r7pu7hdn49rtaoioe6tkn2inq8l2r.apps.googleusercontent.com';
 var SCOPES = [
   'https://www.googleapis.com/auth/drive.file',
   'https://www.googleapis.com/auth/drive.appfolder',
@@ -60,7 +58,7 @@ goog.exportSymbol('handleApiLoad', poker.boot.handleApiLoad);
  */
 poker.boot.checkAuth_ = function() {
   gapi.auth.authorize(
-      {'client_id': CLIENT_ID, 'scope': SCOPES, 'immediate': true},
+      {'client_id': window.client_id, 'scope': SCOPES, 'immediate': true},
       poker.boot.handleAuthResult_);
 };
 
@@ -80,7 +78,7 @@ poker.boot.handleAuthResult_ = function(authResult) {
   } else {
     // No access token could be retrieved, force the authorization flow.
     gapi.auth.authorize(
-        {'client_id': CLIENT_ID, 'scope': SCOPES, 'immediate': false}, 
+        {'client_id': window.client_id, 'scope': SCOPES, 'immediate': false}, 
         poker.boot.handleAuthResult_);
   }
 };
