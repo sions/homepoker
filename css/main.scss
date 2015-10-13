@@ -76,7 +76,7 @@ html {
     max-width: 1200px;
   }
 
-  .edit-only, .edit-only-block {
+  .edit-only, .edit-only-block, .edit-only-inline-block {
     display: none;
   }
 
@@ -87,6 +87,10 @@ html {
 
     .edit-only-block {
       display: block;
+    }
+
+    .edit-only-inline-block {
+      display: inline-block;
     }
 
     .view-only {
@@ -193,6 +197,7 @@ hr {
   cursor: pointer;
   height: $defaultSize;
   @include transition(all 0.25s ease-in-out);
+  text-align: center;
   width: $defaultSize;
 
   &:hover, &:active, &:focus {
@@ -389,7 +394,9 @@ button {
   padding-top: 0.2rem;
 }
 
-.edit-button {
+.action-buttons {
+  overflow: hidden;
+  padding: 4px;
   position: absolute;
   right: 16px;
   top: 8px;
@@ -398,6 +405,53 @@ button {
     font-size: 0.8rem;
     @media screen and (min-width: $screen-lg-desktop) {
       font-size: 24px;
+    }
+  }
+}
+
+$action-button-size: 24px;
+$action-button-padding: 8px;
+$action-button-total-size: $action-button-size + $action-button-padding;
+.action-button {
+  @include action-button(
+      $action-button-total-size, $action-button-total-size, $action-button-total-size);
+
+  box-sizing: border-box;
+  display: inline-block;
+  padding-top: ($action-button-padding / 2) - 1;  // -1 to account for border.
+  position: relative;
+
+  svg {
+    height: $action-button-size;
+    width: $action-button-size;
+  }
+}
+
+.edit-button {
+  position: absolute;
+  right: 4px;
+  @include transition(all 0.25s ease-in-out, right 0.25s 0.25s ease-in-out);
+}
+
+.ok-button, .cancel-button {
+  right: calc(-100% - 24px);
+  @include transform(rotate(90deg));
+}
+
+.editing {
+  .edit-button {
+    @include transition_delay(0s);
+    @include transform(rotate(90deg));
+    right: -50%;
+  }
+
+  .ok-button, .cancel-button {
+    right: 0;
+    @include transition(all 0.25s ease-in-out, right 0.25s 0.25s ease-in-out);
+    @include transform(none);
+
+    &:hover, &:active, &:focus {
+      @include transform(scale(1.1));
     }
   }
 }

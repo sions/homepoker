@@ -15,10 +15,29 @@
 </head>
 <body>
   <div class="ng-cloak canvas" id="canvas">
-    <div ng-controller="EditButtonController" class="edit-button ng-hide">
-      <button class="view-only" ng-click="edit()">EDIT</button>
-      <button class="edit-only" ng-click="ok()">OK</button>
-      <button class="edit-only" ng-click="cancel()">CANCEL</button>
+    <div ng-controller="EditButtonController" class="action-buttons ng-hide">
+      {% raw %}
+      <div ng-attr-tabindex="{{editing ? -1 : 0}}" class="action-button edit-button" 
+          ng-click="edit()" on-enter-key="edit()">
+        <svg fill="currentColor" viewBox="0 0 24 24">
+          <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+          <path d="M0 0h24v24H0z" fill="none"/>
+        </svg>
+      </div>
+      <div ng-attr-tabindex="{{editing ? 0 : -1}}" class="action-button ok-button" 
+          ng-click="ok()" on-enter-key="ok()">
+        <svg fill="currentColor" viewBox="0 0 24 24">
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+        </svg>
+      </div>
+      <div ng-attr-tabindex="{{editing ? 0 : -1}}" class="action-button cancel-button" 
+          ng-click="cancel()" on-enter-key="cancel()">
+        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path d="M5 5 L19 19 M5 19 L19 5 Z"/>
+        </svg>
+      </div>
+      {% endraw %}
     </div>
     <div ng-controller="TimerController">
       <div class="level">
@@ -52,7 +71,7 @@
     </div>
     <div ng-controller="StartPauseController" 
         class="toggle-container view-only requires-edit-permission">
-      <div class="toggle-button" ng-click="toggle()" tabindex="0">
+      <div class="toggle-button" ng-click="toggle()" on-enter-key="toggle()" tabindex="0">
         <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="0px">
           <polygon fill="currentColor" points="3,12 17,4 17,20 3,12">
             <animate id="toPlay1" begin="indefinite" attributeName="points" dur="500ms" to="3,12 17,4 17,20 3,12" fill="freeze" />

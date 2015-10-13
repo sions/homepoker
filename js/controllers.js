@@ -23,6 +23,19 @@ var controllers = angular.module('pokerControllers', [])
       return function(n) {
         return Math.round(n);
       };
+    })
+    .directive('onEnterKey', function () {
+      return function (scope, element, attrs) {
+        element.bind("keydown keypress", function (event) {
+          if(event.which === 13) {
+            scope.$apply(function (){
+                scope.$eval(attrs.onEnterKey);
+            });
+
+            event.preventDefault();
+          }
+        });
+      };
     });
 var modelEvent = poker.modelservice.EVENT;
 var permissionEvent = poker.permissionservice.EVENT;
@@ -354,6 +367,7 @@ controllers.controller('EditBlindController',
 controllers.controller('EditButtonController', 
     ['$scope', '$rootScope', '$element', 'permissionService', 
      function($scope, $rootScope, $element, permissionService) {
+  $scope.editing = false;
   var canvas = angular.element(document.getElementById('canvas'));
 
   var updateEditState = function() {
@@ -365,6 +379,7 @@ controllers.controller('EditButtonController',
   $rootScope.$on(permissionEvent.EDITABLE_UPDATED, updateEditState);
 
   $scope.toggleEditing_ = function(active, opt_saveChanges) {
+    $scope.editing = active;
     canvas.toggleClass('editing', active);
     if (active) {
       $rootScope.$emit(EVENTS.EDIT_STARTED);
