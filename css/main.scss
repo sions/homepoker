@@ -33,6 +33,63 @@ $default-padding: 0.5rem;
 $border-color: rgba(255, 255, 255, 0.3);
 $button-border-color: rgba(167, 167, 167, 0.35);
 
+@mixin action-button($defaultSize, $largeSize, $xlSize) {
+  background: rgba(255,255,255,.9);
+  @include border-radius(50%);
+  border: 1px solid rgba(0,0,0,.65);
+  @include box-shadow(1px 1px 1px rgba(0,0,0,.5));
+  color: black;
+  cursor: pointer;
+  height: $defaultSize;
+  @include transition(all 0.25s ease-in-out);
+  text-align: center;
+  width: $defaultSize;
+
+  &:hover, &:active, &:focus {
+    background: rgba(255,255,255, 0.75);
+    outline: none;
+    @include transform(scale(1.1));
+  }
+
+  @media screen and (min-width: $screen-desktop) {
+    height: $largeSize;
+    width: $largeSize;
+  }
+
+  @media screen and (min-width: $screen-lg-desktop) {
+    height: $xlSize;
+    width: $xlSize;
+  }
+}
+
+$action-button-size: 24px;
+$action-button-padding: 4px;
+$action-button-total-size: $action-button-size + $action-button-padding * 2;
+
+.action-button {
+  @include action-button(
+      $action-button-total-size, $action-button-total-size, 48px);
+
+  box-sizing: border-box;
+  display: inline-block;
+  padding: $action-button-padding;
+  position: relative;
+
+  svg {
+    // height: $action-button-size;
+    left: $action-button-padding;
+
+    position: absolute;
+    top: $action-button-padding;
+    // width: $action-button-size;
+
+    @media screen and (min-width: $screen-lg-desktop) {
+      // height: 32px;
+      // width: 32px;
+    }
+  }
+}
+
 html, body {
   min-height: 100%
 }
@@ -197,36 +254,6 @@ hr {
 
 .toggle-container {
   padding: $default-padding 0;
-}
-
-@mixin action-button($defaultSize, $largeSize, $xlSize) {
-  background: rgba(255,255,255,.9);
-  @include border-radius(50%);
-  border: 1px solid rgba(0,0,0,.65);
-  @include box-shadow(1px 1px 1px rgba(0,0,0,.5));
-  color: black;
-  cursor: pointer;
-  height: $defaultSize;
-  @include transition(all 0.25s ease-in-out);
-  text-align: center;
-  width: $defaultSize;
-
-  &:hover, &:active, &:focus {
-    background: rgba(255,255,255, 0.75);
-    outline: none;
-    @include transform(scale(1.1));
-  }
-
-  @media screen and (min-width: $screen-desktop) {
-    height: $largeSize;
-    width: $largeSize;
-  }
-
-  @media screen and (min-width: $screen-lg-desktop) {
-    height: $xlSize;
-    width: $xlSize;
-  }
-
 }
 
 .toggle-button {
@@ -415,6 +442,23 @@ hr {
   }
 }
 
+.favorites > input {
+  width: 4rem;
+}
+
+.favorite-button {
+  vertical-align: middle;
+
+  & > svg {
+    fill: transparent;
+    @include transition(all 0.25s ease-in-out);
+  }
+
+  &.saving > svg {
+    fill: rgb(237, 237, 73);
+  }
+}
+
 button {
   background: rgb(0,0,0);
   border-color: $button-border-color;
@@ -432,33 +476,6 @@ button {
     font-size: 0.8rem;
     @media screen and (min-width: $screen-lg-desktop) {
       font-size: 24px;
-    }
-  }
-}
-
-$action-button-size: 24px;
-$action-button-padding: 4px;
-$action-button-total-size: $action-button-size + $action-button-padding * 2;
-.action-button {
-  @include action-button(
-      $action-button-total-size, $action-button-total-size, 48px);
-
-  box-sizing: border-box;
-  display: inline-block;
-  padding: $action-button-padding;
-  position: relative;
-
-  svg {
-    // height: $action-button-size;
-    left: $action-button-padding;
-
-    position: absolute;
-    top: $action-button-padding;
-    // width: $action-button-size;
-
-    @media screen and (min-width: $screen-lg-desktop) {
-      // height: 32px;
-      // width: 32px;
     }
   }
 }

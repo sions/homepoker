@@ -296,9 +296,10 @@ controllers.controller('BlindController',
 
 
 controllers.controller('EditBlindController', 
-      ['$scope', '$rootScope', '$element', 'modelService', 
-       function($scope, $rootScope, $element, modelService) {
+      ['$scope', '$rootScope', '$element', 'modelService', 'appdataService',
+       function($scope, $rootScope, $element, modelService, appdataService) {
   $scope.levels = [];
+  $scope.saveFavorite = false;
 
   $scope.remove = function(index) {
     goog.array.removeAt($scope.levels, index);
@@ -310,6 +311,12 @@ controllers.controller('EditBlindController',
       newLevel = modelService.speculateNextLevel(lastLevel);
     } 
     $scope.levels.push(newLevel);
+  };
+  $scope.toggleFavorite = function() {
+    $scope.saveFavorite = !$scope.saveFavorite;
+  };
+  $scope.saving = function() {
+    return $scope.saveFavorite && !!$scope.schemaName_;
   };
 
   var copyValueFromItem = function(inputlement) {
@@ -360,6 +367,9 @@ controllers.controller('EditBlindController',
 
   $rootScope.$on(EVENTS.EDIT_ENDED_SAVED, function(eventName) {
     modelService.setLevels($scope.levels);
+    if ($scope.saving()) {
+      appdataService.setSchema($scope.schemaName_, $scope.levels);
+    }
   });
 }]);
 
