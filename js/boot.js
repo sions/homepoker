@@ -1,6 +1,7 @@
 goog.provide('poker.boot');
 
 goog.require('goog.Timer');
+goog.require('poker.appdataservice');
 goog.require('poker.modelservice');
 goog.require('poker.permissionservice');
 goog.require('poker.timeservice');
@@ -10,12 +11,12 @@ goog.require('poker.timeservice');
 goog.scope(function() {
 
 var SCOPES = [
-  'https://www.googleapis.com/auth/drive.file',
+  'https://www.googleapis.com/auth/drive.appdata',
   'https://www.googleapis.com/auth/drive.appfolder',
+  'https://www.googleapis.com/auth/drive.file',
   'https://www.googleapis.com/auth/drive.install',
   'email',
   'profile'
-  // Add other scopes needed by your application.
 ];
 
 
@@ -25,6 +26,11 @@ var initState = {
   apiJsLoaded: false,
   driveLoaded: false,
   realtimeLoaded: false
+};
+
+var realtimeState = {
+  documentLoaded: false,
+  appdataLoaded: false
 };
 
 /**
@@ -142,6 +148,8 @@ poker.boot.beginAppIfReady_ = function() {
   }
 
   console.log('App is ready to begin.');
+
+  poker.boot.openRealtimeApplicationData_();
   if (!window.game_id) {  // Need to create a new game.
     var request = gapi.client.drive.files.insert({
       'title': 'poker game',
@@ -192,12 +200,24 @@ poker.boot.openRealtimeModel_ = function() {
 /**
  * @private
  */
+poker.boot.openRealtimeApplicationData_ = function() {
+  gapi.drive.realtime.loadAppDataDocument(
+    poker.boot.appdataDocumentLoaded_,
+    poker.boot.initializeAppdataModel_,
+    poker.boot.realtimeError_
+  );
+};
+
+
+/**
+ * @private
+ */
 poker.boot.documentLoaded_ = function(doc) {
   console.log('File loaded successfully.');
   var modelService = new poker.modelservice(doc.getModel());
   modelService.register();
-  angular.bootstrap(document, 
-      ['timeServiceModule', 'permissionServiceModule', 'modelServiceModule', 'pokerControllers']);
+  realtimeState.documentLoaded = true;
+  poker.boot.tryBootstrapAngular();
 };
 
 
@@ -215,8 +235,48 @@ poker.boot.initializeModel_ = function(model) {
 /**
  * @private
  */
+poker.boot.appdataDocumentLoaded_ = function(doc) {
+  console.log('Appdata loaded successfully.');
+  var appdataService = new poker.appdataservice(doc.getModel());
+  appdataService.register();
+  realtimeState.appdataLoaded = true;
+  poker.boot.tryBootstrapAngular();
+};
+
+
+/**
+ * @private
+ */
+poker.boot.initializeAppdataModel_ = function(model) {
+  console.log('Initializing appdata model.');
+  var appdataService = new poker.appdataservice(model);
+  appdataService.initialize();
+  console.log('Appdata initialized.');
+};
+
+
+/**
+ * @private
+ */
 poker.boot.realtimeError_ = function(error) {
   alert('Error loading realtime model: ' + error.toString());
+};
+
+
+poker.boot.tryBootstrapAngular = function() {
+  for (var i in realtimeState) {
+    if (!realtimeState[i]) {
+      return;
+    }
+  }
+
+  console.log('bootstraping angular.');
+  angular.bootstrap(document, 
+      ['timeServiceModule', 
+       'permissionServiceModule', 
+       'modelServiceModule', 
+       'appdataServiceModule', 
+       'pokerControllers']);
 };
 
 });  // goog.scope
