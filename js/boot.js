@@ -144,9 +144,8 @@ poker.boot.beginAppIfReady_ = function() {
   console.log('App is ready to begin.');
   if (!window.game_id) {  // Need to create a new game.
     var request = gapi.client.drive.files.insert({
-      'uploadType': 'media',
       'title': 'poker game',
-      'mimeType': 'custom/mime.type'
+      'mimeType': 'application/vnd.google-apps.drive-sdk'
     });
     request.execute(poker.boot.fileCreated_);
   } else {  // Need to open existing game.
