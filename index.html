@@ -106,6 +106,44 @@
         <div class="next" ng-if="nextSmall > 0">next: {% raw %}{{nextSmall}} / {{nextBig}} <span ng-if="nextAnte > 0">/ {{nextAnte}}</span>{% endraw %}</div>
       </div>
       <div ng-controller="EditBlindController" class="blind-table-container edit-only-block">
+        <div class="favorites">
+          {% raw %}
+          <div class="favorite-button-container">
+            <div class="action-button favorite-button" ng-attr-tabindex="{{saving ? -1 : 0}}"
+                ng-class="{saving: saving}"
+                ng-click="toggleSaving(true)" on-enter-key="toggleSaving(true)"
+                title="click to save blind schema to favorites">
+              <svg viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none"/>
+                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+                    stroke="currentColor" stroke-width="1"/>
+                <path d="M0 0h24v24H0z" fill="none"/>
+              </svg>
+            </div>
+          </div>
+          <div class="favorites-input-container">
+            <div class="favorites-input" ng-class="{saving: saving}">
+              Schema name:
+              <input ng-attr-tabindex="{{saving ? 0 : -1}}" type="text" ng-model="schemaName_" 
+                  ng-required="true"></input>
+              <div ng-attr-tabindex="{{saving && schemaInputValid()}}" 
+                  class="action-button ok-button" ng-class="{valid: schemaInputValid()}"
+                  ng-click="saveSchema()" on-enter-key="saveSchema()">
+                <svg fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M0 0h24v24H0z" fill="none"/>
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+              </div>
+              <div ng-attr-tabindex="{{saving ? 0 : -1}}" class="action-button cancel-button" 
+                  ng-click="cancelSchema()" on-enter-key="cancelSchema()">
+                <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path d="M5 5 L19 19 M5 19 L19 5 Z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          {% endraw %}
+        </div>
         <table class="blind-table">
           <thead>
             <tr>
@@ -167,22 +205,6 @@
           <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
             <path d="M4 12 L20 12 M12 4 L12 20 Z"/>
           </svg>
-        </div>
-        <div class="favorites">
-          Schema name:
-          <input tabindex="0" type="text" ng-model="schemaName_" ng-required="true"></input>
-          <div class="action-button favorite-button" tabindex="0"  ng-class="{saving: saving()}"
-              ng-click="toggleFavorite()" on-enter-key="toggleFavorite()" ng-show="schemaName_"
-              title="Mark to save blind schema to favorites">
-              {% raw %}
-              <svg viewBox="0 0 24 24">
-                <path d="M0 0h24v24H0z" fill="none"/>
-                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-                    stroke="currentColor" stroke-width="1"/>
-                <path d="M0 0h24v24H0z" fill="none"/>
-              </svg>
-              {% endraw %}
-          </div>
         </div>
       </div>
       <hr/>

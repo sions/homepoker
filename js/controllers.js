@@ -299,7 +299,7 @@ controllers.controller('EditBlindController',
       ['$scope', '$rootScope', '$element', 'modelService', 'appdataService',
        function($scope, $rootScope, $element, modelService, appdataService) {
   $scope.levels = [];
-  $scope.saveFavorite = false;
+  $scope.saving = false;
 
   $scope.remove = function(index) {
     goog.array.removeAt($scope.levels, index);
@@ -312,11 +312,28 @@ controllers.controller('EditBlindController',
     } 
     $scope.levels.push(newLevel);
   };
-  $scope.toggleFavorite = function() {
-    $scope.saveFavorite = !$scope.saveFavorite;
+  var favoritesInputElement = document.querySelector('.favorites-input');
+  var schemaNameInput = document.querySelector('.favorites-input > input');
+  $scope.toggleSaving = function(value) {
+    $scope.saving = value;
   };
-  $scope.saving = function() {
-    return $scope.saveFavorite && !!$scope.schemaName_;
+  goog.events.listen(favoritesInputElement, goog.events.EventType.TRANSITIONEND, function(e) {
+    if (e.target === favoritesInputElement && $scope.saving) {
+      schemaNameInput.focus();
+    }
+  });
+  $scope.saveSchema = function() {
+    if ($scope.schemaName_) {
+      appdataService.setSchema($scope.schemaName_, $scope.levels);
+      $scope.schemaName_ = '';
+    }
+    $scope.toggleSaving(false);
+  };
+  $scope.cancelSchema = function() {
+    $scope.toggleSaving(false);
+  };
+  $scope.schemaInputValid = function() {
+    return schemaNameInput.classList.contains('ng-valid');
   };
 
   var copyValueFromItem = function(inputlement) {
@@ -367,9 +384,6 @@ controllers.controller('EditBlindController',
 
   $rootScope.$on(EVENTS.EDIT_ENDED_SAVED, function(eventName) {
     modelService.setLevels($scope.levels);
-    if ($scope.saving()) {
-      appdataService.setSchema($scope.schemaName_, $scope.levels);
-    }
   });
 }]);
 

@@ -303,7 +303,7 @@ hr {
 }
 
 .blind-table-container {
-  padding: $default-padding 0;
+  padding-bottom: $default-padding;
 }
 
 .blind-table {
@@ -442,20 +442,85 @@ hr {
   }
 }
 
-.favorites > input {
-  width: 4rem;
+.favorites {
+  overflow: hidden;
+  padding-bottom: $default-padding;
+  padding-top: $default-padding;
+  position: relative;
+  text-align: right;
+
+  .favorites-input-container {
+    position: absolute;
+    right: 0;
+    top: $default-padding;
+    z-index: 5;
+
+    .favorites-input {
+      padding-right: 16px;
+      position: relative;
+      right: -100%;
+      @include transition(all 0.25s ease-in-out);
+
+      & > div {
+        @include transform(rotate(90deg));
+        @include transition(all 0.125s ease-in-out);
+        vertical-align: middle;
+
+        &:hover, &:active, &:focus {
+          @include transform(scale(1.1));
+        }
+      }
+
+      & > input {
+        width: 4rem;
+      }
+
+      & > .ok-button {
+        @include transform(scale(0));
+
+        &.valid {
+          @include transform(scale(1));
+
+          &:hover, &:active, &:focus {
+            @include transform(scale(1.1));
+          }
+        }
+      }
+
+      &.saving {
+        @include transition(all 0.25s ease-in-out, right 0.25s 0.25s ease-in-out);
+        right: 0;
+
+        & > .cancel-button {
+          @include transform(none);
+        }
+      }
+    }
+  }
 }
 
-.favorite-button {
-  vertical-align: middle;
+.favorite-button-container {
+  display: inline-block;
+  position: relative;
 
-  & > svg {
-    fill: transparent;
-    @include transition(all 0.25s ease-in-out);
-  }
+  .favorite-button {
+    margin-right: 16px;
+    position: relative;
+    right: 0;
+    @include transition(all 0.25s ease-in-out, right 0.25s 0.25s ease-in-out);
+    vertical-align: middle;
+    z-index: 10;
 
-  &.saving > svg {
-    fill: rgb(237, 237, 73);
+    & > svg {
+      fill: rgb(237, 237, 73);
+    }
+
+    &.saving {
+      right: calc(-100% - 1px);  // 1px to account for border.
+      @include transform(rotate(90deg));
+      @include transition(all 0.25s ease-in-out);
+      z-index: 1;
+    }
   }
 }
 
@@ -469,7 +534,7 @@ button {
   overflow: hidden;
   padding: 4px;
   position: absolute;
-  right: 16px;
+  right: 12px;
   top: 8px;
 
   button {
