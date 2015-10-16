@@ -213,6 +213,12 @@ hr {
   margin: 0;
 }
 
+.vertical-line {
+  border-right: 1px solid $border-color;
+  color: $border-color;
+  margin: 0; 
+}
+
 @include keyframes(level-up) {
   0% { @include transform(none); }
   50% { @include transform(scale(1.5)); }
@@ -281,7 +287,7 @@ hr {
 }
 
 .toggle-container {
-  padding: $default-padding 0;
+  padding-bottom: $default-padding;
 }
 
 .toggle-button {
@@ -311,6 +317,40 @@ hr {
 
   .requires-edit-permission-inline-block {
     display: inline-block;
+  }
+}
+
+.blinds-player-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  & > div {
+    display: inline-block;
+    min-width: 100%;
+    flex: 1;
+  }
+
+  .vertical-line {
+    display: none;
+  }
+
+  hr {
+    width: 100%
+  }
+
+  @media screen and (min-width: $screen-lg-desktop) {
+    & > div {
+      min-width: 0;
+    }
+
+    .vertical-line {
+      display: inline-block;
+    }
+
+    hr { 
+      display: none;
+    }
   }
 }
 
