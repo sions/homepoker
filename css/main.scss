@@ -77,17 +77,9 @@ $action-button-total-size: $action-button-size + $action-button-padding * 2;
   position: relative;
 
   svg {
-    // height: $action-button-size;
     left: $action-button-padding;
-
     position: absolute;
     top: $action-button-padding;
-    // width: $action-button-size;
-
-    @media screen and (min-width: $screen-lg-desktop) {
-      // height: 32px;
-      // width: 32px;
-    }
   }
 }
 
@@ -402,7 +394,6 @@ hr {
 
   td {
     padding: 0 0.25rem;
-    width: 3.2rem;
 
     &.remove-level-button {
       cursor: pointer;
@@ -429,7 +420,6 @@ hr {
     padding-bottom: 0.25rem;
     padding-top: 0.25rem;
     position: relative;
-    width: 3.2rem;
 
     & > input {
       background: black;
