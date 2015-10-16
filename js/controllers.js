@@ -299,8 +299,14 @@ controllers.controller('EditBlindController',
       ['$scope', '$rootScope', '$element', 'modelService', 'appdataService',
        function($scope, $rootScope, $element, modelService, appdataService) {
   $scope.levels = [];
+  $scope.loadedLevels = [];
   $scope.saving = false;
+  $scope.loading = false;
 
+  $scope.getLevels = function() {
+    return $scope.loading && !goog.array.isEmpty($scope.loadedLevels) ? 
+        $scope.loadedLevels : $scope.levels;
+  }
   $scope.remove = function(index) {
     goog.array.removeAt($scope.levels, index);
   };
@@ -313,27 +319,51 @@ controllers.controller('EditBlindController',
     $scope.levels.push(newLevel);
   };
   var favoritesInputElement = document.querySelector('.favorites-input');
-  var schemaNameInput = document.querySelector('.favorites-input > input');
+  var schemaNameInput = document.querySelector('#schema-name-input');
+  var schemaLoadInput = document.querySelector('#schema-load-input');
   $scope.toggleSaving = function(value) {
     $scope.saving = value;
-  };
-  goog.events.listen(favoritesInputElement, goog.events.EventType.TRANSITIONEND, function(e) {
-    if (e.target === favoritesInputElement && $scope.saving) {
-      schemaNameInput.focus();
-    }
-  });
-  $scope.saveSchema = function() {
-    if ($scope.schemaName_) {
-      appdataService.setSchema($scope.schemaName_, $scope.levels);
+    if ($scope.saving) {
       $scope.schemaName_ = '';
     }
-    $scope.toggleSaving(false);
   };
-  $scope.cancelSchema = function() {
+  $scope.toggleLoading = function(value) {
+    $scope.loading = value;
+  };
+  goog.events.listen(favoritesInputElement, goog.events.EventType.TRANSITIONEND, function(e) {
+    if (e.target === favoritesInputElement) {
+      if ($scope.saving) {
+        schemaNameInput.focus();
+      } else if ($scope.loading) {
+        schemaLoadInput.focus();
+      }
+    }
+  });
+  $scope.ok = function() {
+    if ($scope.saving) {
+      if ($scope.schemaName_) {
+        appdataService.setSchema($scope.schemaName_, $scope.levels);
+        $scope.schemaName_ = '';
+      }
+      $scope.toggleSaving(false);
+    } else if ($scope.loading) {
+      $scope.levels = $scope.loadedLevels;
+      $scope.toggleLoading(false);
+    }
+  };
+  $scope.cancel = function() {
     $scope.toggleSaving(false);
+    $scope.toggleLoading(false);
   };
   $scope.schemaInputValid = function() {
     return schemaNameInput.classList.contains('ng-valid');
+  };
+  $scope.schemaNames = function() {
+    return appdataService.getSchemaNames();
+  };
+  $scope.loadedSchemaChanged = function() {
+    $scope.loadedLevels = $scope.schemaToLoad_ ? 
+        appdataService.getSchema($scope.schemaToLoad_) : [];
   };
 
   var copyValueFromItem = function(inputlement) {
@@ -374,12 +404,17 @@ controllers.controller('EditBlindController',
     $scope.levels[index].levelTime = (Math.floor(levelSeconds / 60) * 60 + value) * 1000;
   };
 
-  $rootScope.$on(EVENTS.EDIT_STARTED, function() {
-    $scope.levels = modelService.getLevels();
-  });
-
   $rootScope.$on(modelEvent.LEVELS_CHANGED, function(eventName, e) {
     $scope.levels = goog.array.map(e.newValue, goog.object.clone);
+  });
+
+  $rootScope.$on(EVENTS.EDIT_STARTED, function() {
+    $scope.levels = modelService.getLevels();
+    $scope.saving = false;
+    $scope.loading = false;
+    $scope.schemaName_ = '';
+    $scope.schemaToLoad_ = '';
+    $scope.loadedLevels = [];
   });
 
   $rootScope.$on(EVENTS.EDIT_ENDED_SAVED, function(eventName) {

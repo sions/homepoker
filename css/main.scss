@@ -32,6 +32,7 @@ $screen-lg-desktop: 1200px;
 $default-padding: 0.5rem;
 $border-color: rgba(255, 255, 255, 0.3);
 $button-border-color: rgba(167, 167, 167, 0.35);
+$control-background: rgba(0,0,0,0.8);
 
 @mixin action-button($defaultSize, $largeSize, $xlSize) {
   background: rgba(255,255,255,.9);
@@ -168,7 +169,7 @@ html {
 }
 
 input {
-  background: rgba(0,0,0,0.8);
+  background: $control-background;
   border-color: $button-border-color;
   padding: 0.1rem 0.125rem;
 }
@@ -178,6 +179,33 @@ input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none; 
   margin: 0; 
 }
+
+.select-wrapper {
+  display: inline-block;
+  position: relative;
+
+  &:before {
+    color: inherit;
+    content: '▼';
+    font-size: 0.6em;
+    display: block;
+    pointer-events: none;
+    position: absolute;
+    right: 0.25rem;
+    @include transform(translateY(-50%));
+    top: 50%;
+    z-index: 1;
+  }
+}
+
+select {
+  @include appearance(none);
+  background: $control-background;
+  padding-right: 1rem;
+  border-color: $button-border-color;
+  position: relative;
+}
+
 
 hr {
   border-bottom-width: 0;
@@ -308,6 +336,16 @@ hr {
 
 .blind-table {
   margin: 0 auto;
+
+  &.loading {
+    input {
+      display: none;
+    }
+
+    .field {
+      opacity: 1 !important;
+    }
+  }
 
   th, td {
     border: 1px solid $border-color;
@@ -461,6 +499,10 @@ hr {
       right: -100%;
       @include transition(all 0.25s ease-in-out);
 
+      input {
+        width: 4rem;
+      }
+
       & > div {
         @include transform(rotate(90deg));
         @include transition(all 0.125s ease-in-out);
@@ -471,9 +513,6 @@ hr {
         }
       }
 
-      & > input {
-        width: 4rem;
-      }
 
       & > .ok-button {
         @include transform(scale(0));
@@ -487,12 +526,16 @@ hr {
         }
       }
 
-      &.saving {
+      &.active {
         @include transition(all 0.25s ease-in-out, right 0.25s 0.25s ease-in-out);
         right: 0;
 
         & > .cancel-button {
           @include transform(none);
+
+          &:hover, &:active, &:focus {
+            @include transform(scale(1.1));
+          }
         }
       }
     }
@@ -503,23 +546,38 @@ hr {
   display: inline-block;
   position: relative;
 
-  .favorite-button {
+  .favorite-action-buttons {
     margin-right: 16px;
     position: relative;
     right: 0;
     @include transition(all 0.25s ease-in-out, right 0.25s 0.25s ease-in-out);
+    z-index: 10;
+
+    & > .action-button {
+      @include transition(all 0.25s ease-in-out)
+    }
+
+    &.active {
+      right: calc(-100% - 1px);  // 1px to account for border.
+      @include transition(all 0.25s ease-in-out);
+      z-index: 1;
+
+      & > .action-button {
+        @include transform(rotate(90deg));
+      }
+    }
+  }
+
+  .load-button {
+    vertical-align: middle;
+  }
+
+  .favorite-button {
     vertical-align: middle;
     z-index: 10;
 
     & > svg {
       fill: rgb(237, 237, 73);
-    }
-
-    &.saving {
-      right: calc(-100% - 1px);  // 1px to account for border.
-      @include transform(rotate(90deg));
-      @include transition(all 0.25s ease-in-out);
-      z-index: 1;
     }
   }
 }
