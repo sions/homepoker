@@ -23,6 +23,7 @@
 
 $primary-color: #fff;
 $primary-line-height: 1.5;
+$background-color: #212121;
 
 
 $screen-tablet: 480px;
@@ -30,8 +31,8 @@ $screen-desktop: 992px;
 $screen-lg-desktop: 1200px;
 
 $default-padding: 0.5rem;
-$border-color: rgba(255, 255, 255, 0.3);
-$button-border-color: rgba(167, 167, 167, 0.35);
+$border-color: rgb(75, 75, 75);
+$button-border-color: rgba(58, 58, 58, 1);
 $control-background: rgba(0,0,0,0.8);
 
 @mixin action-button($defaultSize, $largeSize, $xlSize) {
@@ -70,7 +71,6 @@ $action-button-total-size: $action-button-size + $action-button-padding * 2;
 .action-button {
   @include action-button(
       $action-button-total-size, $action-button-total-size, 48px);
-
   box-sizing: border-box;
   display: inline-block;
   padding: $action-button-padding;
@@ -84,7 +84,8 @@ $action-button-total-size: $action-button-size + $action-button-padding * 2;
 }
 
 html, body {
-  min-height: 100%
+  height: 100%;
+  width: 100%;
 }
 
 html {
@@ -99,13 +100,15 @@ html {
     font-size: 44px;
   }
 
-  background-color: #222121;
+  background-color: $background-color;
 }
 
 .vertical-layout {
   flex-direction: column;
   display: flex;
+  margin: 0;
   min-height: 100vh;
+  padding: 0 $default-padding;
 }
 
 .placeholder {
@@ -115,14 +118,14 @@ html {
 
 .canvas {
   border: 1px solid $border-color;
+  box-sizing: border-box;
   flex-grow: 0;
   @include border-radius(4px);
   margin: 0.5rem auto;
   max-width: 700px;
-  min-width: 400px;
   position: relative;
   text-align: center;
-  width: calc(100% - 1rem);
+  width: 100%;
 
   @media screen and (min-width: $screen-lg-desktop) {
     max-width: 1200px;
@@ -667,6 +670,7 @@ button {
   text-align: center;
 
   img {
+    border: 5px solid white;
     margin: $default-padding auto;
   }
 }
