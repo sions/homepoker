@@ -80,7 +80,12 @@ poker.boot.handleAuthResult_ = function(authResult) {
     poker.boot.handleAuthenticationDone_();
 
     var timeToExpiration = parseInt(authResult.expires_in);
-    goog.Timer.callOnce(poker.boot.checkAuth_, (timeToExpiration - 60) * 1000);
+    if (poker.boot.timerId_) {
+      goog.Timer.clear(poker.boot.timerId_);
+      poker.boot.timerId_ = null;
+    }
+    poker.boot.timerId_ = 
+        goog.Timer.callOnce(poker.boot.checkAuth_, (timeToExpiration - 60) * 1000);
   } else {
     // No access token could be retrieved, force the authorization flow.
     gapi.auth.authorize(
@@ -259,7 +264,16 @@ poker.boot.initializeAppdataModel_ = function(model) {
  * @private
  */
 poker.boot.realtimeError_ = function(error) {
-  alert('Error loading realtime model: ' + error.toString());
+  if (error.isFatal) {
+    alert('Fatal realtime error: ' + error.toString() + ' Click OK to reload.');
+    window.location.reload();
+  }
+
+  if (error.type == gapi.drive.realtime.ErrorType.TOKEN_REFRESH_REQUIRED) {
+    poker.boot.checkAuth_();
+  } else {
+    console.log('Non fatal realtime error: ' + error.toString());
+  }
 };
 
 
