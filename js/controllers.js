@@ -347,12 +347,22 @@ controllers.controller('EditBlindController',
       }
       $scope.toggleSaving(false);
     } else if ($scope.loading) {
-      $scope.levels = $scope.loadedLevels;
+      $scope.levels = goog.array.clone($scope.loadedLevels);
       $scope.toggleLoading(false);
     }
   };
   $scope.cancel = function() {
     $scope.toggleSaving(false);
+    $scope.toggleLoading(false);
+  };
+  $scope.trash = function() {
+    if ($scope.schemaToLoad_) {
+      var deleteSchema = window.confirm('Delete schema ' + $scope.schemaToLoad_ + '?');
+      if (deleteSchema) {
+        appdataService.deleteSchema($scope.schemaToLoad_);
+        $scope.schemaToLoad_ = '';
+      }
+    }
     $scope.toggleLoading(false);
   };
   $scope.schemaInputValid = function() {

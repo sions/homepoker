@@ -514,7 +514,8 @@ hr {
       }
 
 
-      & > .ok-button {
+      & > .ok-button,
+      & > .trash-button {
         @include transform(scale(0));
 
         &.valid {

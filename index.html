@@ -148,10 +148,18 @@
                   </option>
                 </select>
               </span>
+              <div ng-attr-tabindex="{{loading && schemaToLoad_ ? 0 : -1}}"
+                  class="action-button trash-button" ng-class="{valid: loading && schemaToLoad_}"
+                  ng-click="trash()" on-enter-key="trash()">
+                <svg fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                  <path d="M0 0h24v24H0z" fill="none"/>
+                </svg>
+              </div>
               <div ng-attr-tabindex="{{
                   (saving && schemaInputValid()) || (loading && schemaToLoad_) ? 0 : -1}}"
                   class="action-button ok-button" 
-                  ng-class="{valid: schemaInputValid() || schemaToLoad_}"
+                  ng-class="{valid: schemaInputValid() || (loading && schemaToLoad_)}"
                   ng-click="ok()" on-enter-key="ok()">
                 <svg fill="currentColor" viewBox="0 0 24 24">
                   <path d="M0 0h24v24H0z" fill="none"/>
@@ -228,12 +236,14 @@
              </tr>
           </tbody>
         </table>
-        <div ng-show="!loading" class="add-level-button" ng-click="add()" on-enter-key="add()" 
-            tabindex="0">
+        {% raw %}
+        <div class="add-level-button" ng-click="add()" on-enter-key="add()" 
+            tabindex="0" ng-attr-style="visibility: {{loading ? 'hidden' : 'visible'}}">
           <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
             <path d="M4 12 L20 12 M12 4 L12 20 Z"/>
           </svg>
         </div>
+        {% endraw %}
       </div>
       <hr/>
       <div ng-controller="PlayerController" class="players">
