@@ -222,7 +222,7 @@ hr {
   }
 
   input {
-    width: 3rem;
+    width: 2rem;
   }
 }
 
@@ -356,8 +356,13 @@ hr {
   }
 }
 
-.blind-table-container {
+.edit-blind-container {
   padding-bottom: $default-padding;
+}
+
+.blind-table-container {
+  overflow-x: scroll;
+  width: 100%;
 }
 
 .blind-table {
@@ -410,7 +415,9 @@ hr {
       }
 
       svg {
+        height: 24px;
         vertical-align: middle;
+        width: 24px;
       }
     }
   }
