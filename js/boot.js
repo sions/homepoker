@@ -179,7 +179,7 @@ poker.boot.fileCreated_ = function(response) {
     // Share with anyone with the link.
     var req = gapi.client.drive.permissions.insert({
       'fileId': window.game_id, 
-      'resource': {'role': 'reader', 'type': 'anyone', 'withLink': true}
+      'resource': {'role': 'reader', 'type': 'anyone', 'withLink': false}
     });
     req.then(poker.boot.openRealtimeModel_());
   } else {

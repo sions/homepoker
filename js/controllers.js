@@ -482,7 +482,7 @@ controllers.controller('ShareLinkController',
     if (children.length > 1) {
       children[children.length - 1].remove();
     }
-    $scope.link = permissionService.getShareLink();
+    $scope.link = window.location.href;
     if ($scope.link) {
       var newElement = document.createElement('span');
       var qrcode = new QRCode(newElement, {
