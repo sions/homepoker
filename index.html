@@ -292,6 +292,26 @@
   <audio ng-controller="LevelUpAudioController" 
       src="/res/levelup.mp3" preload="auto" type="audio/mpeg">
   </audio>
+
+  <script src="https://www.gstatic.com/firebasejs/6.3.5/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.3.5/firebase-firestore.js"></script>
+ 
+  <!-- Initialize Firebase -->
+
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyCTgkmqljl9Ho0-f7eP5g6P6BRuFJBe3gk",
+      authDomain: "homepoker-1052.firebaseapp.com",
+      databaseURL: "https://homepoker-1052.firebaseio.com",
+      projectId: "homepoker-1052",
+      storageBucket: "homepoker-1052.appspot.com",
+      messagingSenderId: "1026721110899",
+      appId: "1:1026721110899:web:94d79e72a2a18bb3"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  </script>
   
   <script type="text/javascript" src="/lib/angular-resource/angular-resource.min.js"></script>
   <script type="text/javascript" src="/lib/qrcode.js/qrcode.js"></script>
@@ -304,8 +324,8 @@
     <script>goog.require('poker.controllers');</script>
   {% endif %}
   
-  <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
-  <script type="text/javascript" src="https://apis.google.com/js/api.js?onload=handleApiLoad"></script>
+  <!-- <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script> -->
+  <!-- <script type="text/javascript" src="https://apis.google.com/js/api.js?onload=handleApiLoad"></script> -->
 </body>
 </html>
 {% endautoescape %}
