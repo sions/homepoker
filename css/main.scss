@@ -73,13 +73,21 @@ $action-button-total-size: $action-button-size + $action-button-padding * 2;
       $action-button-total-size, $action-button-total-size, 48px);
   box-sizing: border-box;
   display: inline-block;
+  
   padding: $action-button-padding;
   position: relative;
 
   svg {
+    height: $action-button-size; 
     left: $action-button-padding;
     position: absolute;
     top: $action-button-padding;
+    width: $action-button-size;
+
+    @media screen and (min-width: $screen-lg-desktop) {
+      height: 40px;
+      width: 40x;
+    }
   }
 }
 
