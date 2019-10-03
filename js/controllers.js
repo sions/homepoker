@@ -208,16 +208,16 @@ controllers.controller('PlayerController',
         modelService.getStartingChips() * $scope.playersStarted / $scope.players : 0;
   };
   
-  $rootScope.$on(modelEvent.PLAYERS_CHANGED, function(eventName, event) {
-    $scope.players = event.newValue;
+  $rootScope.$on(modelEvent.PLAYERS_CHANGED, function(eventName, newValue) {
+    $scope.players = newValue;
   });
 
-  $rootScope.$on(modelEvent.PLAYERS_STARTED_CHANGED, function(eventName, event) {
-    $scope.playersStarted = event.newValue;
+  $rootScope.$on(modelEvent.PLAYERS_STARTED_CHANGED, function(eventName, newValue) {
+    $scope.playersStarted = newValue;
   });
 
-  $rootScope.$on(modelEvent.STARTING_CHIPS_CHANGED, function(eventName, event) {
-    $scope.startingChips = event.newValue;
+  $rootScope.$on(modelEvent.STARTING_CHIPS_CHANGED, function(eventName, newValue) {
+    $scope.startingChips = newValue;
   });
 
   var playersInput = angular.element(document.querySelector('.players-field input'));
