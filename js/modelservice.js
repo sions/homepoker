@@ -17,8 +17,6 @@ poker.modelservice = function(gameId) {
   this.timeOfLastCheckpoint_ = null;
   this.running_ = false;
   this.model_ = {};
-  // TODO: handle time changes.
-  // this.processTimeEvents_();
 };
 
 
@@ -122,6 +120,7 @@ pm.createNewGame = async function() {
     [pm.PROPERTY_.PLAYERS]: 1,
     [pm.PROPERTY_.PLAYERS_STARTED]: 1,
     [pm.PROPERTY_.STARTING_CHIPS]: 1,
+    [pm.PROPERTY_.TIME_EVENTS]: [],
   };
   
   var levels = [];
@@ -131,10 +130,6 @@ pm.createNewGame = async function() {
     levels.push(pm.speculateNextLevel(levels[levels.length - 1]));
   }
   model[pm.PROPERTY_.LEVELS] = levels;
-
-  // TODO: Handle time events. Consider using firebase's transaction model to resolve it.
-  // var timeEvents = this.model_.createList();
-  // this.getRoot_().set(pm.PROPERTY_.TIME_EVENTS, timeEvents);
 
   const newGameRef = await firebase.firestore().collection('games').add(model);
   const newGameId = newGameRef.id;
@@ -153,6 +148,7 @@ pm.prototype.readInitialData = async function() {
     throw new Error('Game ID does not exist: ' + this.gameId_);
   }
   this.model_ = doc.data();
+  this.processTimeEvents_();
 };
 
 
@@ -263,17 +259,23 @@ pm.prototype.valuesChanged_ = function(doc) {
   for (let property in pm.PROPERTY_TO_EVENT_) {
     const newValue = this.model_[property];
     const oldValue = oldModel[property];
-    const valueChanged = goog.isObject(newValue) 
-        ? !goog.object.equals(newValue, oldValue) : newValue !== oldValue;
+    let valueChanged = false;
+    if (goog.isArray(newValue)) {
+      valueChanged = !goog.array.equals(newValue, oldValue);
+    } else if (goog.isObject(newValue)) {
+      valueChanged = !goog.object.equals(newValue, oldValue);
+    } else {
+      valueChanged = newValue !== oldValue;
+    }
+    if (property == pm.PROPERTY_.TIME_EVENTS && valueChanged) {
+      for (let i = oldValue.length; i < newValue.length; ++i) {
+        this.processTimeEvent_(newValue[i]);
+      }
+    }
+
     if (valueChanged) {
       this.emitEventOnRootScope_(pm.PROPERTY_TO_EVENT_[property], newValue);
     }
-  }
-
-  // TODO: Clean this up to deal with time changes.
-  timeChanged = false;
-  if (timeChanged) {
-    this.emitEventOnRootScope_(pm.EVENT.TIME_CHANGED);
   }
 };
 
@@ -300,10 +302,10 @@ pm.prototype.emitEventOnRootScope_ = function(eventType, opt_value) {
  * @private
  */
 pm.prototype.processTimeEvents_ = function() {
-  var timeEvents = this.getRoot_().get(pm.PROPERTY_.TIME_EVENTS) || [];
+  const timeEvents = this.model_[pm.PROPERTY_.TIME_EVENTS] || [];
 
-  for (var i = 0; i < timeEvents.length; ++i) {
-    var timeEvent = /** type {pm.TimeEvent} */ timeEvents.get(i);
+  for (let i = 0; i < timeEvents.length; ++i) {
+    const timeEvent = /** type {pm.TimeEvent} */ timeEvents[i];
     this.processTimeEvent_(timeEvent);
   }
 };
@@ -347,20 +349,22 @@ pm.prototype.isRunning = function() {
 
 
 pm.prototype.start = function() {
-  var timeEvent = {
-    timestamp: this.timeService.getTime(),
-    eventType: pm.TimeEventType.START
-  };
-  this.getRoot_().get(pm.PROPERTY_.TIME_EVENTS).push(timeEvent);
+  this.pushTimeEvent_(() => {
+    return {
+      timestamp: this.timeService.getTime(),
+      eventType: pm.TimeEventType.START
+    };
+  });
 };
 
 
 pm.prototype.pause = function() {
-  var timeEvent = {
-    timestamp: this.timeService.getTime(),
-    eventType: pm.TimeEventType.PAUSE
-  };
-  this.getRoot_().get(pm.PROPERTY_.TIME_EVENTS).push(timeEvent);
+  this.pushTimeEvent_(() => {
+    return {
+      timestamp: this.timeService.getTime(),
+      eventType: pm.TimeEventType.PAUSE
+    };
+  });
 };
 
 
@@ -393,12 +397,32 @@ pm.prototype.setGameTime = function(levelIndex, timeRemainingInLevelMs) {
   var timeInLevel = Math.max(0, levels[levelIndex].levelTime - timeRemainingInLevelMs);
   newTime += timeInLevel;
   
-  var timeEvent = {
-    timestamp: this.timeService.getTime(),
-    eventType: pm.TimeEventType.SET_TIME,
-    value: newTime
-  };
   this.getRoot_().get(pm.PROPERTY_.TIME_EVENTS).push(timeEvent);
+  this.pushTimeEvent_(() => {
+    return {
+      timestamp: this.timeService.getTime(),
+      eventType: pm.TimeEventType.SET_TIME,
+      value: newTime
+    };
+  });
+};
+
+
+/**
+ * Pushes a time event to the model using transactions.
+ * @param {!function():!pm.TimeEventType} eventCreator Creates the event to be pushed. May be called 
+ *     multiple times if the transaction is retried.
+ * @private
+ */
+pm.prototype.pushTimeEvent_ = function(eventCreator) {
+  const docRef = this.gameRef_();
+  firebase.firestore().runTransaction(async (transaction) => {
+    const doc = await transaction.get(docRef);
+
+    const timeEvents = doc.data()[pm.PROPERTY_.TIME_EVENTS] || [];
+    timeEvents.push(eventCreator());
+    transaction.update(docRef, {[pm.PROPERTY_.TIME_EVENTS]: timeEvents});
+  });
 };
 
 
