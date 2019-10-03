@@ -14,8 +14,9 @@ poker.permissionservice = function(fileId) {
   this.fileId_ = fileId;
   this.shareLink_ = null;
 
-  var request = gapi.client.drive.files.get({'fileId': this.fileId_});
-  request.execute(goog.bind(this.metadataResponseHandler_, this));
+  // TODO: Make permission service work with firebase auth.
+  // var request = gapi.client.drive.files.get({'fileId': this.fileId_});
+  // request.execute(goog.bind(this.metadataResponseHandler_, this));
 };
 
 

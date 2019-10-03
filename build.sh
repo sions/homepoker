@@ -16,4 +16,4 @@ lib/bower_components/google-closure-library/closure/bin/build/depswriter.py \
     --root_with_prefix="js ../../../../js/" > generated/deps.js
 
 
-scss -Ilib/bower_components --style compressed css/main.scss generated/main.css
+sass -Ilib/bower_components --style compressed css/main.scss generated/main.css

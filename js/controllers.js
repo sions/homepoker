@@ -314,7 +314,7 @@ controllers.controller('EditBlindController',
     var newLevel = poker.modelservice.DEFAULT_FIRST_LEVEL;
     if ($scope.levels.length > 0) {
       var lastLevel = $scope.levels[$scope.levels.length - 1];
-      newLevel = modelService.speculateNextLevel(lastLevel);
+      newLevel = poker.modelservice.speculateNextLevel(lastLevel);
     } 
     $scope.levels.push(newLevel);
   };
@@ -414,8 +414,8 @@ controllers.controller('EditBlindController',
     $scope.levels[index].levelTime = (Math.floor(levelSeconds / 60) * 60 + value) * 1000;
   };
 
-  $rootScope.$on(modelEvent.LEVELS_CHANGED, function(eventName, e) {
-    $scope.levels = goog.array.map(e.newValue, goog.object.clone);
+  $rootScope.$on(modelEvent.LEVELS_CHANGED, function(eventName, newValue) {
+    $scope.levels = goog.array.map(newValue, goog.object.clone);
   });
 
   $rootScope.$on(EVENTS.EDIT_STARTED, function() {

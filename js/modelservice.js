@@ -8,15 +8,17 @@ goog.scope(function() {
 
 
 /**
- * @param {!Object} model Model object, as returned by document.getModel().
+ * @param {string} gameId Represents the currently loaded game.
  * @constructor
  */
-poker.modelservice = function(model) {
-  this.model_ = model;
+poker.modelservice = function(gameId) {
+  this.gameId_ = gameId;
   this.timeToLastCheckpoint_ = 0;
   this.timeOfLastCheckpoint_ = null;
   this.running_ = false;
-  this.processTimeEvents_();
+  this.model_ = {};
+  // TODO: handle time changes.
+  // this.processTimeEvents_();
 };
 
 
@@ -101,20 +103,64 @@ pm.PROPERTY_ = {
 };
 
 
-pm.prototype.initialize = function() {
-  this.setPlayers(1);
-  this.setPlayersStarted(1);
-  this.setStartingChips(1)
+/**
+ * @type {!Object<!pm.PROPERTY,!pm.EVENT>}
+ * @private
+ */
+pm.PROPERTY_TO_EVENT_ = {
+  [pm.PROPERTY_.PLAYERS]: pm.EVENT.PLAYERS_CHANGED,
+  [pm.PROPERTY_.PLAYERS_STARTED]: pm.EVENT.PLAYERS_STARTED_CHANGED,
+  [pm.PROPERTY_.STARTING_CHIPS]: pm.EVENT.STARTING_CHIPS_CHANGED,
+  [pm.PROPERTY_.LEVELS]: pm.EVENT.LEVELS_CHANGED,
+  [pm.PROPERTY_.TIME_EVENTS]: pm.EVENT.TIME_CHANGED,
+};
+
+
+pm.createNewGame = async function() {
+  console.log('Initializing model.');
+  model = {
+    [pm.PROPERTY_.PLAYERS]: 1,
+    [pm.PROPERTY_.PLAYERS_STARTED]: 1,
+    [pm.PROPERTY_.STARTING_CHIPS]: 1,
+  };
+  
   var levels = [];
   // Pre-populate some levels.
   levels.push(pm.DEFAULT_FIRST_LEVEL);
   for (var i = 0; i < 5; ++i) {
-    levels.push(this.speculateNextLevel(levels[levels.length - 1]));
+    levels.push(pm.speculateNextLevel(levels[levels.length - 1]));
   }
-  this.getRoot_().set(pm.PROPERTY_.LEVELS, levels);
+  model[pm.PROPERTY_.LEVELS] = levels;
 
-  var timeEvents = this.model_.createList();
-  this.getRoot_().set(pm.PROPERTY_.TIME_EVENTS, timeEvents);
+  // TODO: Handle time events. Consider using firebase's transaction model to resolve it.
+  // var timeEvents = this.model_.createList();
+  // this.getRoot_().set(pm.PROPERTY_.TIME_EVENTS, timeEvents);
+
+  const newGameRef = await firebase.firestore().collection('games').add(model);
+  const newGameId = newGameRef.id;
+  console.log('Model initialized: ' + newGameId);
+
+  return newGameId;
+};
+
+
+/**
+ * Reads initial data from the database.
+ */
+pm.prototype.readInitialData = async function() {
+  const doc = await this.gameRef_().get();
+  if (!doc.exists) {
+    throw new Error('Game ID does not exist: ' + this.gameId_);
+  }
+  this.model_ = doc.data();
+};
+
+
+/**
+ * @private
+ */
+pm.prototype.gameRef_ = function() {
+  return firebase.firestore().collection('games').doc(this.gameId_);
 };
 
 
@@ -126,19 +172,9 @@ pm.prototype.register = function() {
     thisModel.$rootScope = $rootScope;
     thisModel.timeService = timeService;
 
-    thisModel.getRoot_().addEventListener(
-        gapi.drive.realtime.EventType.OBJECT_CHANGED, 
-        goog.bind(thisModel.valuesChanged_, thisModel));
+    thisModel.gameRef_().onSnapshot(goog.bind(thisModel.valuesChanged_, thisModel));
     return thisModel; 
   }]);
-};
-
-
-/**
- * @private
- */
-pm.prototype.getRoot_ = function() {
-  return this.model_.getRoot();
 };
 
 
@@ -146,7 +182,7 @@ pm.prototype.getRoot_ = function() {
  * @return {number}
  */
 pm.prototype.getPlayers = function() {
-  return this.getRoot_().get(pm.PROPERTY_.PLAYERS);
+  return this.model_[pm.PROPERTY_.PLAYERS];
 };
 
 
@@ -162,7 +198,7 @@ pm.prototype.setPlayers = function(count) {
  * @return {number}
  */
 pm.prototype.getPlayersStarted = function() {
-  return this.getRoot_().get(pm.PROPERTY_.PLAYERS_STARTED);
+  return this.model_[pm.PROPERTY_.PLAYERS_STARTED];
 };
 
 
@@ -177,7 +213,7 @@ pm.prototype.setPlayersStarted = function(count) {
  * @return {number}
  */
 pm.prototype.getStartingChips = function() {
-  return this.getRoot_().get(pm.PROPERTY_.STARTING_CHIPS);
+  return this.model_[pm.PROPERTY_.STARTING_CHIPS];
 };
 
 
@@ -193,7 +229,7 @@ pm.prototype.setStartingChips = function(count) {
  * @return {!Array{pm.Level}}
  */
 pm.prototype.getLevels = function() {
-  return goog.array.map(this.getRoot_().get(pm.PROPERTY_.LEVELS) || [], goog.object.clone);
+  return goog.array.map(this.model_[pm.PROPERTY_.LEVELS] || [], goog.object.clone);
 };
 
 /**
@@ -207,7 +243,7 @@ pm.prototype.setLevels = function(levels) {
 /**
  * @param {!pm.Level} level
  */
-pm.prototype.speculateNextLevel = function(level) {
+pm.speculateNextLevel = function(level) {
   return {
     small: level.small * 2,
     big: level.big * 2,
@@ -218,35 +254,20 @@ pm.prototype.speculateNextLevel = function(level) {
 
 
 /**
- * @param {!Object} event
+ * @param {!Object} doc
  */
-pm.prototype.valuesChanged_ = function(event) {
-  var timeChanged = false;
+pm.prototype.valuesChanged_ = function(doc) {
+  const oldModel = this.model_;
+  this.model_ = doc.data();
   
-  for (var i = 0, e; e = event.events[i]; i++) {
-    if (e.type === gapi.drive.realtime.EventType.VALUE_CHANGED) {
-      console.log('values changed. property: ' + e.property + ' newValue: ' + e.newValue);
-      switch (e.property) {
-        case pm.PROPERTY_.PLAYERS:
-          this.emitEventOnRootScope_(pm.EVENT.PLAYERS_CHANGED, e);
-          break;
-        case pm.PROPERTY_.PLAYERS_STARTED:
-          this.emitEventOnRootScope_(pm.EVENT.PLAYERS_STARTED_CHANGED, e);
-          break;
-        case pm.PROPERTY_.STARTING_CHIPS:
-          this.emitEventOnRootScope_(pm.EVENT.STARTING_CHIPS_CHANGED, e);
-          break;
-        case pm.PROPERTY_.LEVELS:
-          this.emitEventOnRootScope_(pm.EVENT.LEVELS_CHANGED, e);
-          break
-      }
-    } else if (e.type === gapi.drive.realtime.EventType.VALUES_ADDED &&
-          e.target.id === this.getRoot_().get(pm.PROPERTY_.TIME_EVENTS).id) {
-      goog.array.forEach(e.values, this.processTimeEvent_, this);
-      timeChanged = true;
+  for (let property in pm.PROPERTY_TO_EVENT_) {
+    if (!goog.object.equals(this.model_[property], oldModel[property])) {
+      this.emitEventOnRootScope_(pm.PROPERTY_TO_EVENT_[property], this.model_[property]);
     }
   }
 
+  // TODO: Clean this up to deal with time changes.
+  timeChanged = false;
   if (timeChanged) {
     this.emitEventOnRootScope_(pm.EVENT.TIME_CHANGED);
   }

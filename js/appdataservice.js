@@ -6,14 +6,12 @@ goog.require('poker.modelservice');
 
 goog.scope(function() {
 
-
+// TODO: Make this work with firebase.
 
 /**
- * @param {!Object} model Model object, as returned by gapi.drive.realtime.loadAppDataDocument().
  * @constructor
  */
-poker.appdataservice = function(model) {
-  this.model_ = model;
+poker.appdataservice = function() {
 };
 
 
@@ -66,10 +64,13 @@ pa.prototype.getSchemas_ = function() {
  * @return {!Array{string}}
  */
 pa.prototype.getSchemaNames = function() {
-  var schemas = this.getSchemas_();
-  var keys = schemas.keys();
-  goog.array.sort(keys);
-  return keys;
+  // TODO: Make this work with firebase;
+  return [];
+
+  // var schemas = this.getSchemas_();
+  // var keys = schemas.keys();
+  // goog.array.sort(keys);
+  // return keys;
 };
 
 

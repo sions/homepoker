@@ -29,7 +29,7 @@ See the README file for directions. You'll need python 2.7 and [pip 1.4 or later
    ```
 6. For auto update of CSS run:
    ```
-   scss -Ilib/bower_components --style compressed --watch css/main.scss:generated/main.css
+   sass -Ilib/bower_components --style compressed --watch css/main.scss:generated/main.css
    ```
 
 Visit the application [http://localhost:8080](http://localhost:8080)
