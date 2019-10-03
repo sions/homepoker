@@ -6,12 +6,10 @@ goog.scope(function() {
 
 
 /**
- * @param {string} fileId
  * @constructor
  */
-poker.permissionservice = function(fileId) {
-  this.editable_ = null;
-  this.fileId_ = fileId;
+poker.permissionservice = function() {
+  this.editable_ = true;
   this.shareLink_ = null;
 
   // TODO: Make permission service work with firebase auth.

@@ -190,7 +190,7 @@ pm.prototype.getPlayers = function() {
  * @param {number} count
  */
 pm.prototype.setPlayers = function(count) {
-  this.getRoot_().set(pm.PROPERTY_.PLAYERS, count);
+  this.gameRef_().update({[pm.PROPERTY_.PLAYERS]: count});
 };
 
 
@@ -206,7 +206,7 @@ pm.prototype.getPlayersStarted = function() {
  * @param {number} count
  */
 pm.prototype.setPlayersStarted = function(count) {
-  this.getRoot_().set(pm.PROPERTY_.PLAYERS_STARTED, count);
+  this.gameRef_().update({[pm.PROPERTY_.PLAYERS_STARTED]: count});
 };
 
 /**
@@ -221,7 +221,7 @@ pm.prototype.getStartingChips = function() {
  * @param {number} count
  */
 pm.prototype.setStartingChips = function(count) {
-  this.getRoot_().set(pm.PROPERTY_.STARTING_CHIPS, count);
+  this.gameRef_().update({[pm.PROPERTY_.STARTING_CHIPS]: count});
 };
 
 
@@ -236,7 +236,7 @@ pm.prototype.getLevels = function() {
  * @param {!Array{pm.Level}} levels
  */
 pm.prototype.setLevels = function(levels) {
-  this.getRoot_().set(pm.PROPERTY_.LEVELS, levels);
+  this.gameRef_().update({[pm.PROPERTY_.LEVELS]: levels});
 };
 
 
@@ -261,8 +261,12 @@ pm.prototype.valuesChanged_ = function(doc) {
   this.model_ = doc.data();
   
   for (let property in pm.PROPERTY_TO_EVENT_) {
-    if (!goog.object.equals(this.model_[property], oldModel[property])) {
-      this.emitEventOnRootScope_(pm.PROPERTY_TO_EVENT_[property], this.model_[property]);
+    const newValue = this.model_[property];
+    const oldValue = oldModel[property];
+    const valueChanged = goog.isObject(newValue) 
+        ? !goog.object.equals(newValue, oldValue) : newValue !== oldValue;
+    if (valueChanged) {
+      this.emitEventOnRootScope_(pm.PROPERTY_TO_EVENT_[property], newValue);
     }
   }
 
