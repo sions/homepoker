@@ -82,7 +82,8 @@
       </div>
       <div ng-controller="StartPauseController" 
           class="toggle-container view-only requires-edit-permission">
-        <div class="toggle-button" ng-click="toggle()" on-enter-key="toggle()" tabindex="0">
+        <div id="play-btn" class="toggle-button" ng-click="toggle()" on-enter-key="toggle()" 
+            tabindex="0">
           <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="0px">
             <polygon fill="currentColor" points="3,12 17,4 17,20 3,12">
               <animate id="toPlay1" begin="indefinite" attributeName="points" dur="500ms" to="3,12 17,4 17,20 3,12" fill="freeze" />

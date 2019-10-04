@@ -68,6 +68,7 @@ controllers.controller('StartPauseController',
   var toPlayElements = 
       [document.getElementById('toPlay1'), document.getElementById('toPlay2')];
   var svg = $element.find('svg')[0];
+  const button = $element[0].querySelector('#play-btn');
 
   var animate = function(element) {
     element.beginElement();
@@ -86,6 +87,7 @@ controllers.controller('StartPauseController',
 
       $scope.running = newRunning;
     }
+    button.classList.remove('loading');
   };
 
   $scope.running = false;
@@ -93,6 +95,7 @@ controllers.controller('StartPauseController',
   $rootScope.$on(modelEvent.TIME_CHANGED, updateRunningState);
 
   $scope.toggle = function() {
+    button.classList.add('loading');
     if ($scope.running) {
       modelService.pause();  
     } else {
