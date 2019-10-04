@@ -1,17 +1,18 @@
 goog.provide('poker.appdataservice');
 
 goog.require('goog.array');
+goog.require('goog.asserts');
 goog.require('goog.object');
 goog.require('poker.modelservice');
 
 goog.scope(function() {
 
-// TODO: Make this work with firebase.
-
 /**
  * @constructor
  */
 poker.appdataservice = function() {
+  this.uid_ = goog.asserts.assert(firebase.auth().currentUser.uid);
+  this.schemas_ = {};
 };
 
 
@@ -28,35 +29,44 @@ pa.PROPERTY_ = {
 };
 
 
-pa.prototype.initialize = function() {
-  this.getRoot_().set(pa.PROPERTY_.SCHEMAS, this.model_.createMap());
-};
-
-
 pa.prototype.register = function() {
   var service = angular.module('appdataServiceModule', []);
   var thisModel = this;
   service.factory('appdataService', ['$rootScope', function($rootScope) { 
     thisModel.$rootScope = $rootScope;
+    thisModel.userRef_().onSnapshot(goog.bind(thisModel.valuesChanged_, thisModel));
     return thisModel; 
   }]);
 };
 
 
-/**
- * @private
- */
-pa.prototype.getRoot_ = function() {
-  return this.model_.getRoot();
+pa.prototype.initialize = async function() {
+  const doc = await this.userRef_().get();
+  if (!doc.exists) {
+    await this.userRef_().set({
+      [pa.PROPERTY_.SCHEMAS]: [],
+    });
+    return;
+  }
+
+  this.schemas_ = doc.data()[pa.PROPERTY_.SCHEMAS];
 };
 
 
 /**
- * @return {!CollaborativeMap.<string, !Array<ms.Level>>}
+ * @private
+ */
+pa.prototype.userRef_ = function () {
+ return firebase.firestore().collection('games').doc(this.uid_);
+}
+
+
+/**
+ * @return {!Object.<string, !Array<ms.Level>>}
  * @private
  */
 pa.prototype.getSchemas_ = function() {
-  return this.getRoot_().get(pa.PROPERTY_.SCHEMAS);
+  return this.schemas_;
 };
 
 
@@ -64,13 +74,12 @@ pa.prototype.getSchemas_ = function() {
  * @return {!Array{string}}
  */
 pa.prototype.getSchemaNames = function() {
-  // TODO: Make this work with firebase;
-  return [];
-
-  // var schemas = this.getSchemas_();
-  // var keys = schemas.keys();
-  // goog.array.sort(keys);
-  // return keys;
+  const names = [];
+  for (let schemaName in this.schemas_) {
+    names.push(schemaName); 
+  }
+  goog.array.sort(names);
+  return names;
 };
 
 
@@ -79,7 +88,7 @@ pa.prototype.getSchemaNames = function() {
  * @return {!Array<ms.Level>}
  */
 pa.prototype.getSchema = function(name) {
-  return this.getSchemas_().get(name);
+  return this.schemas_[name];
 };
 
 
@@ -88,7 +97,9 @@ pa.prototype.getSchema = function(name) {
  * @param {!Array<ms.Level>}
  */
 pa.prototype.setSchema = function(name, levels) {
-  this.getSchemas_().set(name, levels);
+  const newSchemas = goog.object.clone(this.schemas_);
+  newSchemas[name] = levels;
+  this.userRef_().update({[pa.PROPERTY_.SCHEMAS]: newSchemas});
 };
 
 
@@ -96,8 +107,17 @@ pa.prototype.setSchema = function(name, levels) {
  * @param {string} name
  */
 pa.prototype.deleteSchema = function(name) {
-  this.getSchemas_()['delete'](name);
+  const newSchemas = goog.object.clone(this.schemas_);
+  delete newSchemas[name];
+  this.userRef_().update({[pa.PROPERTY_.SCHEMAS]: newSchemas});
 };
 
+
+/**
+ * @param {string} name
+ */
+pa.prototype.valuesChanged_ = function(doc) {
+  this.schemas_ = doc.data()[pa.PROPERTY_.SCHEMAS];
+};
 
 });  // goog.scope

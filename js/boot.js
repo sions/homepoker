@@ -46,6 +46,7 @@ poker.boot.startApp = async function() {
   permssionService.register();
 
   const appdataservice = new poker.appdataservice();
+  await appdataservice.initialize();
   appdataservice.register();
 
   poker.boot.bootstrapAngular();
