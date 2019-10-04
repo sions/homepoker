@@ -11,26 +11,22 @@ goog.require('poker.timeservice');
 goog.scope(function() {
 
 
-var initState = {
-  gapiLoaded: false,
-  authorized: false,
-  apiJsLoaded: false,
-  driveLoaded: false,
-  realtimeLoaded: false
-};
-
-var realtimeState = {
-  documentLoaded: false,
-  appdataLoaded: false
-};
-
 /**
  * Called when the client library is loaded.
  */
 poker.boot.startApp = async function() {
-  // TODO: Do auth.
+  const authResult = await firebase.auth().getRedirectResult();
+  if (!authResult.user && !firebase.auth().currentUser) {
+    console.info('User not logged in. Signing with redirect.')
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithRedirect(provider);
+    return;
+  }
 
-  var timeService = new poker.timeservice();
+  console.info('User signed in (uid=%s, email=%s)', firebase.auth().currentUser.uid, 
+      firebase.auth().currentUser.email);
+
+  const timeService = new poker.timeservice();
   timeService.register();
 
   let modelService;
@@ -45,8 +41,6 @@ poker.boot.startApp = async function() {
   modelService = new poker.modelservice(window.game_id);
   await modelService.readInitialData();
   modelService.register();
-
-  // TODO: Read initial game data.
 
   const permssionService = new poker.permissionservice(window.game_id);
   permssionService.register();
