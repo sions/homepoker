@@ -9,7 +9,8 @@ lib/bower_components/google-closure-library/closure/bin/build/closurebuilder.py 
     --namespace="poker.controllers" \
     --output_mode=compiled \
     --output_file="generated/compiled.js" \
-    --compiler_jar="compiler.jar"
+    --compiler_jar="compiler.jar" \
+    --compiler_flags=--language_in=ECMASCRIPT_2017
  
 
 lib/bower_components/google-closure-library/closure/bin/build/depswriter.py \
