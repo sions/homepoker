@@ -397,7 +397,6 @@ pm.prototype.setGameTime = function(levelIndex, timeRemainingInLevelMs) {
   var timeInLevel = Math.max(0, levels[levelIndex].levelTime - timeRemainingInLevelMs);
   newTime += timeInLevel;
   
-  this.getRoot_().get(pm.PROPERTY_.TIME_EVENTS).push(timeEvent);
   this.pushTimeEvent_(() => {
     return {
       timestamp: this.timeService.getTime(),
