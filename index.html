@@ -6,7 +6,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/generated/main.css">
-  <link href='https://fonts.googleapis.com/css?family=Orbitron|Josefin+Slab' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Orbitron|Josefin+Slab|Material+Icons' 
+      rel='stylesheet' type='text/css'>
   <link rel="shortcut icon" type="image/png" href="/res/kpoker.png"/>
   <script type="text/javascript">
     window.game_id = '{{ game_id if game_id else null }}';
@@ -21,23 +22,15 @@
         {% raw %}
         <div ng-attr-tabindex="{{editing ? -1 : 0}}" class="action-button edit-button" 
             ng-click="edit()" on-enter-key="edit()">
-          <svg fill="currentColor" viewBox="0 0 24 24">
-            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-            <path d="M0 0h24v24H0z" fill="none"/>
-          </svg>
+          <i class="material-icons">edit</i>
         </div>
         <div ng-attr-tabindex="{{editing ? 0 : -1}}" class="action-button ok-button" 
             ng-click="ok()" on-enter-key="ok()">
-          <svg fill="currentColor" viewBox="0 0 24 24">
-            <path d="M0 0h24v24H0z" fill="none"/>
-            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-          </svg>
+          <i class="material-icons">check</i>
         </div>
         <div ng-attr-tabindex="{{editing ? 0 : -1}}" class="action-button cancel-button" 
             ng-click="cancel()" on-enter-key="cancel()">
-          <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path d="M5 5 L19 19 M5 19 L19 5 Z"/>
-          </svg>
+          <i class="material-icons">close</i>
         </div>
         {% endraw %}
       </div>
@@ -106,10 +99,7 @@
                   ng-class="{loading: loading}"
                   ng-click="toggleLoading(true)" on-enter-key="toggleLoading(true)"
                   title="click to load a blind schema from favorites">
-                <svg viewBox="0 0 24 24">
-                  <path d="M0 0h24v24H0z" fill="none"/>
-                  <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/>
-                </svg>
+                <i class="material-icons">cloud</i>
               </div>
               <div class="action-button favorite-button" ng-attr-tabindex="{{saving ? -1 : 0}}"
                   ng-class="{saving: saving}"
@@ -143,26 +133,18 @@
               <div ng-attr-tabindex="{{loading && schemaToLoad_ ? 0 : -1}}"
                   class="action-button trash-button" ng-class="{valid: loading && schemaToLoad_}"
                   ng-click="trash()" on-enter-key="trash()" ng-show="!saving">
-                <svg fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                  <path d="M0 0h24v24H0z" fill="none"/>
-                </svg>
+                <i class="material-icons">delete</i>
               </div>
               <div ng-attr-tabindex="{{
                   (saving && schemaInputValid()) || (loading && schemaToLoad_) ? 0 : -1}}"
                   class="action-button ok-button" 
                   ng-class="{valid: schemaInputValid() || (loading && schemaToLoad_)}"
                   ng-click="ok()" on-enter-key="ok()">
-                <svg fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M0 0h24v24H0z" fill="none"/>
-                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                </svg>
+                <i class="material-icons">check</i>
               </div>
               <div ng-attr-tabindex="{{saving || loading ? 0 : -1}}" class="action-button cancel-button" 
                   ng-click="cancel()" on-enter-key="cancel()">
-                <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path d="M5 5 L19 19 M5 19 L19 5 Z"/>
-                </svg>
+                <i class="material-icons">close</i>
               </div>
             </div>
           </div>
