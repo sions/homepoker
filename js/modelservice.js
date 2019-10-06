@@ -114,7 +114,7 @@ pm.PROPERTY_TO_EVENT_ = {
 };
 
 
-pm.createNewGame = async function() {
+pm.createNewGame = async function(startingLevels = undefined) {
   console.log('Initializing model.');
   model = {
     [pm.PROPERTY_.PLAYERS]: 1,
@@ -123,12 +123,18 @@ pm.createNewGame = async function() {
     [pm.PROPERTY_.TIME_EVENTS]: [],
   };
   
-  var levels = [];
-  // Pre-populate some levels.
-  levels.push(pm.DEFAULT_FIRST_LEVEL);
-  for (var i = 0; i < 5; ++i) {
-    levels.push(pm.speculateNextLevel(levels[levels.length - 1]));
+  let levels = [];
+
+  if (!startingLevels) {
+      // Pre-populate some levels.
+    levels.push(pm.DEFAULT_FIRST_LEVEL);
+    for (let i = 0; i < 5; ++i) {
+      levels.push(pm.speculateNextLevel(levels[levels.length - 1]));
+    }  
+  } else {
+    levels = startingLevels;
   }
+  
   model[pm.PROPERTY_.LEVELS] = levels;
 
   const newGameRef = await firebase.firestore().collection('games').add(model);

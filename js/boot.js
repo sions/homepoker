@@ -29,9 +29,19 @@ poker.boot.startApp = async function() {
   const timeService = new poker.timeservice();
   timeService.register();
 
+  const appdataservice = new poker.appdataservice();
+  await appdataservice.initialize();
+  appdataservice.register();
+
+  let startingLevels = undefined;
+  const lastUsedSchema = appdataservice.getLastUsedSchema();
+  if (lastUsedSchema) {
+    startingLevels = appdataservice.getSchema(lastUsedSchema);
+  }
+
   let modelService;
   if (!window.game_id) {  // Need to create a new game.
-    const newGameId = await poker.modelservice.createNewGame();
+    const newGameId = await poker.modelservice.createNewGame(startingLevels);
     modelService = new poker.modelservice(newGameId);
     
     window.game_id = newGameId;
@@ -44,10 +54,6 @@ poker.boot.startApp = async function() {
 
   const permssionService = new poker.permissionservice(window.game_id);
   permssionService.register();
-
-  const appdataservice = new poker.appdataservice();
-  await appdataservice.initialize();
-  appdataservice.register();
 
   poker.boot.bootstrapAngular();
 };

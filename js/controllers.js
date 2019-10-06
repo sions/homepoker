@@ -377,6 +377,9 @@ controllers.controller('EditBlindController',
   $scope.loadedSchemaChanged = function() {
     $scope.loadedLevels = $scope.schemaToLoad_ ? 
         appdataService.getSchema($scope.schemaToLoad_) : [];
+    if ($scope.schemaToLoad_) {
+       appdataService.setLastUsedSchema($scope.schemaToLoad_);
+    }
   };
 
   var copyValueFromItem = function(inputlement) {

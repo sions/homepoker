@@ -13,6 +13,7 @@ goog.scope(function() {
 poker.appdataservice = function() {
   this.uid_ = goog.asserts.assert(firebase.auth().currentUser.uid);
   this.schemas_ = {};
+  this.lastUsedSchema_ = '';
 };
 
 
@@ -25,7 +26,8 @@ var ms = poker.modelservice;
  * @private
  */
 pa.PROPERTY_ = {
-  SCHEMAS: 'schemas'
+  SCHEMAS: 'schemas',
+  LAST_USED_SCHEMA: 'lastUsedSchema'
 };
 
 
@@ -50,6 +52,7 @@ pa.prototype.initialize = async function() {
   }
 
   this.schemas_ = doc.data()[pa.PROPERTY_.SCHEMAS];
+  this.lastUsedSchema_ = doc.data()[pa.PROPERTY_.LAST_USED_SCHEMA];
 };
 
 
@@ -118,6 +121,23 @@ pa.prototype.deleteSchema = function(name) {
  */
 pa.prototype.valuesChanged_ = function(doc) {
   this.schemas_ = doc.data()[pa.PROPERTY_.SCHEMAS];
+  this.lastUsedSchema_ = doc.data()[pa.PROPERTY_.LAST_USED_SCHEMA];
+};
+
+/**
+ * @param {string} schema
+ */
+pa.prototype.setLastUsedSchema = function(schema) {
+  this.userRef_().update({
+      [pa.PROPERTY_.LAST_USED_SCHEMA]: schema,
+    });
+};
+
+/**
+ * @return {string} 
+ */
+pa.prototype.getLastUsedSchema = function(schema) {
+  return this.lastUsedSchema_;
 };
 
 });  // goog.scope
