@@ -22,15 +22,15 @@
         {% raw %}
         <div ng-attr-tabindex="{{editing ? -1 : 0}}" class="action-button edit-button" 
             ng-click="edit()" on-enter-key="edit()">
-          <i class="material-icons">edit</i>
+          <i class="material-icons action-button-icon">edit</i>
         </div>
         <div ng-attr-tabindex="{{editing ? 0 : -1}}" class="action-button ok-button" 
             ng-click="ok()" on-enter-key="ok()">
-          <i class="material-icons">check</i>
+          <i class="material-icons action-button-icon">check</i>
         </div>
         <div ng-attr-tabindex="{{editing ? 0 : -1}}" class="action-button cancel-button" 
             ng-click="cancel()" on-enter-key="cancel()">
-          <i class="material-icons">close</i>
+          <i class="material-icons action-button-icon">close</i>
         </div>
         {% endraw %}
       </div>
@@ -99,7 +99,7 @@
                   ng-class="{loading: loading}"
                   ng-click="toggleLoading(true)" on-enter-key="toggleLoading(true)"
                   title="click to load a blind schema from favorites">
-                <i class="material-icons">cloud</i>
+                <i class="material-icons action-button-icon">cloud</i>
               </div>
               <div class="action-button favorite-button" ng-attr-tabindex="{{saving ? -1 : 0}}"
                   ng-class="{saving: saving}"
@@ -133,18 +133,18 @@
               <div ng-attr-tabindex="{{loading && schemaToLoad_ ? 0 : -1}}"
                   class="action-button trash-button" ng-class="{valid: loading && schemaToLoad_}"
                   ng-click="trash()" on-enter-key="trash()" ng-show="!saving">
-                <i class="material-icons">delete</i>
+                <i class="material-icons action-button-icon">delete</i>
               </div>
               <div ng-attr-tabindex="{{
                   (saving && schemaInputValid()) || (loading && schemaToLoad_) ? 0 : -1}}"
                   class="action-button ok-button" 
                   ng-class="{valid: schemaInputValid() || (loading && schemaToLoad_)}"
                   ng-click="ok()" on-enter-key="ok()">
-                <i class="material-icons">check</i>
+                <i class="material-icons action-button-icon">check</i>
               </div>
               <div ng-attr-tabindex="{{saving || loading ? 0 : -1}}" class="action-button cancel-button" 
                   ng-click="cancel()" on-enter-key="cancel()">
-                <i class="material-icons">close</i>
+                <i class="material-icons action-button-icon">close</i>
               </div>
             </div>
           </div>
@@ -202,10 +202,7 @@
                   {% raw %}
                   <td ng-click="remove($index)" class="remove-level-button" tabindex="0" 
                       ng-attr-style="visibility: {{loading ? 'hidden' : 'visible'}}">
-                    <svg viewBox="0 0 24 24" stroke="currentColor" 
-                        stroke-width="2">
-                      <path d="M4 4 L20 20 M4 20 L20 4 Z"/>
-                    </svg>
+                    <i class="material-icons action-button-icon">close</i>
                   </td>
                   {% endraw %}
                </tr>
@@ -215,9 +212,7 @@
         {% raw %}
         <div class="add-level-button" ng-click="add()" on-enter-key="add()" 
             tabindex="0" ng-attr-style="visibility: {{loading ? 'hidden' : 'visible'}}">
-          <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-            <path d="M4 12 L20 12 M12 4 L12 20 Z"/>
-          </svg>
+          <i class="material-icons action-button-icon">add</i>
         </div>
         {% endraw %}
       </div>
@@ -245,10 +240,7 @@
             <div class="action-button remove-player-button view-only 
                 requires-edit-permission-inline-block" 
                 ng-if="players > 0" ng-click="manDown()" on-enter-key="manDown()" tabindex="0">
-              <svg fill="currentColor" viewBox="0 0 24 24">
-                <path d="M0 0h24v24H0z" fill="none"/>
-                <path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v1.91l.01.01L1 14c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/>
-              </svg>
+              <i class="material-icons action-button-icon">thumb_down</i>  
             </div>
             <span class="players-started-field">
               (started:

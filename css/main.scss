@@ -38,18 +38,19 @@ $control-background: rgba(0,0,0,0.8);
 @mixin action-button($defaultSize, $largeSize, $xlSize) {
   background: rgba(255,255,255,.9);
   @include border-radius(50%);
-  border: 1px solid rgba(0,0,0,.65);
   @include box-shadow(1px 1px 1px rgba(0,0,0,.5));
   color: black;
   cursor: pointer;
   height: $defaultSize;
-  @include transition(all 0.25s ease-in-out);
   text-align: center;
   width: $defaultSize;
 
   &:hover, &:active, &:focus {
     background: rgba(255,255,255, 0.75);
     outline: none;
+  }
+
+  &:hover:after {
     @include transform(scale(1.1));
   }
 
@@ -64,13 +65,19 @@ $control-background: rgba(0,0,0,0.8);
   }
 }
 
+.action-button-icon {
+  position: relative;
+  z-index: 10;
+}
+
 $action-button-size: 24px;
 $action-button-padding: 4px;
+$action-button-large-size: 48px;
 $action-button-total-size: $action-button-size + $action-button-padding * 2;
 
 .action-button {
   @include action-button(
-      $action-button-total-size, $action-button-total-size, 48px);
+      $action-button-total-size, $action-button-total-size, $action-button-large-size);
   box-sizing: border-box;
   display: inline-block;
   
@@ -83,11 +90,39 @@ $action-button-total-size: $action-button-size + $action-button-padding * 2;
     position: absolute;
     top: $action-button-padding;
     width: $action-button-size;
+    z-index: 10;
 
     @media screen and (min-width: $screen-lg-desktop) {
       height: 40px;
-      width: 40x;
+      width: 40px;
     }
+  }
+
+  @media screen and (min-width: $screen-lg-desktop) {
+    .action-button-icon {
+      font-size: $action-button-large-size - 2 * $action-button-padding;
+    }
+  }
+
+  &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    z-index: 10;
+    pointer-events: none;
+    border-radius: inherit;
+    border: 1px solid rgba(0,0,0,.65);
+    box-shadow: inherit;
+    box-sizing: border-box;
+    @include transition(all 0.25s ease-in-out);
+    z-index: 5;
   }
 }
 
@@ -333,7 +368,7 @@ hr {
   }
 
   .requires-edit-permission-inline-block {
-    display: inline-block;
+    display: inline-flex;
   }
 }
 
@@ -437,18 +472,15 @@ hr {
     &.remove-level-button {
       cursor: pointer;
       color: rgb(128, 128, 128);
-      height: 24px;
-      width: 24px;
+      vertical-align: middle;
 
       &:hover, &:focus, &:active {
         color: rgb(255, 255, 255);
         outline: 0;
       }
 
-      svg {
-        height: 24px;
-        vertical-align: middle;
-        width: 24px;
+      .action-button-icon {
+        display: block;
       }
     }
   }
@@ -506,11 +538,16 @@ hr {
 }
 
 .add-level-button {
-  @include action-button(24px, 32px, 48px);
+  @include action-button(32px, 32px, 48px);
+  align-items: center;
+  display: flex;
+  justify-content: center;
   margin: $default-padding auto;
 
-  svg {
-    vertical-align: middle;
+   @media screen and (min-width: $screen-lg-desktop) {
+    .action-button-icon {
+      font-size: 32px;
+    }
   }
 }
 
