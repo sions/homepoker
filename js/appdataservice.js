@@ -60,7 +60,7 @@ pa.prototype.initialize = async function() {
  * @private
  */
 pa.prototype.userRef_ = function () {
- return firebase.firestore().collection('games').doc(this.uid_);
+ return firebase.firestore().collection('users').doc(this.uid_);
 }
 
 

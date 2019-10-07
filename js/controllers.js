@@ -5,7 +5,6 @@ goog.require('goog.events');
 goog.require('goog.events.EventType');
 goog.require('goog.object');
 goog.require('poker.modelservice');
-goog.require('poker.permissionservice');
 goog.require('poker.timeservice');
 
 goog.scope(function() {
@@ -38,7 +37,6 @@ var controllers = angular.module('pokerControllers', [])
       };
     });
 var modelEvent = poker.modelservice.EVENT;
-var permissionEvent = poker.permissionservice.EVENT;
 var timeEvent = poker.timeservice.EVENT;
 
 /**
@@ -440,18 +438,18 @@ controllers.controller('EditBlindController',
 
 
 controllers.controller('EditButtonController', 
-    ['$scope', '$rootScope', '$element', 'permissionService', 
-     function($scope, $rootScope, $element, permissionService) {
+    ['$scope', '$rootScope', '$element', 'modelService', 
+     function($scope, $rootScope, $element, modelService) {
   $scope.editing = false;
   var canvas = angular.element(document.getElementById('canvas'));
 
   var updateEditState = function() {
-    $element.toggleClass('ng-hide', !permissionService.getEditable());
-    canvas.toggleClass('has-edit-permission', permissionService.getEditable())
+    $element.toggleClass('ng-hide', !modelService.getEditable());
+    canvas.toggleClass('has-edit-permission', modelService.getEditable())
   }
 
   updateEditState();
-  $rootScope.$on(permissionEvent.EDITABLE_UPDATED, updateEditState);
+  $rootScope.$on(modelEvent.COLABORATORS_CHANGED, updateEditState);
 
   $scope.toggleEditing_ = function(active, opt_saveChanges) {
     $scope.editing = active;
@@ -480,8 +478,8 @@ controllers.controller('EditButtonController',
 
 
 controllers.controller('ShareLinkController', 
-    ['$scope', '$element', '$rootScope', 'permissionService', 
-     function($scope, $element, $rootScope, permissionService) {
+    ['$scope', '$element', '$rootScope', 'modelService', 
+     function($scope, $element, $rootScope, modelService) {
   $scope.link = '';
   var updateLink = function() {
     var children = $element.children();
@@ -500,7 +498,6 @@ controllers.controller('ShareLinkController',
     }
   };
   updateLink();
-  $rootScope.$on(permissionEvent.EDITABLE_UPDATED, updateLink);
 }]);
 
 

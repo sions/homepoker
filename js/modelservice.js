@@ -1,6 +1,7 @@
 goog.provide('poker.modelservice');
 
 goog.require('goog.array');
+goog.require('goog.asserts');
 goog.require('goog.object');
 
 goog.scope(function() {
@@ -97,7 +98,9 @@ pm.PROPERTY_ = {
   PLAYERS_STARTED: 'players-started',
   STARTING_CHIPS: 'starting-chips',
   LEVELS: 'levels',
-  TIME_EVENTS: 'time-events'
+  TIME_EVENTS: 'time-events',
+  CREATOR: 'creator',
+  COLABORATORS: 'colaborators',
 };
 
 
@@ -111,12 +114,16 @@ pm.PROPERTY_TO_EVENT_ = {
   [pm.PROPERTY_.STARTING_CHIPS]: pm.EVENT.STARTING_CHIPS_CHANGED,
   [pm.PROPERTY_.LEVELS]: pm.EVENT.LEVELS_CHANGED,
   [pm.PROPERTY_.TIME_EVENTS]: pm.EVENT.TIME_CHANGED,
+  [pm.PROPERTY_.COLABORATORS]: pm.EVENT.COLABORATORS_CHANGED,
 };
 
 
 pm.createNewGame = async function(startingLevels = undefined) {
   console.log('Initializing model.');
+  const uid = goog.asserts.assert(firebase.auth().currentUser.uid);
   model = {
+    [pm.PROPERTY_.CREATOR]: uid,
+    [pm.PROPERTY_.COLABORATORS]: {},
     [pm.PROPERTY_.PLAYERS]: 1,
     [pm.PROPERTY_.PLAYERS_STARTED]: 1,
     [pm.PROPERTY_.STARTING_CHIPS]: 1,
@@ -243,6 +250,16 @@ pm.prototype.setLevels = function(levels) {
 
 
 /**
+ * @return {boolean}
+ */
+pm.prototype.getEditable = function() {
+  const uid = goog.asserts.assert(firebase.auth().currentUser.uid);
+  return this.model_[pm.PROPERTY_.CREATOR] == uid 
+      || !!this.model_[pm.PROPERTY_.COLABORATORS][uid]
+};
+
+
+/**
  * @param {!pm.Level} level
  */
 pm.speculateNextLevel = function(level) {
@@ -280,7 +297,10 @@ pm.prototype.valuesChanged_ = function(doc) {
     }
 
     if (valueChanged) {
-      this.emitEventOnRootScope_(pm.PROPERTY_TO_EVENT_[property], newValue);
+      const eventType = pm.PROPERTY_TO_EVENT_[property];
+      if (eventType) {
+        this.emitEventOnRootScope_(eventType, newValue);
+      }
     }
   }
 };

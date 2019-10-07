@@ -3,9 +3,7 @@ goog.provide('poker.boot');
 goog.require('goog.Timer');
 goog.require('poker.appdataservice');
 goog.require('poker.modelservice');
-goog.require('poker.permissionservice');
 goog.require('poker.timeservice');
-
 
 
 goog.scope(function() {
@@ -52,9 +50,6 @@ poker.boot.startApp = async function() {
   await modelService.readInitialData();
   modelService.register();
 
-  const permssionService = new poker.permissionservice(window.game_id);
-  permssionService.register();
-
   poker.boot.bootstrapAngular();
 };
 
@@ -65,7 +60,6 @@ poker.boot.bootstrapAngular = function() {
   console.log('bootstraping angular.');
   angular.bootstrap(document, 
       ['timeServiceModule', 
-       'permissionServiceModule', 
        'modelServiceModule', 
        'appdataServiceModule', 
        'pokerControllers']);
