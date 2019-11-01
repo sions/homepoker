@@ -474,30 +474,30 @@ controllers.controller('EditButtonController',
   $scope.cancel = function() {
     $scope.toggleEditing_(false, false);
   };
+
+  $scope.showNotifications = function() {
+  };
+
+  $scope.hasNotifications = function() {
+    return modelService.getColabRequests().size > 0;
+  };
 }]);
 
 
-controllers.controller('ShareLinkController', 
-    ['$scope', '$element', '$rootScope', 'modelService', 
-     function($scope, $element, $rootScope, modelService) {
-  $scope.link = '';
-  var updateLink = function() {
-    var children = $element.children();
-    if (children.length > 1) {
-      children[children.length - 1].remove();
-    }
-    $scope.link = window.location.href;
-    if ($scope.link) {
-      var newElement = document.createElement('span');
-      var qrcode = new QRCode(newElement, {
-        text: $scope.link,
-        width: 128,
-        height: 128
-      });
-      $element.append(newElement);
-    }
+controllers.controller('RequestColaborationController', 
+    ['$scope', '$rootScope', '$element', 'modelService', 
+     function($scope, $rootScope, $element, modelService) {
+  
+  var updateEditState = function() {
+    $element.toggleClass('ng-hide', modelService.getEditable());
+  }
+
+  updateEditState();
+  $rootScope.$on(modelEvent.COLABORATORS_CHANGED, updateEditState);
+
+  $scope.requestInvite = function() {
+    modelService.requestInvite();
   };
-  updateLink();
 }]);
 
 

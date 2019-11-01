@@ -18,6 +18,7 @@ poker.modelservice = function(gameId) {
   this.timeOfLastCheckpoint_ = null;
   this.running_ = false;
   this.model_ = {};
+  this.colaboratorsRequests_ = new Set();
 };
 
 
@@ -32,7 +33,9 @@ pm.EVENT = {
   PLAYERS_STARTED_CHANGED: 'players-started-changed',
   STARTING_CHIPS_CHANGED: 'starting-chips-changed',
   LEVELS_CHANGED: 'levels-changed',
-  TIME_CHANGED: 'time-changed'
+  TIME_CHANGED: 'time-changed',
+  COLABORATORS_CHANGED: 'colaborators_changed',
+  COLABORATORS_REQUESTS_CHANGED: 'colaborators_requests_changed'
 };
 
 
@@ -162,6 +165,12 @@ pm.prototype.readInitialData = async function() {
   }
   this.model_ = doc.data();
   this.processTimeEvents_();
+
+  const requestDocs = await this.gameRef_().collection('colaborators_requests').get();
+  this.colaboratorsRequests_ = new Set();
+  requestDocs.forEach((doc) => {
+    this.colaboratorsRequests_.add(doc.id);
+  });
 };
 
 
@@ -170,6 +179,14 @@ pm.prototype.readInitialData = async function() {
  */
 pm.prototype.gameRef_ = function() {
   return firebase.firestore().collection('games').doc(this.gameId_);
+};
+
+/**
+ * @private
+ */
+pm.prototype.colabRef_ = function() {
+  const uid = goog.asserts.assert(firebase.auth().currentUser.uid);
+  return this.gameRef_().collection('colaborators_requests').doc(uid);
 };
 
 
@@ -182,6 +199,10 @@ pm.prototype.register = function() {
     thisModel.timeService = timeService;
 
     thisModel.gameRef_().onSnapshot(goog.bind(thisModel.valuesChanged_, thisModel));
+
+    thisModel.gameRef_().collection('colaborators_requests').onSnapshot(
+        goog.bind(thisModel.colabRequestsChanged_, thisModel));
+
     return thisModel; 
   }]);
 };
@@ -481,6 +502,26 @@ pm.prototype.getCurrentLevelState = function() {
     timeLeftInLevel: totalTime - gameTime,
     levelIndex: i
   };
+};
+
+
+pm.prototype.requestInvite = function() {
+  this.colabRef_().set({'requested': true});
+};
+
+pm.prototype.getColabRequests = function() {
+  return this.colaboratorsRequests_;
+};
+
+/**
+ * @param {!Object} doc
+ */
+pm.prototype.colabRequestsChanged_ = function(change) {
+  this.colaboratorsRequests_ = new Set();
+  for (let doc of change.docs) {
+    this.colaboratorsRequests_.add(doc.id);
+  }
+  this.emitEventOnRootScope_(pm.EVENT.COLABORATORS_REQUESTS_CHANGED);
 };
 
 });  // goog.scope

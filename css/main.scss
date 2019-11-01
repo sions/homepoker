@@ -682,31 +682,26 @@ hr {
   }
 }
 
-button {
-  background: rgb(0,0,0);
-  border-color: $button-border-color;
-  padding-top: 0.2rem;
-}
-
 .action-buttons {
   overflow: hidden;
   padding: 4px;
   position: absolute;
   right: 12px;
   top: 8px;
+}
 
-  button {
-    font-size: 0.8rem;
-    @media screen and (min-width: $screen-lg-desktop) {
-      font-size: 24px;
-    }
-  }
+.edit-button,
+.notification-button {
+  position: absolute;
+  @include transition(all 0.25s ease-in-out, right 0.25s 0.25s ease-in-out);
 }
 
 .edit-button {
-  position: absolute;
   right: 4px;
-  @include transition(all 0.25s ease-in-out, right 0.25s 0.25s ease-in-out);
+}
+
+.notification-button {
+  right: 40px;
 }
 
 .ok-button, .cancel-button {
@@ -715,7 +710,8 @@ button {
 }
 
 .editing {
-  .edit-button {
+  .edit-button,
+  .notification-button {
     @include transition_delay(0s);
     @include transform(rotate(90deg));
     right: -50%;
