@@ -441,6 +441,7 @@ controllers.controller('EditButtonController',
     ['$scope', '$rootScope', '$element', 'modelService',
      function($scope, $rootScope, $element, modelService) {
   $scope.editing = false;
+  $scope.managingInvites = false;
   var canvas = angular.element(document.getElementById('canvas'));
 
   var updateEditState = function() {
@@ -453,6 +454,7 @@ controllers.controller('EditButtonController',
 
   $scope.toggleEditing_ = function(active, opt_saveChanges) {
     $scope.editing = active;
+    $scope.managingInvites = false;
     canvas.toggleClass('editing', active);
     if (active) {
       $rootScope.$emit(EVENTS.EDIT_STARTED);
@@ -475,11 +477,29 @@ controllers.controller('EditButtonController',
     $scope.toggleEditing_(false, false);
   };
 
-  $scope.showNotifications = function() {
+  $scope.toggleNotifications = function() {
+    $scope.managingInvites = !$scope.managingInvites;
   };
 
   $scope.hasNotifications = function() {
     return modelService.getColabRequests().size > 0;
+  };
+}]);
+
+
+controllers.controller('ManageInvitesController',
+    ['$scope', '$rootScope', '$element', 'modelService',
+     function($scope, $rootScope, $element, modelService) {
+  $scope.getInvites = () => {
+    const result = Array.from(modelService.getColabRequests());
+    return result;
+  };
+
+  // TODO: Apply changes to model.
+  $scope.dismiss = (invite) => {
+  };
+
+  $scope.accept = (invite) => {
   };
 }]);
 

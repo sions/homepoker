@@ -753,3 +753,34 @@ hr {
     margin: $default-padding auto;
   }
 }
+
+.invites-manager {
+  background: #fff;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-top: 8px;
+  max-width: calc(100vw - 48px);
+  padding: 16px;
+  width: 500px;
+}
+
+.invite-request {
+  color: black;
+}
+
+.invite-requestor {
+  color: black;
+  display: flex;
+  justify-content: flex-start;
+  word-break: break-word;
+}
+
+.invite-buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.invite-action {
+  cursor: pointer;
+  padding: 4px;
+}

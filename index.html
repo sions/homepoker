@@ -21,7 +21,7 @@
       <div ng-controller="EditButtonController" class="action-buttons ng-hide">
         {% raw %}
          <div ng-attr-tabindex="{{editing ? -1 : 0}}" class="action-button notification-button"
-            ng-click="showNotifications()" on-enter-key="showNotifications()">
+            ng-click="toggleNotifications()" on-enter-key="showNotifications()">
           <i class="material-icons action-button-icon"
              ng-class="hasNotifications() ? 'active' : ''">
             {{hasNotifications() ? 'notifications_active' : 'notifications_none'}}</i>
@@ -37,6 +37,16 @@
         <div ng-attr-tabindex="{{editing ? 0 : -1}}" class="action-button cancel-button"
             ng-click="cancel()" on-enter-key="cancel()">
           <i class="material-icons action-button-icon">close</i>
+        </div>
+        <div ng-controller="ManageInvitesController"
+            ng-show="managingInvites" class="invites-manager">
+          <div ng-repeat="invite in getInvites()" class="invite-request">
+            <div class="invite-requestor">{{invite}}</div>
+            <div class="invite-buttons">
+              <i class="material-icons invite-action" ng-click="dismiss(invite)">close</i>
+              <i class="material-icons invite-action" ng-click="accept(invite)">check</i>
+            </div>
+          </div>
         </div>
         {% endraw %}
       </div>
