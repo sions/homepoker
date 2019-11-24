@@ -702,6 +702,10 @@ hr {
 
 .notification-button {
   right: 40px;
+
+  @media screen and (min-width: $screen-lg-desktop) {
+    right: 56px;
+  }
 }
 
 .ok-button, .cancel-button {
