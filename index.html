@@ -6,7 +6,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/generated/main.css">
-  <link href='https://fonts.googleapis.com/css?family=Orbitron|Josefin+Slab|Material+Icons' 
+  <link href='https://fonts.googleapis.com/css?family=Orbitron|Josefin+Slab|Material+Icons'
       rel='stylesheet' type='text/css'>
   <link rel="shortcut icon" type="image/png" href="/res/kpoker.png"/>
   <script type="text/javascript">
@@ -20,20 +20,21 @@
     <div class="ng-cloak canvas" id="canvas">
       <div ng-controller="EditButtonController" class="action-buttons ng-hide">
         {% raw %}
-         <div ng-attr-tabindex="{{editing ? -1 : 0}}" class="action-button notification-button" 
+         <div ng-attr-tabindex="{{editing ? -1 : 0}}" class="action-button notification-button"
             ng-click="showNotifications()" on-enter-key="showNotifications()">
-          <i class="material-icons action-button-icon" ng-hide="hasNotifications()">notifications_none</i>
-          <i class="material-icons action-button-icon" ng-show="hasNotifications()">notifications_active</i>
+          <i class="material-icons action-button-icon"
+             ng-class="hasNotifications() ? 'active' : ''">
+            {{hasNotifications() ? 'notifications_active' : 'notifications_none'}}</i>
         </div>
-        <div ng-attr-tabindex="{{editing ? -1 : 0}}" class="action-button edit-button" 
+        <div ng-attr-tabindex="{{editing ? -1 : 0}}" class="action-button edit-button"
             ng-click="edit()" on-enter-key="edit()">
           <i class="material-icons action-button-icon">edit</i>
         </div>
-        <div ng-attr-tabindex="{{editing ? 0 : -1}}" class="action-button ok-button" 
+        <div ng-attr-tabindex="{{editing ? 0 : -1}}" class="action-button ok-button"
             ng-click="ok()" on-enter-key="ok()">
           <i class="material-icons action-button-icon">check</i>
         </div>
-        <div ng-attr-tabindex="{{editing ? 0 : -1}}" class="action-button cancel-button" 
+        <div ng-attr-tabindex="{{editing ? 0 : -1}}" class="action-button cancel-button"
             ng-click="cancel()" on-enter-key="cancel()">
           <i class="material-icons action-button-icon">close</i>
         </div>
@@ -41,7 +42,7 @@
       </div>
       <div ng-controller="RequestColaborationController" class="action-buttons ng-hide">
         {% raw %}
-         <div ng-attr-tabindex="0" class="action-button colab-button" 
+         <div ng-attr-tabindex="0" class="action-button colab-button"
             ng-click="requestInvite()" on-enter-key="requestInvite()">
           <i class="material-icons action-button-icon">person_add</i>
         </div>
@@ -50,26 +51,26 @@
       <div ng-controller="TimerController">
         <div class="level">
           <span class="level-span">
-            Level <span class="view-only">{% raw %}{{levelIndex + 1}}{% endraw %}</span><input 
-                type="number" class="edit-only" ng-model="levelInput_" min="1" 
+            Level <span class="view-only">{% raw %}{{levelIndex + 1}}{% endraw %}</span><input
+                type="number" class="edit-only" ng-model="levelInput_" min="1"
                 ng-change="levelInputChanged()"></input>
           </span>
         </div>
         <div class="timer-container">
           <div class="timer">
             <span class="timer-text">
-              <span class="view-only" 
+              <span class="view-only"
                   ng-class="{levelend: running && minutes == 0 && seconds < 10, odd: seconds % 2}">
                 {% raw %}
-                <span>{{minutes | numberFixedLen:2}}</span><span 
-                    class="colon">:</span><span 
+                <span>{{minutes | numberFixedLen:2}}</span><span
+                    class="colon">:</span><span
                     class="seconds">{{seconds | numberFixedLen:2}}</span>
                 {% endraw %}
               </span>
               <span class="edit-only">
-                <input class="input-minutes" type="number" ng-model="minutesInput_" 
-                    min="0" ng-change="minutesInputChanged()"></input><span 
-                    class="colon">:</span><input 
+                <input class="input-minutes" type="number" ng-model="minutesInput_"
+                    min="0" ng-change="minutesInputChanged()"></input><span
+                    class="colon">:</span><input
                     class="input-seconds" type="number" ng-model="secondsInput_" min="0" max="59"
                     ng-change="secondsInputChanged()"></input>
               </span>
@@ -77,9 +78,9 @@
           </div>
         </div>
       </div>
-      <div ng-controller="StartPauseController" 
+      <div ng-controller="StartPauseController"
           class="toggle-container view-only requires-edit-permission">
-        <div id="play-btn" class="toggle-button" ng-click="toggle()" on-enter-key="toggle()" 
+        <div id="play-btn" class="toggle-button" ng-click="toggle()" on-enter-key="toggle()"
             tabindex="0">
           <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="0px">
             <polygon fill="currentColor" points="3,12 17,4 17,20 3,12">
@@ -126,7 +127,7 @@
                     id="schema-name-input"></input>
               </span>
               <span ng-show="loading" class="select-wrapper">
-                <select id="schema-load-input" ng-model="schemaToLoad_" 
+                <select id="schema-load-input" ng-model="schemaToLoad_"
                     ng-change="loadedSchemaChanged()">
                   <option value="">--Select schema--</option>
                   <option ng-repeat="name in schemaNames()" value="{{name}}">
@@ -141,12 +142,12 @@
               </div>
               <div ng-attr-tabindex="{{
                   (saving && schemaInputValid()) || (loading && schemaToLoad_) ? 0 : -1}}"
-                  class="action-button ok-button" 
+                  class="action-button ok-button"
                   ng-class="{valid: schemaInputValid() || (loading && schemaToLoad_)}"
                   ng-click="ok()" on-enter-key="ok()">
                 <i class="material-icons action-button-icon">check</i>
               </div>
-              <div ng-attr-tabindex="{{saving || loading ? 0 : -1}}" class="action-button cancel-button" 
+              <div ng-attr-tabindex="{{saving || loading ? 0 : -1}}" class="action-button cancel-button"
                   ng-click="cancel()" on-enter-key="cancel()">
                 <i class="material-icons action-button-icon">close</i>
               </div>
@@ -168,19 +169,19 @@
             <tbody>
                <tr ng-repeat="level in getLevels()">
                   <td>{% raw %}{{$index + 1}}{% endraw %}</td>
-                  <td class="field-group" ng-mouseover="onItemMouseOver($event)"><span 
+                  <td class="field-group" ng-mouseover="onItemMouseOver($event)"><span
                           class="field">{% raw %}{{level.small}}{% endraw %}</span><input tabindex="0"
-                      type="number" ng-model="smallInput_" min="1" 
+                      type="number" ng-model="smallInput_" min="1"
                       ng-change="smallChanged($event, $index)" ng-focus="onInputFocus($event)"></input>
                   </td>
-                  <td class="field-group" ng-mouseover="onItemMouseOver($event)"><span 
-                          class="field">{% raw %}{{level.big}}{% endraw %}</span><input tabindex="0" 
-                      type="number" ng-model="bigInput_" min="1" 
+                  <td class="field-group" ng-mouseover="onItemMouseOver($event)"><span
+                          class="field">{% raw %}{{level.big}}{% endraw %}</span><input tabindex="0"
+                      type="number" ng-model="bigInput_" min="1"
                       ng-change="bigChanged($event, $index)" ng-focus="onInputFocus($event)"></input>
                   </td>
-                  <td class="field-group" ng-mouseover="onItemMouseOver($event)"><span 
-                          class="field">{% raw %}{{level.ante}}{% endraw %}</span><input tabindex="0" 
-                      type="number" ng-model="anteInput_" min="0" 
+                  <td class="field-group" ng-mouseover="onItemMouseOver($event)"><span
+                          class="field">{% raw %}{{level.ante}}{% endraw %}</span><input tabindex="0"
+                      type="number" ng-model="anteInput_" min="0"
                       ng-change="anteChanged($event, $index)" ng-focus="onInputFocus($event)"></input>
                   </td>
                   <td>
@@ -188,23 +189,23 @@
                       <div class="field-group time-group" ng-mouseover="onItemMouseOver($event)">
                         <span class="field">{% raw %}{{
                             level.levelTime / 1000 / 60 |round|numberFixedLen:2}}{% endraw %}</span>
-                        <input tabindex="0" 
-                            type="number" ng-model="minutesInput_" min="0" 
-                            ng-change="minutesChanged($event, $index)" 
+                        <input tabindex="0"
+                            type="number" ng-model="minutesInput_" min="0"
+                            ng-change="minutesChanged($event, $index)"
                             ng-focus="onInputFocus($event)"></input>
-                      </div>:<div 
+                      </div>:<div
                           class="field-group time-group" ng-mouseover="onItemMouseOver($event)">
                         <span class="field">{% raw %}{{
                             level.levelTime / 1000 % 60 |round|numberFixedLen:2}}{% endraw %}</span>
-                        <input tabindex="0" 
-                            type="number" ng-model="secondsInput_" min="0" 
-                            ng-change="secondsChanged($event, $index)" 
+                        <input tabindex="0"
+                            type="number" ng-model="secondsInput_" min="0"
+                            ng-change="secondsChanged($event, $index)"
                             ng-focus="onInputFocus($event)"></input>
                       </div>
                     </div>
                   </td>
                   {% raw %}
-                  <td ng-click="remove($index)" class="remove-level-button" tabindex="0" 
+                  <td ng-click="remove($index)" class="remove-level-button" tabindex="0"
                       ng-attr-style="visibility: {{loading ? 'hidden' : 'visible'}}">
                     <i class="material-icons action-button-icon">close</i>
                   </td>
@@ -214,7 +215,7 @@
           </table>
         </div>
         {% raw %}
-        <div class="add-level-button" ng-click="add()" on-enter-key="add()" 
+        <div class="add-level-button" ng-click="add()" on-enter-key="add()"
             tabindex="0" ng-attr-style="visibility: {{loading ? 'hidden' : 'visible'}}">
           <i class="material-icons action-button-icon">add</i>
         </div>
@@ -238,17 +239,17 @@
             Players:
             <span class="players-field">
               <span class="view-only">{% raw %}{{players}}{% endraw %}</span>
-              <input type="number" class="edit-only" ng-model="playersInput" min="1" 
+              <input type="number" class="edit-only" ng-model="playersInput" min="1"
                   ng-change="playersInputChanged()"></input>
             </span>
-            <div class="action-button remove-player-button view-only 
-                requires-edit-permission-inline-block" 
+            <div class="action-button remove-player-button view-only
+                requires-edit-permission-inline-block"
                 ng-if="players > 0" ng-click="manDown()" on-enter-key="manDown()" tabindex="0">
-              <i class="material-icons action-button-icon">thumb_down</i>  
+              <i class="material-icons action-button-icon">thumb_down</i>
             </div>
             <span class="players-started-field">
               (started:
-              <span class="view-only">{% raw %}{{playersStarted}}{% endraw %}</span><input 
+              <span class="view-only">{% raw %}{{playersStarted}}{% endraw %}</span><input
                   type="number" class="edit-only" ng-model="playersStartedInput" min="1"
                   ng-change="playersStartedInputChanged()"></input>)
             </span>
@@ -257,7 +258,7 @@
             Average stack: {% raw %}{{averageChips() |round}}{% endraw %}
           </div>
           <div class="edit-only starting-chips">
-            Starting chips: 
+            Starting chips:
             <input type="number" class="edit-only" ng-model="startingChipsInput" min="0"></input>
           </div>
         </div>
@@ -269,14 +270,14 @@
       <span>code to open this game:</span>
     </div>
   </div>
-  <audio ng-controller="LevelUpAudioController" 
+  <audio ng-controller="LevelUpAudioController"
       src="/res/levelup.mp3" preload="auto" type="audio/mpeg">
   </audio>
 
   <script src="https://www.gstatic.com/firebasejs/7.0.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.0.0/firebase-firestore.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.0.0/firebase-auth.js"></script>
- 
+
   <!-- Initialize Firebase -->
 
   <script>
@@ -293,7 +294,7 @@
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
   </script>
-  
+
   <script type="text/javascript" src="/lib/angular-resource/angular-resource.min.js"></script>
   <script type="text/javascript" src="/lib/qrcode.js/qrcode.js"></script>
   {% if js_compiled %}

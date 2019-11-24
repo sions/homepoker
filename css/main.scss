@@ -80,12 +80,12 @@ $action-button-total-size: $action-button-size + $action-button-padding * 2;
       $action-button-total-size, $action-button-total-size, $action-button-large-size);
   box-sizing: border-box;
   display: inline-block;
-  
+
   padding: $action-button-padding;
   position: relative;
 
   svg {
-    height: $action-button-size; 
+    height: $action-button-size;
     left: $action-button-padding;
     position: absolute;
     top: $action-button-padding;
@@ -202,10 +202,10 @@ input {
   padding: 0.1rem 0.125rem;
 }
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
-  margin: 0; 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .select-wrapper {
@@ -244,7 +244,7 @@ hr {
 .vertical-line {
   border-right: 1px solid $border-color;
   color: $border-color;
-  margin: 0; 
+  margin: 0;
 }
 
 @include keyframes(level-up) {
@@ -328,7 +328,7 @@ hr {
     @include transition(transform 0.5s ease-in-out);
 
     &.paused {
-      @include transform(none); 
+      @include transform(none);
     }
   }
 
@@ -348,7 +348,7 @@ hr {
     position: absolute;
     top: -2px;
     width: calc(100% + 4px);
-    z-index: 100;  
+    z-index: 100;
   }
 }
 
@@ -400,7 +400,7 @@ hr {
       display: inline-block;
     }
 
-    hr { 
+    hr {
       display: none;
     }
   }
@@ -705,6 +705,10 @@ hr {
 
   @media screen and (min-width: $screen-lg-desktop) {
     right: 56px;
+  }
+
+  & > .active {
+    color: #2971e0;
   }
 }
 
