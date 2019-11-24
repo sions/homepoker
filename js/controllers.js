@@ -58,12 +58,12 @@ var EVENTS = {
 controllers.TIMER_UPDATE_PERIOD_MS_ = 250;
 
 
-controllers.controller('StartPauseController', 
+controllers.controller('StartPauseController',
       ['$scope', '$rootScope', '$interval', '$element', 'modelService',
        function($scope, $rootScope, $interval, $element, modelService) {
-  var toPauseElements = 
+  var toPauseElements =
       [document.getElementById('toPause1'), document.getElementById('toPause2')];
-  var toPlayElements = 
+  var toPlayElements =
       [document.getElementById('toPlay1'), document.getElementById('toPlay2')];
   var svg = $element.find('svg')[0];
   const button = $element[0].querySelector('#play-btn');
@@ -95,7 +95,7 @@ controllers.controller('StartPauseController',
   $scope.toggle = function() {
     button.classList.add('loading');
     if ($scope.running) {
-      modelService.pause();  
+      modelService.pause();
     } else {
       modelService.start();
     }
@@ -103,8 +103,8 @@ controllers.controller('StartPauseController',
 }]);
 
 
-controllers.controller('TimerController', 
-      ['$scope', '$rootScope', '$interval', '$element', 'modelService', 
+controllers.controller('TimerController',
+      ['$scope', '$rootScope', '$interval', '$element', 'modelService',
        function($scope, $rootScope, $interval, $element, modelService) {
   var updateGameState = function() {
     var levelState = modelService.getCurrentLevelState();
@@ -145,7 +145,7 @@ controllers.controller('TimerController',
     }
   };
   var setSecondsMax = function() {
-    var maxSeconds = 
+    var maxSeconds =
         Math.min(parseInt($scope.secondsInLevel) - (minutesInputElement.val() * 60), 60);
     setInputMax(secondsInputElement, maxSeconds);
   };
@@ -184,7 +184,7 @@ controllers.controller('TimerController',
 
   $rootScope.$on(EVENTS.EDIT_ENDED_SAVED, function(eventName) {
     modelService.setGameTime(
-      parseInt(levelInputElement.val()) - 1, 
+      parseInt(levelInputElement.val()) - 1,
       (parseInt(minutesInputElement.val()) * 60 + parseInt(secondsInputElement.val())) * 1000);
   });
 
@@ -193,8 +193,8 @@ controllers.controller('TimerController',
 }]);
 
 
-controllers.controller('PlayerController', 
-    ['$scope', '$rootScope', 'modelService', 
+controllers.controller('PlayerController',
+    ['$scope', '$rootScope', 'modelService',
      function($scope, $rootScope, modelService) {
   var updateAverage = function() {
     $scope.averageChips = $scope.players > 0 ? modelService.getStartingChips() / $scope.players : 0;
@@ -205,10 +205,10 @@ controllers.controller('PlayerController',
   $scope.startingChips = modelService.getStartingChips();
 
   $scope.averageChips = function() {
-    return $scope.players > 0 ? 
+    return $scope.players > 0 ?
         modelService.getStartingChips() * $scope.playersStarted / $scope.players : 0;
   };
-  
+
   $rootScope.$on(modelEvent.PLAYERS_CHANGED, function(eventName, newValue) {
     $scope.players = newValue;
   });
@@ -263,8 +263,8 @@ controllers.controller('PlayerController',
 }]);
 
 
-controllers.controller('BlindController', 
-      ['$scope', '$rootScope', '$element', 'modelService', 
+controllers.controller('BlindController',
+      ['$scope', '$rootScope', '$element', 'modelService',
        function($scope, $rootScope, $element, modelService) {
   $scope.small = 0;
   $scope.big = 0;
@@ -296,7 +296,7 @@ controllers.controller('BlindController',
 }]);
 
 
-controllers.controller('EditBlindController', 
+controllers.controller('EditBlindController',
       ['$scope', '$rootScope', '$element', 'modelService', 'appdataService',
        function($scope, $rootScope, $element, modelService, appdataService) {
   $scope.levels = [];
@@ -305,7 +305,7 @@ controllers.controller('EditBlindController',
   $scope.loading = false;
 
   $scope.getLevels = function() {
-    return $scope.loading && !goog.array.isEmpty($scope.loadedLevels) ? 
+    return $scope.loading && !goog.array.isEmpty($scope.loadedLevels) ?
         $scope.loadedLevels : $scope.levels;
   }
   $scope.remove = function(index) {
@@ -316,7 +316,7 @@ controllers.controller('EditBlindController',
     if ($scope.levels.length > 0) {
       var lastLevel = $scope.levels[$scope.levels.length - 1];
       newLevel = poker.modelservice.speculateNextLevel(lastLevel);
-    } 
+    }
     $scope.levels.push(newLevel);
   };
   var favoritesInputElement = document.querySelector('.favorites-input');
@@ -373,7 +373,7 @@ controllers.controller('EditBlindController',
     return appdataService.getSchemaNames();
   };
   $scope.loadedSchemaChanged = function() {
-    $scope.loadedLevels = $scope.schemaToLoad_ ? 
+    $scope.loadedLevels = $scope.schemaToLoad_ ?
         appdataService.getSchema($scope.schemaToLoad_) : [];
     if ($scope.schemaToLoad_) {
        appdataService.setLastUsedSchema($scope.schemaToLoad_);
@@ -437,8 +437,8 @@ controllers.controller('EditBlindController',
 }]);
 
 
-controllers.controller('EditButtonController', 
-    ['$scope', '$rootScope', '$element', 'modelService', 
+controllers.controller('EditButtonController',
+    ['$scope', '$rootScope', '$element', 'modelService',
      function($scope, $rootScope, $element, modelService) {
   $scope.editing = false;
   var canvas = angular.element(document.getElementById('canvas'));
@@ -484,10 +484,10 @@ controllers.controller('EditButtonController',
 }]);
 
 
-controllers.controller('RequestColaborationController', 
-    ['$scope', '$rootScope', '$element', 'modelService', 
+controllers.controller('RequestColaborationController',
+    ['$scope', '$rootScope', '$element', 'modelService',
      function($scope, $rootScope, $element, modelService) {
-  
+
   var updateEditState = function() {
     $element.toggleClass('ng-hide', modelService.getEditable());
   }
@@ -501,7 +501,7 @@ controllers.controller('RequestColaborationController',
 }]);
 
 
-controllers.controller('LevelUpAudioController', 
+controllers.controller('LevelUpAudioController',
       ['$rootScope', '$element', function($rootScope, $element) {
   $rootScope.$on(EVENTS.LEVEL_UP, function() {
     $element[0].play();
@@ -509,12 +509,27 @@ controllers.controller('LevelUpAudioController',
 }]);
 
 
-controllers.controller('ShareButtonController', ['$scope', function($scope) {
-  var client = new gapi.drive.share.ShareClient(window.client_id);
-  client.setItemIds([window.game_id])
-  $scope.share = function() {
-    client.showSettingsDialog();
+controllers.controller('ShareLinkController',
+    ['$scope', '$element', '$rootScope', 'modelService',
+     function($scope, $element, $rootScope, modelService) {
+  $scope.link = '';
+  var updateLink = function() {
+    var children = $element.children();
+    if (children.length > 1) {
+      children[children.length - 1].remove();
+    }
+    $scope.link = window.location.href;
+    if ($scope.link) {
+      var newElement = document.createElement('span');
+      var qrcode = new QRCode(newElement, {
+        text: $scope.link,
+        width: 128,
+        height: 128
+      });
+      $element.append(newElement);
+    }
   };
+  updateLink();
 }]);
 
 
