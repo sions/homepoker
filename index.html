@@ -41,10 +41,15 @@
         <div ng-controller="ManageInvitesController"
             ng-show="managingInvites" class="invites-manager">
           <div ng-repeat="invite in getInvites()" class="invite-request">
-            <div class="invite-requestor">{{invite}}</div>
+            <div class="invite-requestor">
+              <span class="invite-name">{{invite.displayName}}</span>
+              <span class="invite-email">({{invite.email}})</span>
+            </div>
             <div class="invite-buttons">
-              <i class="material-icons invite-action" ng-click="dismiss(invite)">close</i>
-              <i class="material-icons invite-action" ng-click="accept(invite)">check</i>
+              <i class="material-icons invite-action" ng-click="dismiss(invite)"
+                  title="Deny request">close</i>
+              <i class="material-icons invite-action" ng-click="accept(invite)"
+                  title="Approve request">check</i>
             </div>
           </div>
         </div>
@@ -52,9 +57,14 @@
       </div>
       <div ng-controller="RequestColaborationController" class="action-buttons ng-hide">
         {% raw %}
-         <div ng-attr-tabindex="0" class="action-button colab-button"
-            ng-click="requestInvite()" on-enter-key="requestInvite()">
+        <div ng-attr-tabindex="0" class="action-button colab-button"
+            ng-click="requestInvite()" on-enter-key="requestInvite()" ng-hide="inviteRequested()">
           <i class="material-icons action-button-icon">person_add</i>
+        </div>
+        <div ng-attr-tabindex="0" class="action-button colab-button"
+            ng-click="requestInvite()" on-enter-key="requestInvite()" ng-show="inviteRequested()"
+            title="Waiting for invite to be approved">
+          <i class="material-icons action-button-icon">hourglass_empty</i>
         </div>
         {% endraw %}
       </div>

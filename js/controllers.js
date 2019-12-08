@@ -491,8 +491,7 @@ controllers.controller('ManageInvitesController',
     ['$scope', '$rootScope', '$element', 'modelService',
      function($scope, $rootScope, $element, modelService) {
   $scope.getInvites = () => {
-    const result = Array.from(modelService.getColabRequests());
-    return result;
+    return modelService.getColabRequests();
   };
 
   // TODO: Apply changes to model.
@@ -508,15 +507,19 @@ controllers.controller('RequestColaborationController',
     ['$scope', '$rootScope', '$element', 'modelService',
      function($scope, $rootScope, $element, modelService) {
 
-  var updateEditState = function() {
+  const updateEditState = function() {
     $element.toggleClass('ng-hide', modelService.getEditable());
   }
 
   updateEditState();
   $rootScope.$on(modelEvent.COLABORATORS_CHANGED, updateEditState);
 
-  $scope.requestInvite = function() {
+  $scope.requestInvite = () => {
     modelService.requestInvite();
+  };
+
+  $scope.inviteRequested = () => {
+    return modelService.inviteRequested();
   };
 }]);
 

@@ -688,6 +688,7 @@ hr {
   position: absolute;
   right: 12px;
   top: 8px;
+  z-index: 100;
 }
 
 .edit-button,
@@ -766,16 +767,32 @@ hr {
 
 .invite-request {
   color: black;
+  border-top: 1px solid rgba(0,0,0,0.38);
+  padding-bottom: 8px;
+  padding-top: 8px;
+}
+
+.invite-request:first-child {
+  border-top: none;
+  padding-top: 0px;
 }
 
 .invite-requestor {
   color: black;
-  display: flex;
-  justify-content: flex-start;
+  text-align: start;
   word-break: break-word;
 }
 
+.invite-name {
+  font-weight: 600;
+}
+
+.invite-email {
+  color: #717171;
+}
+
 .invite-buttons {
+  color: rgba(0,0,0,0.54);
   display: flex;
   justify-content: flex-end;
 }

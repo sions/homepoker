@@ -18,7 +18,7 @@ poker.modelservice = function(gameId) {
   this.timeOfLastCheckpoint_ = null;
   this.running_ = false;
   this.model_ = {};
-  this.colaboratorsRequests_ = new Set();
+  this.colaboratorsRequests_ = {};
 };
 
 
@@ -44,7 +44,7 @@ pm.EVENT = {
  *   small: number,
  *   big: number,
  *   ante: number,
- *   levelTime: number 
+ *   levelTime: number
  * }}
  */
 pm.Level;
@@ -64,7 +64,7 @@ pm.TimeEventType = {
  * @typedef {{
  *   timestamp: number,
  *   evntType: pm.TimeEventType,
- *   value: number 
+ *   value: number
  * }}
  */
 pm.TimeEvent;
@@ -132,7 +132,7 @@ pm.createNewGame = async function(startingLevels = undefined) {
     [pm.PROPERTY_.STARTING_CHIPS]: 1,
     [pm.PROPERTY_.TIME_EVENTS]: [],
   };
-  
+
   let levels = [];
 
   if (!startingLevels) {
@@ -140,11 +140,11 @@ pm.createNewGame = async function(startingLevels = undefined) {
     levels.push(pm.DEFAULT_FIRST_LEVEL);
     for (let i = 0; i < 5; ++i) {
       levels.push(pm.speculateNextLevel(levels[levels.length - 1]));
-    }  
+    }
   } else {
     levels = startingLevels;
   }
-  
+
   model[pm.PROPERTY_.LEVELS] = levels;
 
   const newGameRef = await firebase.firestore().collection('games').add(model);
@@ -167,9 +167,9 @@ pm.prototype.readInitialData = async function() {
   this.processTimeEvents_();
 
   const requestDocs = await this.gameRef_().collection('colaborators_requests').get();
-  this.colaboratorsRequests_ = new Set();
+  this.colaboratorsRequests_ = {};
   requestDocs.forEach((doc) => {
-    this.colaboratorsRequests_.add(doc.id);
+    this.colaboratorsRequests_[doc.id] = doc.data();
   });
 };
 
@@ -193,8 +193,8 @@ pm.prototype.colabRef_ = function() {
 pm.prototype.register = function() {
   var service = angular.module('modelServiceModule', ['ngResource']);
   var thisModel = this;
-  service.factory('modelService', ['timeService', '$rootScope', 
-      function(timeService, $rootScope) { 
+  service.factory('modelService', ['timeService', '$rootScope',
+      function(timeService, $rootScope) {
     thisModel.$rootScope = $rootScope;
     thisModel.timeService = timeService;
 
@@ -203,7 +203,7 @@ pm.prototype.register = function() {
     thisModel.gameRef_().collection('colaborators_requests').onSnapshot(
         goog.bind(thisModel.colabRequestsChanged_, thisModel));
 
-    return thisModel; 
+    return thisModel;
   }]);
 };
 
@@ -275,7 +275,7 @@ pm.prototype.setLevels = function(levels) {
  */
 pm.prototype.getEditable = function() {
   const uid = goog.asserts.assert(firebase.auth().currentUser.uid);
-  return this.model_[pm.PROPERTY_.CREATOR] == uid 
+  return this.model_[pm.PROPERTY_.CREATOR] == uid
       || !!this.model_[pm.PROPERTY_.COLABORATORS][uid]
 };
 
@@ -299,7 +299,7 @@ pm.speculateNextLevel = function(level) {
 pm.prototype.valuesChanged_ = function(doc) {
   const oldModel = this.model_;
   this.model_ = doc.data();
-  
+
   for (let property in pm.PROPERTY_TO_EVENT_) {
     const newValue = this.model_[property];
     const oldValue = oldModel[property];
@@ -443,7 +443,7 @@ pm.prototype.setGameTime = function(levelIndex, timeRemainingInLevelMs) {
   }
   var timeInLevel = Math.max(0, levels[levelIndex].levelTime - timeRemainingInLevelMs);
   newTime += timeInLevel;
-  
+
   this.pushTimeEvent_(() => {
     return {
       timestamp: this.timeService.getTime(),
@@ -456,7 +456,7 @@ pm.prototype.setGameTime = function(levelIndex, timeRemainingInLevelMs) {
 
 /**
  * Pushes a time event to the model using transactions.
- * @param {!function():!pm.TimeEventType} eventCreator Creates the event to be pushed. May be called 
+ * @param {!function():!pm.TimeEventType} eventCreator Creates the event to be pushed. May be called
  *     multiple times if the transaction is retried.
  * @private
  */
@@ -506,7 +506,18 @@ pm.prototype.getCurrentLevelState = function() {
 
 
 pm.prototype.requestInvite = function() {
-  this.colabRef_().set({'requested': true});
+  const currentUser = firebase.auth().currentUser;
+  this.colabRef_().set({
+    'requested': true,
+    'email': currentUser.email,
+    'displayName': currentUser.displayName,
+  });
+};
+
+pm.prototype.inviteRequested = function() {
+  const uid = goog.asserts.assert(firebase.auth().currentUser.uid);
+  const colabRequest = this.colaboratorsRequests_[uid];
+  return colabRequest && colabRequest['requested'];
 };
 
 pm.prototype.getColabRequests = function() {
@@ -517,9 +528,9 @@ pm.prototype.getColabRequests = function() {
  * @param {!Object} doc
  */
 pm.prototype.colabRequestsChanged_ = function(change) {
-  this.colaboratorsRequests_ = new Set();
+  this.colaboratorsRequests_ = {};
   for (let doc of change.docs) {
-    this.colaboratorsRequests_.add(doc.id);
+    this.colaboratorsRequests_[doc.id] = doc.data();
   }
   this.emitEventOnRootScope_(pm.EVENT.COLABORATORS_REQUESTS_CHANGED);
 };
