@@ -482,7 +482,7 @@ controllers.controller('EditButtonController',
   };
 
   $scope.hasNotifications = function() {
-    return modelService.getColabRequests().size > 0;
+    return !goog.object.isEmpty(modelService.getColabRequests());
   };
 }]);
 
@@ -494,11 +494,16 @@ controllers.controller('ManageInvitesController',
     return modelService.getColabRequests();
   };
 
-  // TODO: Apply changes to model.
-  $scope.dismiss = (invite) => {
+  $scope.noInvites = () => {
+    return goog.object.isEmpty($scope.getInvites());
   };
 
-  $scope.accept = (invite) => {
+  $scope.deny = (uid) => {
+    modelService.denyInviteRequest(uid);
+  };
+
+  $scope.accept = (uid) => {
+    modelService.approveInviteRequest(uid);
   };
 }]);
 

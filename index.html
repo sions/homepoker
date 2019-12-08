@@ -40,17 +40,20 @@
         </div>
         <div ng-controller="ManageInvitesController"
             ng-show="managingInvites" class="invites-manager">
-          <div ng-repeat="invite in getInvites()" class="invite-request">
+          <div ng-repeat="(uid, invite) in getInvites()" class="invite-request">
             <div class="invite-requestor">
               <span class="invite-name">{{invite.displayName}}</span>
               <span class="invite-email">({{invite.email}})</span>
             </div>
             <div class="invite-buttons">
-              <i class="material-icons invite-action" ng-click="dismiss(invite)"
+              <i class="material-icons invite-action" ng-click="deny(uid)"
                   title="Deny request">close</i>
-              <i class="material-icons invite-action" ng-click="accept(invite)"
+              <i class="material-icons invite-action" ng-click="accept(uid)"
                   title="Approve request">check</i>
             </div>
+          </div>
+          <div ng-show="noInvites()" class="no-invites">
+            All Done!
           </div>
         </div>
         {% endraw %}

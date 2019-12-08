@@ -535,4 +535,25 @@ pm.prototype.colabRequestsChanged_ = function(change) {
   this.emitEventOnRootScope_(pm.EVENT.COLABORATORS_REQUESTS_CHANGED);
 };
 
+
+/**
+ * @param {string} uid
+ */
+pm.prototype.approveInviteRequest = function(uid) {
+  // Set user as colaborator.
+  const colaborators = goog.object.clone(this.model_[pm.PROPERTY_.COLABORATORS]);
+  colaborators[uid] = true;
+  this.gameRef_().update({[pm.PROPERTY_.COLABORATORS]: colaborators});
+  // Delete invite.
+  this.gameRef_().collection('colaborators_requests').doc(uid).delete();
+};
+
+/**
+ * @param {string} uid
+ */
+pm.prototype.denyInviteRequest = function(uid) {
+  // Delete invite.
+  this.gameRef_().collection('colaborators_requests').doc(uid).delete();
+};
+
 });  // goog.scope
