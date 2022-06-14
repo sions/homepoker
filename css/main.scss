@@ -749,8 +749,9 @@ hr {
   margin-top: $default-padding;
   text-align: center;
 
-  img {
+  .qr-code {
     border: 5px solid white;
+    display: inline-flex;
     margin: $default-padding auto;
   }
 }

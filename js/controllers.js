@@ -548,7 +548,8 @@ controllers.controller('ShareLinkController',
     }
     $scope.link = window.location.href;
     if ($scope.link) {
-      var newElement = document.createElement('span');
+      var newElement = document.createElement('div');
+      newElement.classList.add('qr-code');
       var qrcode = new QRCode(newElement, {
         text: $scope.link,
         width: 128,
