@@ -1,6 +1,4 @@
 runtime: python310
-api_version: 1
-threadsafe: yes
 
 handlers:
 - url: /js
@@ -12,9 +10,3 @@ handlers:
 - url: /static
   static_dir: static
   secure: always
-
-libraries:
-- name: jinja2
-  version: "2.6"
-- name: markupsafe
-  version: "0.15"
