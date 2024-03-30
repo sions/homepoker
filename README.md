@@ -18,15 +18,19 @@ See the README file for directions. You'll need python 2.7 and [pip 1.4 or later
 
    ```
 4. Install client side dependencies using Bower:
-   
+
    ```
    bower install
    ```
 5. Run this project locally from the command line:
 
    ```
-   dev_appserver.py .
+   python main.py
+
    ```
+
+   See setup in https://cloud.google.com/appengine/docs/standard/python3/building-app/writing-web-service#testing_your_web_service.
+
 6. For auto update of CSS run:
    ```
    sass -Ilib/bower_components --style compressed --watch css/main.scss:generated/main.css

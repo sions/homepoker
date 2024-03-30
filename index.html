@@ -5,15 +5,15 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="/generated/main.css">
+  <link rel="stylesheet" href="/static/generated/main.css">
   <link href='https://fonts.googleapis.com/css?family=Orbitron|Josefin+Slab|Material+Icons'
       rel='stylesheet' type='text/css'>
-  <link rel="shortcut icon" type="image/png" href="/res/kpoker.png"/>
+  <link rel="shortcut icon" type="image/png" href="/static/res/kpoker.png"/>
   <script type="text/javascript">
     window.game_id = '{{ game_id if game_id else null }}';
     window.client_id = '{{ client_id }}';
   </script>
-  <script type="text/javascript" src="/lib/angular/angular.min.js"></script>
+  <script type="text/javascript" src="/static/lib/angular/angular.min.js"></script>
 </head>
 <body>
   <div class="vertical-layout">
@@ -294,7 +294,7 @@
     </div>
   </div>
   <audio ng-controller="LevelUpAudioController"
-      src="/res/levelup.mp3" preload="auto" type="audio/mpeg">
+      src="/static/res/levelup.mp3" preload="auto" type="audio/mpeg">
   </audio>
 
   <script src="https://www.gstatic.com/firebasejs/7.0.0/firebase-app.js"></script>
@@ -318,13 +318,13 @@
     firebase.initializeApp(firebaseConfig);
   </script>
 
-  <script type="text/javascript" src="/lib/angular-resource/angular-resource.min.js"></script>
-  <script type="text/javascript" src="/lib/qrcode.js/qrcode.js"></script>
+  <script type="text/javascript" src="/static/lib/angular-resource/angular-resource.min.js"></script>
+  <script type="text/javascript" src="/static/lib/qrcode.js/qrcode.js"></script>
   {% if js_compiled %}
-    <script type="text/javascript" src="/generated/compiled.js"></script>
+    <script type="text/javascript" src="/static/generated/compiled.js"></script>
   {% else %}
-    <script src="/lib/google-closure-library/closure/goog/base.js"></script>
-    <script type="text/javascript" src="/generated/deps.js"></script>
+    <script src="/static/lib/google-closure-library/closure/goog/base.js"></script>
+    <script type="text/javascript" src="/static/generated/deps.js"></script>
     <script>goog.require('poker.boot');</script>
     <script>goog.require('poker.controllers');</script>
   {% endif %}
