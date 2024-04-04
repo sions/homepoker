@@ -416,13 +416,19 @@ pm.prototype.isRunning = function() {
 };
 
 
+/**
+ * @return {boolean} If this is the first start.
+ */
 pm.prototype.start = function() {
+  const timeEvents = this.model_[pm.PROPERTY_.TIME_EVENTS] || [];
+  const firstStart = !timeEvents.some(e => e.eventType === pm.TimeEventType.START);
   this.pushTimeEvent_(() => {
     return {
       timestamp: this.timeService.getTime(),
       eventType: pm.TimeEventType.START
     };
   });
+  return firstStart;
 };
 
 

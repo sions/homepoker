@@ -172,7 +172,7 @@ pa.prototype.textToSpeech = async function(text) {
     'model_id': 'eleven_multilingual_v2',
     'voice_settings': {
         'stability': 0.6,
-        'similarity_boost': 0.96,
+        'similarity_boost': 0.9,
         'style': 0.0,
         'use_speaker_boost': true
     }
@@ -206,7 +206,7 @@ pa.prototype.fetchVoiceId_ = async function() {
           'Content-Type': 'application/json'}
         });
   const voices = await response.json();
-  this.voiceId_ = voices['voices'].filter(v => v.name === 'Allison - millennial')[0]['voice_id'];
+  this.voiceId_ = voices['voices'].filter(v => v.name === 'Tony - King of New York')[0]['voice_id'];
   return this.voiceId_;
 };
 

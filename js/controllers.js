@@ -59,8 +59,8 @@ controllers.TIMER_UPDATE_PERIOD_MS_ = 250;
 
 
 controllers.controller('StartPauseController',
-      ['$scope', '$rootScope', '$interval', '$element', 'modelService',
-       function($scope, $rootScope, $interval, $element, modelService) {
+      ['$scope', '$rootScope', '$interval', '$element', 'modelService', 'appdataService',
+       function($scope, $rootScope, $interval, $element, modelService, appdataService) {
   var toPauseElements =
       [document.getElementById('toPause1'), document.getElementById('toPause2')];
   var toPlayElements =
@@ -92,12 +92,17 @@ controllers.controller('StartPauseController',
   updateRunningState();
   $rootScope.$on(modelEvent.TIME_CHANGED, updateRunningState);
 
-  $scope.toggle = function() {
+  $scope.toggle = async function() {
     button.classList.add('loading');
     if ($scope.running) {
       modelService.pause();
     } else {
-      modelService.start();
+      const firstStart = modelService.start();
+      if (firstStart) {
+        const text = `Good luck players! Dealers - shuffle up and deal!`;
+         const blobData = await appdataService.textToSpeech(text);
+        new Audio(blobData).play()
+      }
     }
   };
 }]);
