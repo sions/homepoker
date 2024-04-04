@@ -565,7 +565,7 @@ controllers.controller('LevelUpAudioController',
     const small = levelState.current.small;
     const big = levelState.current.big;
     const ante = levelState.current.ante;
-    let text = `We are now at level ${level}. Blinds are now ${small} and ${big}`;
+    let text = `Players! We are now at level ${level}. Blinds are now ${small} and ${big}`;
     if (ante > 0) {
       text += `. Ante is now ${ante}`;
     }
