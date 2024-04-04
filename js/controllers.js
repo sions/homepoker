@@ -550,9 +550,29 @@ controllers.controller('RequestColaborationController',
 
 
 controllers.controller('LevelUpAudioController',
-      ['$rootScope', '$element', function($rootScope, $element) {
-  $rootScope.$on(EVENTS.LEVEL_UP, function() {
-    $element[0].play();
+      ['$rootScope', '$element', 'modelService', 'appdataService',
+      function($rootScope, $element, modelService, appdataService) {
+  $rootScope.$on(EVENTS.LEVEL_UP, async () => {
+    const audio = $element[0];
+    const endedPromise = Promise.withResolvers();
+    goog.events.listenOnce(audio, "ended", () => {
+      console.info('Audio ended');
+      endedPromise.resolve();
+    });
+    audio.play();
+    const levelState = modelService.getCurrentLevelState();
+    const level = levelState.levelIndex + 1;
+    const small = levelState.current.small;
+    const big = levelState.current.big;
+    const ante = levelState.current.ante;
+    let text = `We are now at level ${level}. Blinds are now ${small} and ${big}`;
+    if (ante > 0) {
+      text += `. Ante is now ${ante}`;
+    }
+
+    const blobData = await appdataService.textToSpeech(text);
+    await endedPromise.promise;
+    new Audio(blobData).play()
   });
 }]);
 

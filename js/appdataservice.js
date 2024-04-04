@@ -15,11 +15,14 @@ poker.appdataservice = function() {
   this.schema_levels_ = {};
   this.schema_start_states_ = {};
   this.lastUsedSchema_ = '';
+  this.voiceId_ = '';
 };
 
 
 var pa = poker.appdataservice;
 var ms = poker.modelservice;
+
+const VOICE_API_KEY = 'ccd65255be3903c1aee46149769872ff';
 
 
 /**
@@ -155,6 +158,56 @@ pa.prototype.setLastUsedSchema = function(schema) {
  */
 pa.prototype.getLastUsedSchema = function(schema) {
   return this.lastUsedSchema_;
+};
+
+/**
+ * @return {string} Data URL for the speech
+ */
+pa.prototype.textToSpeech = async function(text) {
+  if (!this.voiceId_) {
+    this.voiceId_ = await this.fetchVoiceId_();
+  }
+  const data = {
+    'text': text,
+    'model_id': 'eleven_multilingual_v2',
+    'voice_settings': {
+        'stability': 0.6,
+        'similarity_boost': 0.96,
+        'style': 0.0,
+        'use_speaker_boost': true
+    }
+  }
+  const response = await fetch(
+    `https://api.elevenlabs.io/v1/text-to-speech/${this.voiceId_}/stream`, {
+    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+
+    headers: {
+      'Accept': 'application/json',
+      'xi-api-key': VOICE_API_KEY,
+      'Content-Type': 'application/json'
+    },
+    redirect: 'follow',
+    referrerPolicy: 'no-referrer',
+    body: JSON.stringify(data),
+  });
+  const blobData = await response.blob();
+  return URL.createObjectURL(blobData);
+};
+
+/**
+ * @return {string} Data URL for the speec
+ */
+pa.prototype.fetchVoiceId_ = async function() {
+   const response = await fetch('https://api.elevenlabs.io/v1/voices',
+      {'headers':
+        {
+          'Accept': 'application/json',
+          'xi-api-key': VOICE_API_KEY,
+          'Content-Type': 'application/json'}
+        });
+  const voices = await response.json();
+  this.voiceId_ = voices['voices'].filter(v => v.name === 'Allison - millennial')[0]['voice_id'];
+  return this.voiceId_;
 };
 
 });  // goog.scope
