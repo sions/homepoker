@@ -2,19 +2,13 @@
 
 # Yes, this is primitive, I know.
 
-python2.7 static/lib/google-closure-library/closure/bin/build/closurebuilder.py \
-    --root="static/lib/google-closure-library/" \
-    --root="js/" \
-    --namespace="poker.boot" \
-    --namespace="poker.controllers" \
-    --output_mode=compiled \
-    --output_file="static/generated/compiled.js" \
-    --compiler_jar="compiler.jar" \
-    --compiler_flags=--language_in=ECMASCRIPT_2017
-
-
-static/lib/google-closure-library/closure/bin/build/depswriter.py \
-    --root_with_prefix="js ../../../../js/" > static/generated/deps.js
+google-closure-compiler --language_in=ECMASCRIPT_2021  \
+    --js="js/*" \
+    --js="static/lib/google-closure-library/closure/goog/**.js" \
+    --entry_point="goog:poker.boot" \
+    --entry_point="goog:poker.controllers" \
+    --dependency_mode=PRUNE \
+    --js_output_file="static/generated/compiled.js"
 
 
 sass -Istatic/lib --style compressed css/main.scss static/generated/main.css

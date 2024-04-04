@@ -93,6 +93,24 @@ pm.DEFAULT_FIRST_LEVEL = {
 
 
 /**
+ * @typedef {{
+ *   chips: number
+ * }}
+ */
+pm.StartState;
+
+
+/**
+ * @typedef {{
+ *   levels: Array<ms.Level>,
+ *   startingState: pm.StartState.
+ * }}
+ */
+pm.Schema;
+
+
+
+/**
  * @enum {string}
  * @private
  */
@@ -121,7 +139,10 @@ pm.PROPERTY_TO_EVENT_ = {
 };
 
 
-pm.createNewGame = async function(startingLevels = undefined) {
+/**
+ * @param {pm.Schema=} schema
+ */
+pm.createNewGame = async function(schema = undefined) {
   console.log('Initializing model.');
   const uid = goog.asserts.assert(firebase.auth().currentUser.uid);
   model = {
@@ -129,20 +150,20 @@ pm.createNewGame = async function(startingLevels = undefined) {
     [pm.PROPERTY_.COLABORATORS]: {},
     [pm.PROPERTY_.PLAYERS]: 1,
     [pm.PROPERTY_.PLAYERS_STARTED]: 1,
-    [pm.PROPERTY_.STARTING_CHIPS]: 1,
+    [pm.PROPERTY_.STARTING_CHIPS]: schema?.startingState?.chips ?? 1,
     [pm.PROPERTY_.TIME_EVENTS]: [],
   };
 
   let levels = [];
 
-  if (!startingLevels) {
+  if (!schema.levels) {
       // Pre-populate some levels.
     levels.push(pm.DEFAULT_FIRST_LEVEL);
     for (let i = 0; i < 5; ++i) {
       levels.push(pm.speculateNextLevel(levels[levels.length - 1]));
     }
   } else {
-    levels = startingLevels;
+    levels = goog.cloneObject(schema.levels);
   }
 
   model[pm.PROPERTY_.LEVELS] = levels;
@@ -304,7 +325,7 @@ pm.prototype.valuesChanged_ = function(doc) {
     const newValue = this.model_[property];
     const oldValue = oldModel[property];
     let valueChanged = false;
-    if (goog.isArray(newValue)) {
+    if (goog.isArrayLike(newValue)) {
       valueChanged = !goog.array.equals(newValue, oldValue);
     } else if (goog.isObject(newValue)) {
       valueChanged = !goog.object.equals(newValue, oldValue);

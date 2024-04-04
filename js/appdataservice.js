@@ -12,7 +12,8 @@ goog.scope(function() {
  */
 poker.appdataservice = function() {
   this.uid_ = goog.asserts.assert(firebase.auth().currentUser.uid);
-  this.schemas_ = {};
+  this.schema_levels_ = {};
+  this.schema_start_states_ = {};
   this.lastUsedSchema_ = '';
 };
 
@@ -27,6 +28,7 @@ var ms = poker.modelservice;
  */
 pa.PROPERTY_ = {
   SCHEMAS: 'schemas',
+  SCHEMA_START_STATES: 'schema_start_states',
   LAST_USED_SCHEMA: 'lastUsedSchema'
 };
 
@@ -34,10 +36,10 @@ pa.PROPERTY_ = {
 pa.prototype.register = function() {
   var service = angular.module('appdataServiceModule', []);
   var thisModel = this;
-  service.factory('appdataService', ['$rootScope', function($rootScope) { 
+  service.factory('appdataService', ['$rootScope', function($rootScope) {
     thisModel.$rootScope = $rootScope;
     thisModel.userRef_().onSnapshot(goog.bind(thisModel.valuesChanged_, thisModel));
-    return thisModel; 
+    return thisModel;
   }]);
 };
 
@@ -46,12 +48,26 @@ pa.prototype.initialize = async function() {
   const doc = await this.userRef_().get();
   if (!doc.exists) {
     await this.userRef_().set({
-      [pa.PROPERTY_.SCHEMAS]: [],
+      [pa.PROPERTY_.SCHEMAS]: {},
+      [pa.PROPERTY_.SCHEMA_START_STATES]: {},
     });
     return;
   }
 
-  this.schemas_ = doc.data()[pa.PROPERTY_.SCHEMAS];
+  this.schema_levels_ = doc.data()[pa.PROPERTY_.SCHEMAS];
+  if (this.schema_levels_ === undefined) {
+    this.schema_levels_ = {};
+    await this.userRef_().set({
+      [pa.PROPERTY_.SCHEMAS]: this.schema_levels_,
+    });
+  }
+  this.schema_start_states_ = doc.data()[pa.PROPERTY_.SCHEMA_START_STATES];
+  if (this.schema_start_states_ === undefined) {
+    this.schema_start_states = {};
+    await this.userRef_().set({
+      [pa.PROPERTY_.SCHEMA_START_STATES]: this.schema_start_states,
+    });
+  }
   this.lastUsedSchema_ = doc.data()[pa.PROPERTY_.LAST_USED_SCHEMA];
 };
 
@@ -65,21 +81,12 @@ pa.prototype.userRef_ = function () {
 
 
 /**
- * @return {!Object.<string, !Array<ms.Level>>}
- * @private
- */
-pa.prototype.getSchemas_ = function() {
-  return this.schemas_;
-};
-
-
-/**
  * @return {!Array{string}}
  */
 pa.prototype.getSchemaNames = function() {
   const names = [];
-  for (let schemaName in this.schemas_) {
-    names.push(schemaName); 
+  for (let schemaName in this.schema_levels_) {
+    names.push(schemaName);
   }
   goog.array.sort(names);
   return names;
@@ -88,21 +95,27 @@ pa.prototype.getSchemaNames = function() {
 
 /**
  * @param {string} name
- * @return {!Array<ms.Level>}
+ * @return {!Schema}
  */
 pa.prototype.getSchema = function(name) {
-  return this.schemas_[name];
+  return {
+    levels: this.schema_levels_[name],
+    startingState: this.schema_start_states_[name] ?? {}
+  };
 };
 
 
 /**
  * @param {string} name
- * @param {!Array<ms.Level>}
+ * @param {!Schema} schema
  */
-pa.prototype.setSchema = function(name, levels) {
-  const newSchemas = goog.object.clone(this.schemas_);
-  newSchemas[name] = levels;
-  this.userRef_().update({[pa.PROPERTY_.SCHEMAS]: newSchemas});
+pa.prototype.setSchema = function(name, schema) {
+  const newSchemaLevels = goog.object.clone(this.schema_levels_);
+  newSchemaLevels[name] = schema.levels;
+  this.userRef_().update({[pa.PROPERTY_.SCHEMAS]: newSchemaLevels});
+  const newSchemaStartState = goog.object.clone(this.schema_start_states_);
+  newSchemaStartState[name] = schema.startingState;
+  this.userRef_().update({[pa.PROPERTY_.SCHEMA_START_STATES]: newSchemaStartState});
 };
 
 
@@ -110,9 +123,12 @@ pa.prototype.setSchema = function(name, levels) {
  * @param {string} name
  */
 pa.prototype.deleteSchema = function(name) {
-  const newSchemas = goog.object.clone(this.schemas_);
+  const newSchemas = goog.object.clone(this.schema_levels_);
   delete newSchemas[name];
   this.userRef_().update({[pa.PROPERTY_.SCHEMAS]: newSchemas});
+  const newSchemasStartingStates = goog.object.clone(this.schema_start_states_);
+  delete newSchemasStartingStates[name];
+  this.userRef_().update({[pa.PROPERTY_.SCHEMA_START_STATES]: newSchemasStartingStates});
 };
 
 
@@ -120,7 +136,8 @@ pa.prototype.deleteSchema = function(name) {
  * @param {string} name
  */
 pa.prototype.valuesChanged_ = function(doc) {
-  this.schemas_ = doc.data()[pa.PROPERTY_.SCHEMAS];
+  this.schema_levels_ = doc.data()[pa.PROPERTY_.SCHEMAS];
+  this.schema_start_states_ = doc.data()[pa.PROPERTY_.SCHEMA_START_STATES];
   this.lastUsedSchema_ = doc.data()[pa.PROPERTY_.LAST_USED_SCHEMA];
 };
 
@@ -134,7 +151,7 @@ pa.prototype.setLastUsedSchema = function(schema) {
 };
 
 /**
- * @return {string} 
+ * @return {string}
  */
 pa.prototype.getLastUsedSchema = function(schema) {
   return this.lastUsedSchema_;

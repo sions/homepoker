@@ -4,12 +4,19 @@
 1. Install the [App Engine Python SDK](https://developers.google.com/appengine/downloads).
 See the README file for directions. You'll need python 2.7 and [pip 1.4 or later](http://www.pip-installer.org/en/latest/installing.html) installed too.
 
-2. Clone this repo with
+1. Install
+
+   ```
+   npm install google-closure-deps
+   npm install google-closure-compiler
+   ```
+
+1. Clone this repo with
 
    ```
    git clone https://github.com/sions/homepoker.git
    ```
-3. Install dependencies in the project's lib directory.
+1. Install dependencies in the project's lib directory.
    Note: App Engine can only import libraries from inside your project directory.
 
    ```
@@ -17,12 +24,12 @@ See the README file for directions. You'll need python 2.7 and [pip 1.4 or later
    pip install -r requirements.txt -t lib
 
    ```
-4. Install client side dependencies using Bower:
+1. Install client side dependencies using Bower:
 
    ```
    bower install
    ```
-5. Run this project locally from the command line:
+1. Run this project locally from the command line:
 
    ```
    python main.py
@@ -31,7 +38,7 @@ See the README file for directions. You'll need python 2.7 and [pip 1.4 or later
 
    See setup in https://cloud.google.com/appengine/docs/standard/python3/building-app/writing-web-service#testing_your_web_service.
 
-6. For auto update of CSS run:
+1. For auto update of CSS run:
    ```
    sass -Ilib/bower_components --style compressed --watch css/main.scss:generated/main.css
    ```

@@ -300,13 +300,17 @@ controllers.controller('EditBlindController',
       ['$scope', '$rootScope', '$element', 'modelService', 'appdataService',
        function($scope, $rootScope, $element, modelService, appdataService) {
   $scope.levels = [];
-  $scope.loadedLevels = [];
+  $scope.loadedSchema = null;
   $scope.saving = false;
   $scope.loading = false;
+  $scope.previousStartingChips = null;
+
+  const startingChipsInput = angular.element(document.querySelector('.starting-chips input'));
 
   $scope.getLevels = function() {
-    return $scope.loading && !goog.array.isEmpty($scope.loadedLevels) ?
-        $scope.loadedLevels : $scope.levels;
+    return ($scope.loading && $scope.loadedSchema?.levels
+      && !goog.array.isEmpty($scope.loadedSchema.levels)) ?
+        $scope.loadedSchema.levels : $scope.levels;
   }
   $scope.remove = function(index) {
     goog.array.removeAt($scope.levels, index);
@@ -343,16 +347,26 @@ controllers.controller('EditBlindController',
   $scope.ok = function() {
     if ($scope.saving) {
       if ($scope.schemaName_) {
-        appdataService.setSchema($scope.schemaName_, $scope.levels);
+        appdataService.setSchema($scope.schemaName_,
+          {
+            levels: $scope.levels,
+            startingState: {
+              chips: parseInt(startingChipsInput.val())
+            }
+          });
         $scope.schemaName_ = '';
       }
       $scope.toggleSaving(false);
     } else if ($scope.loading) {
-      $scope.levels = goog.array.clone($scope.loadedLevels);
+      $scope.levels = goog.cloneObject($scope.loadedSchema.levels);
       $scope.toggleLoading(false);
     }
   };
   $scope.cancel = function() {
+    if ($scope.loading && $scope.previousStartingChips !== null) {
+      startingChipsInput.val($scope.previousStartingChips);
+      $scope.previousStartingChips = null;
+    }
     $scope.toggleSaving(false);
     $scope.toggleLoading(false);
   };
@@ -373,10 +387,16 @@ controllers.controller('EditBlindController',
     return appdataService.getSchemaNames();
   };
   $scope.loadedSchemaChanged = function() {
-    $scope.loadedLevels = $scope.schemaToLoad_ ?
-        appdataService.getSchema($scope.schemaToLoad_) : [];
+    $scope.loadedSchema = $scope.schemaToLoad_ ?
+        appdataService.getSchema($scope.schemaToLoad_) : null;
     if ($scope.schemaToLoad_) {
-       appdataService.setLastUsedSchema($scope.schemaToLoad_);
+      appdataService.setLastUsedSchema($scope.schemaToLoad_);
+    }
+    if ($scope.loadedSchema?.startingState?.chips) {
+      if ($scope.previousStartingChips === null) {
+        $scope.previousStartingChips = parseInt(startingChipsInput.val());
+      }
+      startingChipsInput.val($scope.loadedSchema.startingState.chips);
     }
   };
 
@@ -428,7 +448,7 @@ controllers.controller('EditBlindController',
     $scope.loading = false;
     $scope.schemaName_ = '';
     $scope.schemaToLoad_ = '';
-    $scope.loadedLevels = [];
+    $scope.loadedSchema = null;
   });
 
   $rootScope.$on(EVENTS.EDIT_ENDED_SAVED, function(eventName) {

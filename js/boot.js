@@ -21,7 +21,7 @@ poker.boot.startApp = async function() {
     return;
   }
 
-  console.info('User signed in (uid=%s, email=%s)', firebase.auth().currentUser.uid, 
+  console.info('User signed in (uid=%s, email=%s)', firebase.auth().currentUser.uid,
       firebase.auth().currentUser.email);
 
   const timeService = new poker.timeservice();
@@ -31,20 +31,20 @@ poker.boot.startApp = async function() {
   await appdataservice.initialize();
   appdataservice.register();
 
-  let startingLevels = undefined;
+  let schema = undefined;
   const lastUsedSchema = appdataservice.getLastUsedSchema();
   if (lastUsedSchema) {
-    startingLevels = appdataservice.getSchema(lastUsedSchema);
+    schema = appdataservice.getSchema(lastUsedSchema);
   }
 
   let modelService;
   if (!window.game_id) {  // Need to create a new game.
-    const newGameId = await poker.modelservice.createNewGame(startingLevels);
+    const newGameId = await poker.modelservice.createNewGame(schema);
     modelService = new poker.modelservice(newGameId);
-    
+
     window.game_id = newGameId;
     window.history.replaceState(null, 'game', '/open/' + window.game_id)
-  } 
+  }
 
   modelService = new poker.modelservice(window.game_id);
   await modelService.readInitialData();
@@ -58,10 +58,10 @@ goog.exportSymbol('startApp', poker.boot.startApp);
 
 poker.boot.bootstrapAngular = function() {
   console.log('bootstraping angular.');
-  angular.bootstrap(document, 
-      ['timeServiceModule', 
-       'modelServiceModule', 
-       'appdataServiceModule', 
+  angular.bootstrap(document,
+      ['timeServiceModule',
+       'modelServiceModule',
+       'appdataServiceModule',
        'pokerControllers']);
 };
 
