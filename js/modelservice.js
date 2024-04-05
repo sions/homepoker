@@ -33,6 +33,7 @@ pm.EVENT = {
   PLAYERS_STARTED_CHANGED: 'players-started-changed',
   STARTING_CHIPS_CHANGED: 'starting-chips-changed',
   LEVELS_CHANGED: 'levels-changed',
+  GAME_STARTED: 'game-started',
   TIME_CHANGED: 'time-changed',
   COLABORATORS_CHANGED: 'colaborators_changed',
   COLABORATORS_REQUESTS_CHANGED: 'colaborators_requests_changed'
@@ -333,8 +334,13 @@ pm.prototype.valuesChanged_ = function(doc) {
       valueChanged = newValue !== oldValue;
     }
     if (property == pm.PROPERTY_.TIME_EVENTS && valueChanged) {
+      const oldTimeEvents = oldModel[pm.PROPERTY_.TIME_EVENTS] || [];
+      const firstStart = !oldTimeEvents.some(e => e.eventType === pm.TimeEventType.START);
       for (let i = oldValue.length; i < newValue.length; ++i) {
         this.processTimeEvent_(newValue[i]);
+      }
+      if (this.running_ && firstStart) {
+        this.emitEventOnRootScope_(pm.EVENT.GAME_STARTED);
       }
     }
 
@@ -416,19 +422,13 @@ pm.prototype.isRunning = function() {
 };
 
 
-/**
- * @return {boolean} If this is the first start.
- */
 pm.prototype.start = function() {
-  const timeEvents = this.model_[pm.PROPERTY_.TIME_EVENTS] || [];
-  const firstStart = !timeEvents.some(e => e.eventType === pm.TimeEventType.START);
   this.pushTimeEvent_(() => {
     return {
       timestamp: this.timeService.getTime(),
       eventType: pm.TimeEventType.START
     };
   });
-  return firstStart;
 };
 
 
