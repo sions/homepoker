@@ -22,7 +22,7 @@ poker.appdataservice = function() {
 var pa = poker.appdataservice;
 var ms = poker.modelservice;
 
-const VOICE_API_KEY = 'ccd65255be3903c1aee46149769872ff';
+const VOICE_API_KEY = window.voice_api_key;
 
 
 /**
@@ -159,6 +159,13 @@ pa.prototype.setLastUsedSchema = function(schema) {
 pa.prototype.getLastUsedSchema = function(schema) {
   return this.lastUsedSchema_;
 };
+
+/**
+ * @return {boolean}
+ */
+pa.prototype.textToSpeechAvailable = function() {
+  return Boolean(VOICE_API_KEY);
+}
 
 /**
  * @return {string} Data URL for the speech

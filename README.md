@@ -29,6 +29,16 @@ See the README file for directions. You'll need python 2.7 and [pip 1.4 or later
    ```
    bower install
    ```
+1. Populate project specific variables:
+
+   1. Run:
+
+      ```
+      cp env_variables_template.yaml env_variables.yaml
+      ```
+
+   1. Now edit `env_variables.yaml` and set it to your projects specific variable (see comments in the file).
+
 1. Run this project locally from the command line:
 
    ```

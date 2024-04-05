@@ -98,10 +98,10 @@ controllers.controller('StartPauseController',
       modelService.pause();
     } else {
       const firstStart = modelService.start();
-      if (firstStart) {
+      if (appdataService.textToSpeechAvailable() && firstStart) {
         const text = `Good luck players! Dealers - shuffle up and deal!`;
-         const blobData = await appdataService.textToSpeech(text);
-        new Audio(blobData).play()
+        const blobData = await appdataService.textToSpeech(text);
+        new Audio(blobData).play();
       }
     }
   };
@@ -565,19 +565,21 @@ controllers.controller('LevelUpAudioController',
       endedPromise.resolve();
     });
     audio.play();
-    const levelState = modelService.getCurrentLevelState();
-    const level = levelState.levelIndex + 1;
-    const small = levelState.current.small;
-    const big = levelState.current.big;
-    const ante = levelState.current.ante;
-    let text = `Players! We are now at level ${level}. Blinds are now ${small} and ${big}`;
-    if (ante > 0) {
-      text += `. Ante is now ${ante}`;
-    }
+    if (appdataService.textToSpeechAvailable()) {
+      const levelState = modelService.getCurrentLevelState();
+      const level = levelState.levelIndex + 1;
+      const small = levelState.current.small;
+      const big = levelState.current.big;
+      const ante = levelState.current.ante;
+      let text = `Players! We are now at level ${level}. Blinds are now ${small} and ${big}`;
+      if (ante > 0) {
+        text += `. Ante is now ${ante}`;
+      }
 
-    const blobData = await appdataService.textToSpeech(text);
-    await endedPromise.promise;
-    new Audio(blobData).play()
+      const blobData = await appdataService.textToSpeech(text);
+      await endedPromise.promise;
+      new Audio(blobData).play()
+    }
   });
 }]);
 
