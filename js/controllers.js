@@ -99,7 +99,15 @@ controllers.controller('StartPauseController',
     } else {
       const firstStart = modelService.start();
       if (appdataService.textToSpeechAvailable() && firstStart) {
-        const text = `Good luck players! Dealers - shuffle up and deal!`;
+        const levelState = modelService.getCurrentLevelState();
+        const small = levelState.current.small;
+        const big = levelState.current.big;
+        const ante = levelState.current.ante;
+        let text = `Welcome players! We're starting the game with blinds at ${small} and ${big}. `;
+        if (ante > 0) {
+          text += `Ante is at ${ante}. `;
+        }
+        text += `Good luck players! Dealers - SHUFFLE UP AND DEAL!`;
         const blobData = await appdataService.textToSpeech(text);
         new Audio(blobData).play();
       }

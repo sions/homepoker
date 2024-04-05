@@ -186,8 +186,7 @@ pa.prototype.textToSpeech = async function(text) {
   }
   const response = await fetch(
     `https://api.elevenlabs.io/v1/text-to-speech/${this.voiceId_}/stream`, {
-    method: 'POST', // *GET, POST, PUT, DELETE, etc.
-
+    method: 'POST',
     headers: {
       'Accept': 'application/json',
       'xi-api-key': VOICE_API_KEY,
