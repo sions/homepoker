@@ -157,7 +157,7 @@ pm.createNewGame = async function(schema = undefined) {
 
   let levels = [];
 
-  if (!schema.levels) {
+  if (!schema?.levels) {
       // Pre-populate some levels.
     levels.push(pm.DEFAULT_FIRST_LEVEL);
     for (let i = 0; i < 5; ++i) {
