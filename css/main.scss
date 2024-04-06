@@ -43,6 +43,7 @@ $control-background: rgba(0,0,0,0.8);
   cursor: pointer;
   height: $defaultSize;
   text-align: center;
+  user-select: none;
   width: $defaultSize;
 
   &:hover, &:active, &:focus {
@@ -257,16 +258,31 @@ hr {
   font-family: 'Orbitron';
   font-size: 1.5rem;
   line-height: 1.5;
+  text-align: start;
 
   .level-span.animate {
     animation-duration: 1s;
     animation-name: level-up;
   }
 
+  .level-span {
+    margin-left: 8px;
+  }
+
   input {
     width: 2rem;
   }
+
+  @media screen and (min-width: $screen-desktop) {
+    text-align: center;
+
+    .level-span {
+      margin-left: 0;
+    }
+  }
 }
+
+
 
 .timer-container {
   cursor: default;
@@ -687,12 +703,15 @@ hr {
   padding: 4px;
   position: absolute;
   right: 12px;
+  text-align: end;
   top: 8px;
+  width: 200px;
   z-index: 100;
 }
 
 .edit-button,
-.notification-button {
+.notification-button,
+.sound-button {
   position: absolute;
   @include transition(all 0.25s ease-in-out, right 0.25s 0.25s ease-in-out);
 }
@@ -713,6 +732,14 @@ hr {
   }
 }
 
+.sound-button {
+  right: 76px;
+
+  @media screen and (min-width: $screen-lg-desktop) {
+    right: 112px;
+  }
+}
+
 .ok-button, .cancel-button {
   right: calc(-100% - 24px);
   @include transform(rotate(90deg));
@@ -720,7 +747,8 @@ hr {
 
 .editing {
   .edit-button,
-  .notification-button {
+  .notification-button,
+  .sound-button {
     @include transition_delay(0s);
     @include transform(rotate(90deg));
     right: -50%;

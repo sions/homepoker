@@ -22,7 +22,6 @@ See the README file for directions. You'll need python 2.7 and [pip 1.4 or later
    ```
    cd appengine-python-flask-skeleton
    pip install -r requirements.txt -t lib
-
    ```
 1. Install client side dependencies using Bower:
 
@@ -42,8 +41,9 @@ See the README file for directions. You'll need python 2.7 and [pip 1.4 or later
 1. Run this project locally from the command line:
 
    ```
+   python3 -m venv env
+   source env/bin/activate
    python main.py
-
    ```
 
    See setup in https://cloud.google.com/appengine/docs/standard/python3/building-app/writing-web-service#testing_your_web_service.

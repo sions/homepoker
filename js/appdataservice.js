@@ -16,6 +16,7 @@ poker.appdataservice = function() {
   this.schema_start_states_ = {};
   this.lastUsedSchema_ = '';
   this.voiceId_ = '';
+  this.soundActive = true;
 };
 
 
@@ -32,7 +33,8 @@ const VOICE_API_KEY = window.voice_api_key;
 pa.PROPERTY_ = {
   SCHEMAS: 'schemas',
   SCHEMA_START_STATES: 'schema_start_states',
-  LAST_USED_SCHEMA: 'lastUsedSchema'
+  LAST_USED_SCHEMA: 'lastUsedSchema',
+  SOUND_ACTIVE: 'soundActive'
 };
 
 
@@ -72,6 +74,10 @@ pa.prototype.initialize = async function() {
     });
   }
   this.lastUsedSchema_ = doc.data()[pa.PROPERTY_.LAST_USED_SCHEMA];
+  const soundActive = doc.data()[pa.PROPERTY_.SOUND_ACTIVE];
+  if (soundActive !== undefined) {
+    this.soundActive = soundActive;
+  }
 };
 
 
@@ -159,6 +165,21 @@ pa.prototype.setLastUsedSchema = function(schema) {
 pa.prototype.getLastUsedSchema = function(schema) {
   return this.lastUsedSchema_;
 };
+
+
+/**
+ * @return {boolean}
+ */
+pa.prototype.getSoundActive = function() {
+  return this.soundActive;
+}
+
+pa.prototype.toggleSoundActive = function() {
+  this.soundActive = !this.soundActive;
+  this.userRef_().update({
+    [pa.PROPERTY_.SOUND_ACTIVE]: this.soundActive,
+  });
+}
 
 /**
  * @return {boolean}

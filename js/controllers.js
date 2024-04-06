@@ -102,7 +102,7 @@ controllers.controller('StartPauseController',
   };
 
   $rootScope.$on(modelEvent.GAME_STARTED, async () => {
-    if (appdataService.textToSpeechAvailable()) {
+    if (appdataService.getSoundActive() && appdataService.textToSpeechAvailable()) {
       const levelState = modelService.getCurrentLevelState();
       const small = levelState.current.small;
       const big = levelState.current.big;
@@ -474,8 +474,8 @@ controllers.controller('EditBlindController',
 
 
 controllers.controller('EditButtonController',
-    ['$scope', '$rootScope', '$element', 'modelService',
-     function($scope, $rootScope, $element, modelService) {
+    ['$scope', '$rootScope', '$element', 'modelService', 'appdataService',
+     function($scope, $rootScope, $element, modelService, appdataService) {
   $scope.editing = false;
   $scope.managingInvites = false;
   var canvas = angular.element(document.getElementById('canvas'));
@@ -519,6 +519,14 @@ controllers.controller('EditButtonController',
 
   $scope.hasNotifications = function() {
     return !goog.object.isEmpty(modelService.getColabRequests());
+  };
+
+  $scope.toggleSound = () => {
+    appdataService.toggleSoundActive();
+  };
+
+  $scope.soundActive = () => {
+    return appdataService.getSoundActive();
   };
 }]);
 
@@ -569,6 +577,9 @@ controllers.controller('LevelUpAudioController',
       ['$rootScope', '$element', 'modelService', 'appdataService',
       function($rootScope, $element, modelService, appdataService) {
   $rootScope.$on(EVENTS.LEVEL_UP, async () => {
+    if (!appdataService.getSoundActive()) {
+      return;
+    }
     const audio = $element[0];
     const endedPromise = Promise.withResolvers();
     goog.events.listenOnce(audio, "ended", () => {

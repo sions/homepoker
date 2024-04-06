@@ -21,6 +21,11 @@
     <div class="ng-cloak canvas" id="canvas">
       <div ng-controller="EditButtonController" class="action-buttons ng-hide">
         {% raw %}
+        <div ng-attr-tabindex="{{editing ? -1 : 0}}" class="action-button sound-button"
+            ng-click="toggleSound()" on-enter-key="toggleSound()">
+          <i class="material-icons action-button-icon">
+            {{soundActive() ? 'volume_up' : 'volume_off'}}</i>
+        </div>
          <div ng-attr-tabindex="{{editing ? -1 : 0}}" class="action-button notification-button"
             ng-click="toggleNotifications()" on-enter-key="showNotifications()">
           <i class="material-icons action-button-icon"
