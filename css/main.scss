@@ -698,6 +698,10 @@ hr {
   }
 }
 
+.actions-container {
+  position: relative;
+}
+
 .action-buttons {
   overflow: hidden;
   padding: 4px;
@@ -791,7 +795,15 @@ hr {
   margin-top: 8px;
   max-width: calc(100vw - 48px);
   padding: 16px;
+  position: absolute;
+  right: 12px;
+  top: 42px;
   width: 500px;
+  z-index: 200;
+
+  @media screen and (min-width: $screen-lg-desktop) {
+    top: 64px;
+  }
 }
 
 .invite-request {

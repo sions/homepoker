@@ -19,30 +19,32 @@
 <body>
   <div class="vertical-layout">
     <div class="ng-cloak canvas" id="canvas">
-      <div ng-controller="EditButtonController" class="action-buttons ng-hide">
+      <div ng-controller="EditButtonController" class="ng-hide actions-container">
         {% raw %}
-        <div ng-attr-tabindex="{{editing ? -1 : 0}}" class="action-button sound-button"
-            ng-click="toggleSound()" on-enter-key="toggleSound()">
-          <i class="material-icons action-button-icon">
-            {{soundActive() ? 'volume_up' : 'volume_off'}}</i>
-        </div>
-         <div ng-attr-tabindex="{{editing ? -1 : 0}}" class="action-button notification-button"
-            ng-click="toggleNotifications()" on-enter-key="showNotifications()">
-          <i class="material-icons action-button-icon"
-             ng-class="hasNotifications() ? 'active' : ''">
-            {{hasNotifications() ? 'notifications_active' : 'notifications_none'}}</i>
-        </div>
-        <div ng-attr-tabindex="{{editing ? -1 : 0}}" class="action-button edit-button"
-            ng-click="edit()" on-enter-key="edit()">
-          <i class="material-icons action-button-icon">edit</i>
-        </div>
-        <div ng-attr-tabindex="{{editing ? 0 : -1}}" class="action-button ok-button"
-            ng-click="ok()" on-enter-key="ok()">
-          <i class="material-icons action-button-icon">check</i>
-        </div>
-        <div ng-attr-tabindex="{{editing ? 0 : -1}}" class="action-button cancel-button"
-            ng-click="cancel()" on-enter-key="cancel()">
-          <i class="material-icons action-button-icon">close</i>
+        <div class="action-buttons">
+          <div ng-attr-tabindex="{{editing ? -1 : 0}}" class="action-button sound-button"
+              ng-click="toggleSound()" on-enter-key="toggleSound()">
+            <i class="material-icons action-button-icon">
+              {{soundActive() ? 'volume_up' : 'volume_off'}}</i>
+          </div>
+           <div ng-attr-tabindex="{{editing ? -1 : 0}}" class="action-button notification-button"
+              ng-click="toggleNotifications()" on-enter-key="showNotifications()">
+            <i class="material-icons action-button-icon"
+               ng-class="hasNotifications() ? 'active' : ''">
+              {{hasNotifications() ? 'notifications_active' : 'notifications_none'}}</i>
+          </div>
+          <div ng-attr-tabindex="{{editing ? -1 : 0}}" class="action-button edit-button"
+              ng-click="edit()" on-enter-key="edit()">
+            <i class="material-icons action-button-icon">edit</i>
+          </div>
+          <div ng-attr-tabindex="{{editing ? 0 : -1}}" class="action-button ok-button"
+              ng-click="ok()" on-enter-key="ok()">
+            <i class="material-icons action-button-icon">check</i>
+          </div>
+          <div ng-attr-tabindex="{{editing ? 0 : -1}}" class="action-button cancel-button"
+              ng-click="cancel()" on-enter-key="cancel()">
+            <i class="material-icons action-button-icon">close</i>
+          </div>
         </div>
         <div ng-controller="ManageInvitesController"
             ng-show="managingInvites" class="invites-manager">
