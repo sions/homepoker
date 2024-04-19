@@ -581,6 +581,7 @@ controllers.controller('LevelUpAudioController',
       return;
     }
     const audio = $element[0];
+    audio.volume = 0.4;
     const endedPromise = Promise.withResolvers();
     goog.events.listenOnce(audio, "ended", () => {
       console.info('Audio ended');
