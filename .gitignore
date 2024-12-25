@@ -3,8 +3,9 @@ appengine-generated/
 lib/bower_components
 lib
 .sass-cache/
+env/
 
 *.pyc
 .gcloudignore
 env_variables.yaml
-env/
+
