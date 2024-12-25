@@ -7,3 +7,4 @@ lib
 *.pyc
 .gcloudignore
 env_variables.yaml
+env/
