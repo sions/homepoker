@@ -17,7 +17,7 @@ poker.boot.startApp = async function() {
   if (!authResult.user && !firebase.auth().currentUser) {
     console.info('User not logged in. Signing with redirect.')
     const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithRedirect(provider);
+    firebase.auth().signInWithPopup(provider);
     return;
   }
 
